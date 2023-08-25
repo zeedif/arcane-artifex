@@ -15,24 +15,26 @@ Hooks.once('init', async function () {
 });
 
 Hooks.once('ready', async function () {
+    if (game.user.isGM) {
+        let stIP = await game.settings.get("stable-images", "ip");
+        try {
+            // Envoi d'une requête HEAD au serveur
+            const response = await fetch(stIP, { method: 'HEAD' });
 
-    let stIP = await game.settings.get("stable-images", "ip");
-    try {
-        // Envoi d'une requête HEAD au serveur
-        const response = await fetch(stIP, { method: 'HEAD' });
+            if (response.ok) {
+                ui.notifications.notify('Le serveur distant de stable diffusion est accessible.');
+                game.settings.set("stable-images", "connection", true)
+            } else {
+                console.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:', response.status);
+                ui.notifications.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:' + response.status);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion :', error);
+            ui.notifications.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion ; erreur = ' + error);
 
-        if (response.ok) {
-            ui.notifications.notify('Le serveur distant de stable diffusion est accessible.');
-            game.settings.set("stable-images", "connection", true)
-        } else {
-            console.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:', response.status);
-            ui.notifications.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:' + response.status);
         }
-    } catch (error) {
-        console.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion :', error);
-        ui.notifications.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion ; erreur = ' + error);
-
     }
+
 
 });
 Hooks.on('renderActorSheet5e', async function (sheet, html, data) {
@@ -40,7 +42,7 @@ Hooks.on('renderActorSheet5e', async function (sheet, html, data) {
 });
 
 Hooks.on('createChatMessage', async function (message, options, id) {
-    if (game.user.isGM) {
+    if (game.user.isGM && game.settings.get('stable-images', 'connection')) {
         if (message.content.indexOf(":sd: ") > -1) {
 
             let prompt = message.content.replace(":sd: ", "")
@@ -128,7 +130,7 @@ async function createImage(data, prompt, message) {
     content += "</div>"
     await message.update({
         content: content,
-    })
+    });
 
 }
 async function chatListeners(html) {
