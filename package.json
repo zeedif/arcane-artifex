@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "<!-- SPDX-FileCopyrightText: 2020 Cody Swendrowski SPDX-FileCopyrightText: 2020 Andrew Krigline SPDX-FileCopyrightText: 2020 Fallayn SPDX-FileCopyrightText: 2021 BadIdeasBureau",
   "scripts": {
-    "launch Foundry": "cd C:/Program Files/Foundry Virtual Tabletop_10/resources/app && node main.js",
+    "launch Foundry11": "cd C:/Program Files/Foundry Virtual Tabletop_V11/resources/app && node main.js",
     "watch": "gulp watch"
   },
   "author": "",
