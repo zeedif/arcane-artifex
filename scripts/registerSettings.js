@@ -31,14 +31,16 @@ export default function registerSettings() {
         config: false,
         type: Object,
         default: {
-            "checkpoint": "",
-            "pre-prompt": "",
+            "pre-prompt": "((SFW)), masterpiece,cinematic pose, bokeh",
             "negative-prompt": "((NSFW, nude)) bad-artist,bad face, bad anatomy, bad proportions, bad perspective, multiple views, mutated hands and fingers, interlocked fingers, twisted fingers, excessively bent fingers, more than five fingers, lowres, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name, low quality lowres multiple breasts, low quality lowres mutated hands and fingers, more than two arms, more than two hands, more than two legs, more than two feet,",
             "server-IP": "http://localhost:7860",
             "width": 512,
             "height": 512,
             "restoreFaces": true,
-            "imgDenoising": 0.7
+            "imgDenoising": 0.7,
+            "steps": 22,
+            "cfgScale": 7.5
+
         },
         onChange: debouncedReload
 

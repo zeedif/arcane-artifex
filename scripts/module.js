@@ -94,14 +94,15 @@ async function generateActorChatCommand(sheet) {
 function generatePromptFromActor(sheet) {
     let prompt = ":sd: ";
     if (game.system.id == "dnd5e") {
+        prompt += "a fantasy "
         // Check if the actor is an npc
         if (sheet.actor.type == "npc") {
-            prompt += `((${sheet.actor.name})),${sheet.actor.system.details.type.value},${sheet.actor.system.details.alignment}, ${sheet.actor.system.details.race}, `;
+            prompt += `(${sheet.actor.name}),${sheet.actor.system.details.type.value},${sheet.actor.system.details.alignment}, ${sheet.actor.system.details.race}, `;
         }
 
         // Check if the actor is a character
         if (sheet.actor.type == "character") {
-            prompt += `dnd hero, ${sheet.actor.name}, `;
+            prompt += ` hero, ${sheet.actor.name}, `;
             let classes = sheet.actor.items.filter(it => it.type == "class");
             classes.forEach(c => prompt += `(${c.name})`);
         }

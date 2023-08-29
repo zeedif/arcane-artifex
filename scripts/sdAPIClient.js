@@ -143,7 +143,7 @@ class SdAPIClient {
                 let progressBar = html.querySelector(".stable-progress-bar");
                 let progressState = html.querySelector(".stable-progress-state");
 
-                if (progress) {
+                if (progressState && progressBar) {
                     // Update the progress bar
                     let percent = Math.trunc(data.progress * 100);
                     progressState.innerText = `ETA : ${Math.trunc(data.eta_relative)}s__${Math.trunc(data.progress * 100)}%`;
