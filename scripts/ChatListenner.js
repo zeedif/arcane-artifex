@@ -48,6 +48,16 @@ class StableImagesChatListenner {
         html.on("click", '.stable-image-copySrc', async (event) => {
             this.copyImgSrc(event)
         });
+        html.on("click", '.stable-image-actor-image', async (event) => {
+            this.updateActorImg(event)
+        });
+    };
+
+    async updateActorImg(ev) {
+        let src = ev.currentTarget.closest('.stable-image-block').querySelector('img').src;
+        let actor = await fromUuid(ev.currentTarget.closest('.stable-message').dataset.actorId)
+        if (!actor) { return ui.notifications.error("this actor isn't in your world yet") }
+        else actor.update({ img: src })
     }
     copyImgSrc(event) {
         let src = event.currentTarget.closest('.stable-image-block').querySelector('img').src;

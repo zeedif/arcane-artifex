@@ -1,4 +1,4 @@
-<div class="stable-message">
+<div class="stable-message" data-actor-id="{{flags.stable-images.fromActor}}">
     {{log this}}
     <h3>{{title}}{{#if imgToImg}}
         <img src="{{sourceSrc}}" class="stable-image source">
@@ -22,8 +22,7 @@
             <a class="stable-image-copySrc">copy src</a>
             {{log @root}}
             {{#if @root.flags.stable-images.fromActor}}
-            <a class="stable-image-actor-image"
-                data-actor-id="flags.stable-images.fromActor">
+            <a class="stable-image-actor-image">
                 affect to actor
             </a>
             {{/if}}

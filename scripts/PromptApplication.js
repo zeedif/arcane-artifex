@@ -3,10 +3,10 @@ export default class PromptApplication extends FormApplication {
 
 
 
-    constructor(prompt, actorId) {
+    constructor(prompt, actorUuid) {
         super();
         this.basePrompt = prompt;
-        this.actorId = actorId
+        this.actorId = actorUuid
 
     }
 
@@ -24,9 +24,7 @@ export default class PromptApplication extends FormApplication {
             top: 40
         });
     }
-    setTargetActor(actor) {
-        this.targetActor = actor
-    };
+
 
     getData() {
         return mergeObject(super.getData(), {

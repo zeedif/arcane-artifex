@@ -124,5 +124,5 @@ function generatePromptFromActor(sheet) {
         prompt += sheet.actor.name + ', ';
         sheet.actor.items.forEach(it => prompt += it.name + ', ');
     }
-    new PromptApplication(prompt, sheet.actor.id).render(true)
+    new PromptApplication(prompt, sheet.actor.uuid).render(true)
 }
