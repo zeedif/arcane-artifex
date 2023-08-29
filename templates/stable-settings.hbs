@@ -1,0 +1,130 @@
+<form autocomplete="on">
+
+    <div class="form-group">
+        <label>Stable difusion checkpoint</label>
+        <div class="form-fields">
+            <select name="checkpoint">
+                <option value></option>
+            </select>
+        </div>
+        <p class="notes">choose the checkpoint that will be used</p>
+
+    </div>
+    <div class="form-group">
+        <label>pre-promte</label>
+        <div class="form-fields">
+            <textarea name="pre-prompt">{{pre-prompt}}</textarea>
+        </div>
+        <p class="notes">text that will be add to each request at the beginning
+            of the prompt</p>
+
+    </div>
+
+    <div class="form-group">
+        <label>negative prompt</label>
+        <div class="form-fields">
+            <textarea name="negative-prompt">{{negative-prompt}}</textarea>
+        </div>
+        <p class="notes">text that will be add to each request as negative
+            prompt</p>
+
+    </div>
+    <div class="form-group">
+        <label>stable diffusion server IP</label>
+        <div class="form-fields">
+            <input name="server-IP" type="text" value="{{server-IP}}" />
+
+        </div>
+        <p class="notes">IP adress of your local instance of Stable diffusion</p>
+
+    </div>
+    <div class="form-group">
+        <label>width</label>
+        <div class="form-fields">
+
+            <input type="range" name="width" data-dtype="Number"
+                value="{{width}}" min="128" max="1024" step="64">
+            <span class="range-value">{{width}}</span>
+
+        </div>
+
+        <p class="notes">width of generated image</p>
+    </div>
+    <div class="form-group">
+        <label>height</label>
+        <div class="form-fields">
+
+            <input type="range" name="height" data-dtype="Number"
+                value="{{height}}" min="128" max="1024" step="64">
+            <span class="range-value">{{height}}</span>
+
+        </div>
+
+        <p class="notes">height of generated image</p>
+    </div>
+    <div class="form-group">
+        <label>batch count</label>
+        <div class="form-fields">
+
+            <input type="range" name="batchCount" data-dtype="Number"
+                value="{{batchCount}}" min="1" max="20" step="1">
+            <span class="range-value">{{batchCount}}</span>
+
+        </div>
+
+        <p class="notes">how many batches image to create</p>
+    </div>
+    <div class="form-group">
+        <label>sampling steps</label>
+        <div class="form-fields">
+
+            <input type="range" name="steps" data-dtype="Number"
+                value="{{steps}}" min="15" max="80" step="1">
+            <span class="range-value">{{steps}}</span>
+
+        </div>
+
+        <p class="notes">numbers of iterations for image generation</p>
+    </div>
+    <div class="form-group">
+        <label>variations </label>
+        <div class="form-fields">
+
+            <input type="range" name="imgDenoising" data-dtype="Number"
+                value="{{imgDenoising}}" min="0.1" max="1" step="0.05">
+            <span class="range-value">{{imgDenoising}}</span>
+
+        </div>
+
+        <p class="notes">height of generated image</p>
+    </div>
+    <div class="form-group">
+        <label>restore faces</label>
+        <div class="form-fields">
+
+            <input type="checkbox" name="restoreFaces" data-dtype="Boolean"
+                checked="{{restoreFaces}}">
+
+        </div>
+
+        <p class="notes">restore faces</p>
+    </div>
+    <div class="form-group">
+        <label>CFG scale</label>
+        <div class="form-fields">
+
+            <input type="range" name="cfgScale" data-dtype="Number"
+                value="{{cfgScale}}" min="3" max="25" step="1">
+            <span class="range-value">{{cfgScale}}</span>
+
+        </div>
+
+        <p class="notes">How strongly the image should conform to your prompt</p>
+    </div>
+
+    <button type="submit">
+        <i class="far fa-save"></i>
+        {{ localize "Submit"}}
+        <i>this will reload the window</i>
+    </button>
+</form>

@@ -1,184 +1,127 @@
+/**
+ * Importing the registerSettings module from "./registerSettings.js"
+ */
 import registerSettings from "./registerSettings.js";
 
-3// SPDX-FileCopyrightText: 2020 Cody Swendrowski
-//
-// SPDX-License-Identifier: MIT
+/**
+ * Importing the chatListenner module from './ChatListenner.js'
+ */
+import chatListenner from './ChatListenner.js';
 
+/**
+ * Importing the sdAPIClient module from "./sdAPIClient.js"
+ */
+import sdAPIClient from "./sdAPIClient.js";
+import PromptApplication from "./PromptApplication.js";
 
-Hooks.once('init', async function () {
+/**
+ * Hook that runs when the game is initialized
+ */
+Hooks.on('init', async function () {
+    // Enable debug hooks
     CONFIG.debug.hooks = true;
-
-    Hooks.on('renderChatLog', (log, html, data) => chatListeners(html))
-
-    registerSettings();
-
 });
 
-Hooks.once('ready', async function () {
+/**
+ * Hook that runs when the actor sheet header buttons are rendered
+ */
+Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
     if (game.user.isGM) {
-        let stIP = await game.settings.get("stable-images", "ip");
-        try {
-            // Envoi d'une requête HEAD au serveur
-            const response = await fetch(stIP, { method: 'HEAD' });
+        buttons.unshift({
+            label: 'generate art',
+            class: 'stable-image-actor',
+            icon: 'fas fa-images',
+            onclick: () => generateActorChatCommand(actor5eSheet)
+        })
+    }
+    // Add a button to generate art
 
-            if (response.ok) {
-                ui.notifications.notify('Le serveur distant de stable diffusion est accessible.');
-                game.settings.set("stable-images", "connection", true)
-            } else {
-                console.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:', response.status);
-                ui.notifications.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:' + response.status);
-            }
-        } catch (error) {
-            console.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion :', error);
-            ui.notifications.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion ; erreur = ' + error);
+});
 
-        }
+
+
+/**
+ * Hook that runs once the game is ready
+ */
+Hooks.once('ready', async function () {
+    // Register the settings
+    registerSettings();
+    sdAPIClient.getStableDiffusionSettings();
+
+    // Initialize the stable diffusion API client if the user is the GM
+    if (game.user.isGM) {
+        sdAPIClient.initConnexion();
+    }
+    // Activate listeners for the chat log
+
+});
+Hooks.on('renderChatLog', async (log, html, data) => chatListenner.activateListenners(html));
+
+
+// Remove the stable image block from chat messages if the user is not the GM
+Hooks.on('renderChatMessage', async function (message, html, data) {
+    if (!game.user.isGM) {
+        html.find(".stable-image-block a").remove();
+    }
+    if (message.user.id == game.user.id && game.user.isGM) {
+        chatListenner.getPromptCommand(message);
+
     }
 
-
-});
-Hooks.on('renderActorSheet5e', async function (sheet, html, data) {
-
 });
 
-Hooks.on('createChatMessage', async function (message, options, id) {
+
+/**
+ * Generates an image based on the actor's information
+ * @param {Object} sheet - The actor sheet
+ */
+async function generateActorChatCommand(sheet) {
+    if (sdAPIClient.working) { return ui.notifications.warn('please wait until previous job is finished') }
+    // Check if the user is the GM and the stable-images connection is enabled
     if (game.user.isGM && game.settings.get('stable-images', 'connection')) {
-        if (message.content.indexOf(":sd: ") > -1) {
+        // Generate the prompt from the actor's information
+        generatePromptFromActor(sheet);
 
-            let prompt = message.content.replace(":sd: ", "")
-            callStableDiffusion(prompt, message);
-            await message.update({
-                id: message._id,
-                content: `<h3>generating image
-                            <i class="fa-solid fa-spinner fa-spin"></i>
-                </h3>
-                            `,
-                whisper: ChatMessage.getWhisperRecipients("GM")
-            })
-        }
-    }
-
-})
-Hooks.on('renderChatMessage', async function (messge, html, data) {
-    if (!game.user.isGM) {
-        html.find(".stable-image-block a").remove()
-    }
-})
-
-async function callStableDiffusion(prompt, message) {
-    //getting settings
-    let preprompt = await game.settings.get("stable-images", "preprompt");
-    let stIP = await game.settings.get("stable-images", "ip");
-    let negativePrompt = await game.settings.get("stable-images", "negativePrompt");
-    let imgWidth = await game.settings.get("stable-images", "width");
-    let imgHeight = await game.settings.get("stable-images", "height");
-    let count = await game.settings.get("stable-images", "batchCount");
-    let steps = await game.settings.get("stable-images", "steps");
-    let apiUrl = stIP + '/sdapi/v1/txt2img';
-    let cfg = await game.settings.get("stable-images", "cfgScale");
-
-    // request body construction
-    const requestBody = {
-        "prompt": prompt,
-        "seed": -1,
-        "height": imgHeight,
-        "width": imgWidth,
-        "negative_prompt": negativePrompt,
-        "n_iter": count,
-        steps: steps,
-        cfg_scale: cfg
 
     }
-    // request construction
-    var xhr = new XMLHttpRequest();
-    try {
-        xhr.open('POST', apiUrl);
-    } catch (e) {
+};
 
-    }
-
-    xhr.setRequestHeader("Content-type", "application/json; charset=utf-8"); xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-
-    xhr.onload = () => {
-        //managing request state
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            const data = xhr.response;
-            createImage(JSON.parse(data), prompt, message)
-        } else {
-            console.error(`Error: `, xhr.response);
-        }
-    };
-
-    //sending request
-
-    xhr.send(JSON.stringify(requestBody));
-
-}
-async function createImage(data, prompt, message) {
-    console.log(data, prompt, message);
-    let content = `<h3>${prompt}</h3><div title="${prompt}"class="stable-images"> `;
-    for (let img of data.images) {
-        content += `
-        <div class="stable-image-block">
-        <img  title="${prompt}" src="data:image/png;base64,${img}" />
-        <div class="flexrow">
-        <a class="stable-image-show-chat">visible in chat</a>
-        <a class="stable-image-create-journal">create a journal</a>
-        </div>
-        </div>`
-    }
-    content += "</div>"
-    await message.update({
-        content: content,
-    });
-
-}
-async function chatListeners(html) {
-    if (!game.user.isGM) {
-        html.find(".stable-image-block div").remove()
-    }
-
-    html.on("click", '.stable-image-show-chat', event => {
-        let img = event.currentTarget.closest('.stable-image-block').querySelector('img');
-        let content = `
-                <div class="stable-image-block">
-
-        ${img.outerHTML} <div class="flexrow">
-             <a class="stable-image-create-journal">create a journal</a>
-
-        </div>
-        </div>`;
-        ChatMessage.create({
-            user: game.user._id,
-            speaker: ChatMessage.getSpeaker(),
-            content: content
-        });
-
-    })
-    html.on("click", '.stable-image-block img', event => {
-
-        let src = event.currentTarget.getAttribute('src');
-        const ip = new ImagePopout(src, {});
-        ip.render(true);
-
-    })
-    html.on("click", '.stable-image-create-journal', async (event) => {
-        if (game.user.isGM) {
-            let img = event.currentTarget.closest('.stable-image-block').querySelector('img');
-            let src = img.getAttribute('src');
-            // Construct the Application instance
-
-            const journal = await JournalEntry.create({
-                name: "new Journal",
-            });
-            let page = await journal.createEmbeddedDocuments("JournalEntryPage", [{
-                name: "generated image",
-                type: "image",
-                src: src
-            }])
-            journal.sheet.render(true);
+/**
+ * Generates the prompt from the actor's information
+ * @param {Object} sheet - The actor sheet
+ * @returns {string} - The generated prompt
+ */
+function generatePromptFromActor(sheet) {
+    let prompt = ":sd: ";
+    if (game.system.id == "dnd5e") {
+        // Check if the actor is an npc
+        if (sheet.actor.type == "npc") {
+            prompt += `((${sheet.actor.name})),${sheet.actor.system.details.type.value},${sheet.actor.system.details.alignment}, ${sheet.actor.system.details.race}, `;
         }
 
-    })
+        // Check if the actor is a character
+        if (sheet.actor.type == "character") {
+            prompt += `dnd hero, ${sheet.actor.name}, `;
+            let classes = sheet.actor.items.filter(it => it.type == "class");
+            classes.forEach(c => prompt += `(${c.name})`);
+        }
 
+        // Filter out important items from the actor's items
+        let importantsItems = sheet.actor.items.filter(it =>
+            (it.type != "backpack") &&
+            (it.type != "consumable") &&
+            (it.type != "tool") &&
+            (it.type != "spell")
+        );
+
+        // Add the names of the important items to the prompt
+        importantsItems.forEach(it => prompt += `${it.name}, `);
+
+        prompt;
+    }
+    else {
+        prompt += sheet.actor.name + ', ';
+        sheet.actor.items.forEach(it => prompt += it.name + ', ');
+    }
+    new PromptApplication(prompt, sheet.actor.id).render(true)
 }

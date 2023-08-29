@@ -1,0 +1,25 @@
+<div class="stable-message">
+    <h3>{{title}}{{#if imgToImg}}
+        <img src="{{sourceSrc}}" class="stable-image source">
+        {{/if}}</h3>
+    {{#if send}}
+
+    <h4>working <i class="fas-fa-spin fa-circle"></i></h4>
+    <div class="stable-progress-container">
+        <div class="stable-progress-bar"></div>
+        <div class="stable-progress-state"></div>
+    </div>
+    {{/if}}
+    {{#each images as |image|}}
+    <div class="stable-image-block">
+        <img src="data:image/png;base64,{{image}}" alt="{{title}}">
+        <div class="stable-buttons">
+            <a class="stable-image-show-chat">send visible</a>
+            <a class="stable-image-create-journal">create
+                journal</a>
+            <a class="stable-image-img2img">variations</a>
+            <a class="stable-image-copySrc">copy src</a>
+        </div>
+    </div>
+    {{/each}}
+</div>
