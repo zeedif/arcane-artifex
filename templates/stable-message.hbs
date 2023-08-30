@@ -1,11 +1,16 @@
 <div class="stable-message" data-actor-id="{{flags.stable-images.fromActor}}">
-    {{log this}}
-    <h3>{{title}}{{#if imgToImg}}
-        <img src="{{sourceSrc}}" class="stable-image source">
-        {{/if}}</h3>
-    {{#if send}}
+    <h3 class="flexrow">{{title}}
 
-    <h4>working <i class="fas-fa-spin fa-circle"></i></h4>
+        {{prompt}}
+        {{#if imgToImg}}
+            <img src="{{sourceSrc}}" class="stable-image source">
+        {{/if}}
+    </h3>
+    {{#if send}}
+        <h4 class="flexrow">working <i class="fas-fa-spin fa-circle"></i></h4>
+        
+    </div>
+
     <div class="stable-progress-container">
         <div class="stable-progress-bar"></div>
         <div class="stable-progress-state"></div>
@@ -20,7 +25,6 @@
                 journal</a>
             <a class="stable-image-img2img">variations</a>
             <a class="stable-image-copySrc">copy src</a>
-            {{log @root}}
             {{#if @root.flags.stable-images.fromActor}}
             <a class="stable-image-actor-image">
                 affect to actor

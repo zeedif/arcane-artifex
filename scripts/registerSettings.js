@@ -1,5 +1,5 @@
 import StableImageSettings from "./StableImageSettings.js";
-const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 100);
+import sdAPIClient from "./sdAPIClient.js";
 
 export default function registerSettings() {
 
@@ -39,10 +39,16 @@ export default function registerSettings() {
             "restoreFaces": true,
             "imgDenoising": 0.7,
             "steps": 22,
-            "cfgScale": 7.5
+            "cfgScale": 7.5,
+            "batchCount": 4,
+            "loras": [],
+            "loraPromt": "",
+            "activeLoras": [],
+            "activeModel": "",
+            "models": {}
 
         },
-        onChange: debouncedReload
+        onChange: () => sdAPIClient.getStableDiffusionSettings()
 
     });
 

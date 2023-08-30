@@ -77,9 +77,11 @@ class StableImagesChatListenner {
 
         let messageData = {
             title: "variations",
+            prompt: prompt,
             sourceSrc: img.src,
             send: true,
-            imgToImg: true
+            imgToImg: true,
+
         }
         let content = await renderTemplate(this.template, messageData);
         // Create a chat message with the image content
@@ -197,9 +199,11 @@ class StableImagesChatListenner {
      * @param {Object} message - The chat message object
      */
     async createImage(data, prompt, message) {
+
         this.updateGMMessage(message, {
             images: data.images,
-            send: false
+            send: false,
+            title: prompt
         })
     }
 
