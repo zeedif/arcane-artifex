@@ -1,6 +1,4 @@
-class settings=> get requests for settings
--models
--loras etc...
+-loras settings not working
 
 button skip
 temp image

@@ -25,8 +25,8 @@ export default class StableImageSettings extends FormApplication {
         console.log(html)
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this))
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
-            let activeMap = this.context.activeLoras.map(l => l.alias);
-            if (activeMap.indexOf(span.innerText) > -1) { span.classList.add('active') }
+            let activeMap = this.context.activeLoras?.map(l => l.alias);
+            if (activeMap?.indexOf(span.innerText) > -1) { span.classList.add('active') }
             span.addEventListener('click', this.toggleLora.bind(this))
         }
         //selections of activeLora
