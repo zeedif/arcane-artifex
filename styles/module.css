@@ -88,16 +88,25 @@
     text-align: center;
 
 }
-span.lora-choice{
-    border:1px solid black;
+
+.stable-setting-sheet section
+{
     padding: 0 0.5rem;
-    margin:0.1rem;
-    cursor:pointer;
-    background:#a9a6a6;
-    display:inline-block;
-    border-radius:0.5rem;
 }
-span.lora-choice.active{
-    background:#8cb98a;
+
+span.lora-choice
+{
+    border: 1px solid black;
+    padding: 0 0.5rem;
+    margin: 0.1rem;
+    cursor: pointer;
+    background: #a9a6a6;
+    display: inline-block;
+    border-radius: 0.5rem;
+}
+
+span.lora-choice.active
+{
+    background: #8cb98a;
 
 }

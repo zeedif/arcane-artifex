@@ -27,6 +27,8 @@ Hooks.on('init', async function () {
  */
 Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
     if (game.user.isGM) {
+        // Add a button to generate art
+
         buttons.unshift({
             label: 'generate art',
             class: 'stable-image-actor',
@@ -34,7 +36,6 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
             onclick: () => generateActorChatCommand(actor5eSheet)
         })
     }
-    // Add a button to generate art
 
 });
 
@@ -52,14 +53,15 @@ Hooks.once('ready', async function () {
     if (game.user.isGM) {
         sdAPIClient.initConnexion();
     }
-    // Activate listeners for the chat log
 
 });
+
+// Activate listeners for the chat log
 Hooks.on('renderChatLog', async (log, html, data) => chatListenner.activateListenners(html));
 
 
-// Remove the stable image block from chat messages if the user is not the GM
 Hooks.on('renderChatMessage', async function (message, html, data) {
+    // Remove the stable image buttons from chat messages if the user is not the GM
     if (!game.user.isGM) {
         html.find(".stable-image-block a").remove();
     }
@@ -121,7 +123,7 @@ function generatePromptFromActor(sheet) {
         prompt;
     }
     else {
-        prompt += sheet.actor.name + ', ';
+        prompt += '((' + sheet.actor.name + ')), ';
         sheet.actor.items.forEach(it => prompt += it.name + ', ');
     }
     new PromptApplication(prompt, sheet.actor.uuid).render(true)

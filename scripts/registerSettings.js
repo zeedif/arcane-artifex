@@ -1,21 +1,23 @@
+//import the form app that manage the stable-images settings
 import StableImageSettings from "./StableImageSettings.js";
+//import the api client
 import sdAPIClient from "./sdAPIClient.js";
 
+/**
+ * Registers the settings for the Stable Images module.
+ */
 export default function registerSettings() {
-
-    // initiating the connexion state with stable diffusion
-
+    // Initiating the connection state with Stable Diffusion
     game.settings.register("stable-images", "connection", {
-
         name: "connection",
-        hint: "conncetion",
+        hint: "connection",
         scope: "world",
         config: false,
         type: Boolean,
         default: false
     });
 
-    //creating the sub menu
+    // Creating the sub menu for Stable Images Settings
     game.settings.registerMenu("stable-images", "stable-image-menu", {
         name: "Stable Images Settings",
         label: "Stable Images Settings",
@@ -25,7 +27,10 @@ export default function registerSettings() {
         restricted: true
     });
 
-    // creating setting object
+    /**
+     * Represents the default stable-settings object.
+     * @type {Object}
+     */
     game.settings.register('stable-images', 'stable-settings', {
         scope: 'world',
         config: false,
@@ -36,22 +41,22 @@ export default function registerSettings() {
             "server-IP": "http://localhost:7860",
             "width": 512,
             "height": 512,
-            "restoreFaces": true,
+            "face_restoration": true,
             "imgDenoising": 0.7,
             "steps": 22,
             "cfgScale": 7.5,
             "batchCount": 4,
             "loras": [],
-            "loraPromt": "",
+            "loraPrompt": "",
             "activeLoras": [],
             "activeModel": "",
-            "models": {}
+            "models": {},
 
         },
+        /**
+         * Handles the onChange event for the stable-settings.
+         * Calls the getStableDiffusionSettings function from the sdAPIClient.
+         */
         onChange: () => sdAPIClient.getStableDiffusionSettings()
-
     });
-
-
-
 }
