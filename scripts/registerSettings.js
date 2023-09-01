@@ -51,6 +51,7 @@ export default function registerSettings() {
             "activeLoras": [],
             "activeModel": "",
             "models": {},
+            "stableStoragePath": "/worlds/" + game.world.id
 
         },
         /**

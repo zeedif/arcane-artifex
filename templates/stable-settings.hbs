@@ -15,6 +15,23 @@
 
                 </div>
             </div>
+            <div class="server-ip">
+                <h2>STORAGE</h2>
+                <div class="form-group picker">
+                    <label>path for stored generated images</label>
+                    <div class="form-fields">
+                        <input type="text" name="stableStoragePath"
+                            value="{{stableStoragePath}}">
+
+                        <button type="button" class="file-picker"
+                            data-type="folder"
+                            data-target="stableStoragePath"
+                            title="Browse">
+                            <i class="fas fa-file-import fa-fw"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div class="models">
                 <h2>MODELS</h2>
                 <h4>active model : {{activeModel}}</h4>

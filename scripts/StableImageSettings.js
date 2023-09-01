@@ -53,7 +53,10 @@ export default class StableImageSettings extends FormApplication {
      */
     activateListeners(html) {
         super.activateListeners(html);
-        console.log(html);
+
+
+        // Event listener for the choose-stable-storage button
+        html.find('#choose-stable-storage').click(this.onChooseStableStorage.bind(this));
 
         // Event listener for the model change
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
@@ -73,7 +76,29 @@ export default class StableImageSettings extends FormApplication {
             range.addEventListener('change', this.changeLoraPrompt.bind(this));
         }
     }
-
+    /**
+  * Opens the file picker dialog to choose a stable storage directory.
+  * @param {Event} event - The event object
+  */
+    async onChooseStableStorage(event) {
+        event.preventDefault();
+        // Open the file picker dialog
+        const pickerOptions = {
+            /**
+             * Callback function that is called when a directory is selected.
+             * @param {string} path - The selected directory path
+             */
+            callback: (path) => {
+                // Update the stable storage directory path
+                this.context.stableStoragePath = path;
+                this.render();
+            },
+            multiple: false,
+            type: 'folder',
+            current: this.context.stableStoragePath
+        };
+        new FilePicker(pickerOptions).browse();
+    }
     /**
      * Handles the model change event.
      * @param {Event} ev - The event object
@@ -155,7 +180,7 @@ export default class StableImageSettings extends FormApplication {
      * @param {Object} formData - The form data
      */
     _updateObject(event, formData) {
-        const data = mergeObject(this.context, expandObject(formData));
+        const data = { ...this.context, ...expandObject(formData) };
         console.log("setting data___________________", data)
         // Update the stable-settings in game settings
         game.settings.set('stable-images', 'stable-settings', data);
