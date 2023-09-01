@@ -57,6 +57,20 @@ class StableImagesChatListenner {
             this.updateActorImg(event);
         });
     };
+    /**
+     * Vérifie si un fichier existe à une certaine URL.
+     * @param {string} url - L'URL du fichier à vérifier.
+     * @returns {Promise<boolean>} - Une promesse résolue avec la valeur true si le fichier existe, sinon false.
+     */
+    async checkFileExists(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch (error) {
+            console.error('Une erreur s\'est produite lors de la vérification du fichier :', error);
+            return false;
+        }
+    }
 
     /**
      * Updates the actor image with the clicked stable image
@@ -69,7 +83,23 @@ class StableImagesChatListenner {
         if (!actor) {
             return ui.notifications.error("This actor isn't in your world yet");
         } else {
-            actor.update({ img: src });
+            let msgId = ev.currentTarget.closest(".message").dataset.messageId
+            let filename = actor.name + '_' + msgId + ".png";
+            let path = game.settings.get('stable-images', 'stable-settings').stableStoragePath;
+            let fileUrl = path + '/' + filename
+
+            this.checkFileExists(fileUrl)
+                .then(async exists => {
+                    if (exists) {
+                        actor.update({ img: fileUrl })
+                    } else {
+                        ui.notifications.notify('uploading file : ' + fileUrl);
+                        await ImageHelper.uploadBase64(src, filename, path);
+                        actor.update({ img: fileUrl })
+
+                    }
+                });
+
         }
     }
 
