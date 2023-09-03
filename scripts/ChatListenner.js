@@ -1,3 +1,4 @@
+import stableFileManager from "./StableFileManager.js";
 import sdAPIClient from "./sdAPIClient.js";
 
 /**
@@ -57,48 +58,31 @@ class StableImagesChatListenner {
             this.updateActorImg(event);
         });
     };
-    /**
-     * Vérifie si un fichier existe à une certaine URL.
-     * @param {string} url - L'URL du fichier à vérifier.
-     * @returns {Promise<boolean>} - Une promesse résolue avec la valeur true si le fichier existe, sinon false.
-     */
-    async checkFileExists(url) {
-        try {
-            const response = await fetch(url, { method: 'HEAD' });
-            return response.ok;
-        } catch (error) {
-            console.error('Une erreur s\'est produite lors de la vérification du fichier :', error);
-            return false;
-        }
-    }
+
 
     /**
      * Updates the actor image with the clicked stable image
      * @param {Event} ev - The click event
      */
     async updateActorImg(ev) {
-        console.log(ev.currentTarget.closest('.stable-image-block').querySelector('img'))
         let src = ev.currentTarget.closest('.stable-image-block').querySelector('img').src;
         let actor = await fromUuid(ev.currentTarget.closest('.stable-message').dataset.actorId);
         if (!actor) {
             return ui.notifications.error("This actor isn't in your world yet");
         } else {
-            let msgId = ev.currentTarget.closest(".message").dataset.messageId
-            let filename = actor.name + '_' + msgId + ".png";
-            let path = game.settings.get('stable-images', 'stable-settings').stableStoragePath;
-            let fileUrl = path + '/' + filename
+            let imgId = ev.currentTarget.closest(".stable-image-block").dataset.imageId
+            let filename = actor.name + '_' + imgId + ".png";
+            stableFileManager.checkFileExists(filename).then(async (exist) => {
+                if (!!exist) {
+                    actor.update({ img: stableFileManager.storagePath + filename })
+                } else {
+                    await stableFileManager.saveBase64(filename, src).then(url => {
+                        actor.update({ img: url })
+                    })
+                }
+            });
 
-            this.checkFileExists(fileUrl)
-                .then(async exists => {
-                    if (exists) {
-                        actor.update({ img: fileUrl })
-                    } else {
-                        ui.notifications.notify('uploading file : ' + fileUrl);
-                        await ImageHelper.uploadBase64(src, filename, path);
-                        actor.update({ img: fileUrl })
 
-                    }
-                });
 
         }
     }
@@ -252,7 +236,6 @@ class StableImagesChatListenner {
             if (options.send) {
                 sdAPIClient.initProgressRequest(msg);
             }
-            ui.sidebar.tabs.chat.scrollBottom();
         });
     }
 
@@ -283,8 +266,17 @@ class StableImagesChatListenner {
      * @param {Object} message - The chat message object
      */
     async createImage(data, prompt, message) {
+        console.log(data);
+        let images = [];
+        for (let imgData of data.images) {
+            images.push({
+                id: foundry.utils.randomID(),
+                data: imgData
+            })
+        }
+
         this.updateGMMessage(message, {
-            images: data.images,
+            images: images,
             send: false,
             title: prompt
         });

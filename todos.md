@@ -1,4 +1,5 @@
--loras settings not working
-
-button skip
+manage "styles" instead of "preprompt"
+filemanager
+default journal+page choice
+button skip+interrup
 temp image

@@ -38,6 +38,7 @@ class SdAPIClient {
          * @type {Array}
          */
         this.loras = [];
+        this.styles = [];
     }
 
     /**
@@ -69,6 +70,7 @@ class SdAPIClient {
     async getStableDiffusionSettings() {
         await this.getLoras();
         await this.getModels();
+        await this.getStyles();
         await this.getSdOptions();
         this.settings = game.settings.get("stable-images", "stable-settings");
         this.defaultRequestBody = {
@@ -102,6 +104,22 @@ class SdAPIClient {
         } catch (error) {
             console.error('Erreur lors de la tentative d\'accès au loras de stable diffusion :', error);
             ui.notifications.error('Erreur lors de la tentative d\'accès au loras de stable diffusion ; erreur = ' + error);
+        }
+    }
+    async getStyles() {
+        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let styleUrl = stIP + '/sdapi/v1/prompt-styles';
+        try {
+            // Send a GET request to the server
+            const response = await fetch(styleUrl, { method: 'GET' });
+            if (response.ok) {
+                this.styles = await response.json();
+            } else {
+                // Handle error
+            }
+        } catch (error) {
+            console.error('Erreur lors de la tentative d\'accès au loras de stable diffusion :', error);
+            ui.notifications.error('Erreur lors de la tentative d\'accès au styles de stable diffusion ; erreur = ' + error);
         }
     }
 
@@ -167,6 +185,7 @@ class SdAPIClient {
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
+        requestBody.styles = ["dnd"];
         console.log(requestBody);
         let apiUrl = this.settings['server-IP'] + '/sdapi/v1/txt2img/';
         this.working = true;
@@ -188,6 +207,7 @@ class SdAPIClient {
                 .then(data => {
                     // Create the image based on the response data
                     chatListenner.createImage(data, prompt, message);
+                    console.log("received : _______", data)
                     this.working = false;
                 })
                 .catch(error => {

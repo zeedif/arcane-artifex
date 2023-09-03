@@ -15,10 +15,11 @@
         <div class="stable-progress-bar"></div>
         <div class="stable-progress-state"></div>
     </div>
+    <img src="{{}}" alt="temp image">
     {{/if}}
     {{#each images as |image|}}
-    <div class="stable-image-block">
-        <img src="data:image/png;base64,{{image}}" alt="{{title}}">
+    <div class="stable-image-block" data-image-id="{{image.id}}">
+        <img src="data:image/png;base64,{{image.data}}" alt="{{title}}">
         <div class="stable-buttons">
             <a class="stable-image-show-chat">send visible</a>
             <a class="stable-image-create-journal">create

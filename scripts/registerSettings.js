@@ -1,4 +1,5 @@
 //import the form app that manage the stable-images settings
+import stableFileManager from "./StableFileManager.js";
 import StableImageSettings from "./StableImageSettings.js";
 //import the api client
 import sdAPIClient from "./sdAPIClient.js";
@@ -47,6 +48,7 @@ export default function registerSettings() {
             "cfgScale": 7.5,
             "batchCount": 4,
             "loras": [],
+            "styles": [],
             "loraPrompt": "",
             "activeLoras": [],
             "activeModel": "",
@@ -58,6 +60,9 @@ export default function registerSettings() {
          * Handles the onChange event for the stable-settings.
          * Calls the getStableDiffusionSettings function from the sdAPIClient.
          */
-        onChange: () => sdAPIClient.getStableDiffusionSettings()
+        onChange: () => {
+            sdAPIClient.getStableDiffusionSettings();
+            stableFileManager.setStoragePath();
+        }
     });
 }

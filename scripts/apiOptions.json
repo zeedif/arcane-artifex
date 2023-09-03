@@ -240,7 +240,7 @@
     "disabled_extensions": [],
     "disable_all_extensions": "none",
     "restore_config_state_file": "",
-    "sd_checkpoint_hash": "64a21449d747fb5cc13672edf220ba22c25ea80fb1ab1d55673e02e603c5b459",
+    "sd_checkpoint_hash": "5594efef1ce9a84dc67a773db31e91f596858428e52378bd39ca2a844af462aa",
     "sd_lora": "None",
     "lora_preferred_name": "Alias from file",
     "lora_add_hashes_to_infotext": true,

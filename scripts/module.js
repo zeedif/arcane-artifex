@@ -13,6 +13,7 @@ import chatListenner from './ChatListenner.js';
  */
 import sdAPIClient from "./sdAPIClient.js";
 import PromptApplication from "./PromptApplication.js";
+import stableFileManager from "./StableFileManager.js";
 
 /**
  * Hook that runs when the game is initialized
@@ -48,7 +49,7 @@ Hooks.once('ready', async function () {
     // Register the settings
     registerSettings();
     sdAPIClient.getStableDiffusionSettings();
-
+    stableFileManager.setStoragePath();
     // Initialize the stable diffusion API client if the user is the GM
     if (game.user.isGM) {
         sdAPIClient.initConnexion();
