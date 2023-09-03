@@ -183,7 +183,6 @@ class SdAPIClient {
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
-        requestBody.styles = ["dnd"];
         let apiUrl = this.settings['server-IP'] + '/sdapi/v1/txt2img/';
         this.working = true;
         try {
