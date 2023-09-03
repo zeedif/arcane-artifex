@@ -165,8 +165,6 @@ export default class StableImageSettings extends FormApplication {
 
         }
 
-        console.log(this.context.activeLoras);
-
         // Set the value of the textarea with the name 'loraPrompt' to the lorPrompt string
         html.querySelector('textarea[name="loraPrompt"]').value = lorPrompt;
 
@@ -182,7 +180,6 @@ export default class StableImageSettings extends FormApplication {
      */
     _updateObject(event, formData) {
         const data = { ...this.context, ...expandObject(formData) };
-        console.log("setting data___________________", data)
         // Update the stable-settings in game settings
         game.settings.set('stable-images', 'stable-settings', data);
 

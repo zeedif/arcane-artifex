@@ -258,7 +258,21 @@ class StableImagesChatListenner {
             sdAPIClient.textToImg(prompt, message);
         };
     }
+    displayProgress(message, data) {
+        let messageElement = document.querySelector(`[data-message-id=${message.id}]`);
+        let progressBarElement = messageElement.querySelector('.stable-progress-bar');
+        let progressStateElement = messageElement.querySelector('.stable-progress-state');
+        let titleEl = messageElement.querySelector('h4.stable-job');
+        let img = messageElement.querySelector('img.stable-temp-image');
 
+        let percent = Math.trunc(data.progress * 100);
+        progressBarElement.style = `width:${percent}%`;
+        progressStateElement.innerText = `${percent}%`;
+        titleEl.innerText = "Working : " + data.state.job;
+        img.src = "data:image/png;base64," + data.current_image;
+
+
+    }
     /**
      * Creates the image in the chat message
      * @param {Object} data - The response data from the stable diffusion API
@@ -266,7 +280,6 @@ class StableImagesChatListenner {
      * @param {Object} message - The chat message object
      */
     async createImage(data, prompt, message) {
-        console.log(data);
         let images = [];
         for (let imgData of data.images) {
             images.push({

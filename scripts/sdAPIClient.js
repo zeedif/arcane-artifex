@@ -133,7 +133,6 @@ class SdAPIClient {
             // Send a GET request to the server
             const response = await fetch(modelsUrl, { method: 'GET' });
             if (response.ok) {
-                console.log(response);
                 this.models = await response.json();
             } else {
                 // Handle error
@@ -154,7 +153,6 @@ class SdAPIClient {
             // Send a GET request to the server
             const response = await fetch(optionsUrl, { method: 'GET' });
             if (response.ok) {
-                console.log(response);
                 this.sdOptions = await response.json();
             } else {
                 // Handle error
@@ -186,7 +184,6 @@ class SdAPIClient {
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.styles = ["dnd"];
-        console.log(requestBody);
         let apiUrl = this.settings['server-IP'] + '/sdapi/v1/txt2img/';
         this.working = true;
         try {
@@ -207,7 +204,6 @@ class SdAPIClient {
                 .then(data => {
                     // Create the image based on the response data
                     chatListenner.createImage(data, prompt, message);
-                    console.log("received : _______", data)
                     this.working = false;
                 })
                 .catch(error => {
@@ -281,7 +277,6 @@ class SdAPIClient {
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
         requestBody.denoising_strength = this.settings.imgDenoising;
-        console.log(requestBody);
         let apiUrl = this.settings['server-IP'] + '/sdapi/v1/img2img/';
         this.working = true;
         try {
@@ -329,19 +324,13 @@ class SdAPIClient {
                 }
             })
             .then(async data => {
+                chatListenner.displayProgress(message, data)
+
                 // Get the HTML elements
-                let html = document.body.querySelector(`[data-message-id="${message.id}"]`);
-                let progressBar = html.querySelector(".stable-progress-bar");
-                let progressState = html.querySelector(".stable-progress-state");
-                if (progressState && progressBar) {
-                    // Update the progress bar
-                    let percent = Math.trunc(data.progress * 100);
-                    progressState.innerText = `ETA : ${Math.trunc(data.eta_relative)}s__${Math.trunc(data.progress * 100)}%`;
-                    progressBar.style = `width:${Math.trunc(data.progress * 100)}%`;
-                }
+
                 if (data.progress < 0.99) {
                     // Call the initProgressRequest function again after a delay if the progress is not complete
-                    setTimeout(() => { this.initProgressRequest(message) }, 500);
+                    setTimeout(() => { this.initProgressRequest(message) }, 1000);
                 }
             })
             .catch(error => {
