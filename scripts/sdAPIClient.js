@@ -51,16 +51,16 @@ class SdAPIClient {
             // Send a HEAD request to the server
             const response = await fetch(stIP, { method: 'HEAD' });
             if (response.ok) {
-                ui.notifications.notify('Le serveur distant de stable diffusion est accessible.');
+                ui.notifications.notify('The remote server for stable diffusion is accessible.');
                 game.settings.set("stable-images", "connection", true);
                 this.connexion = true;
             } else {
-                console.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:', response.status);
-                ui.notifications.error('Le serveur distant de stable diffusion n\'est pas accessible. Code de réponse:' + response.status);
+                console.error('The remote server for stable diffusion is not accessible : response code ', response.status);
+                ui.notifications.error('The remote server for stable diffusion is not accessible : response code:' + response.status);
             }
         } catch (error) {
-            console.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion :', error);
-            ui.notifications.error('Erreur lors de la tentative d\'accès au serveur distant de stable diffusion ; erreur = ' + error);
+            console.error('Error occurred while trying to access the remote server for stable broadcasting :', error);
+            ui.notifications.error('Error occurred while trying to access the remote server for stable broadcasting; error = ' + error);
         }
     }
 
@@ -162,7 +162,52 @@ class SdAPIClient {
             ui.notifications.error("Erreur lors de la tentative d\'accès au options de stable diffusion ; erreur = " + error);
         }
     }
-
+    postSkip() {
+        let apiUrl = game.settings.get("stable-images", "stable-settings")["server-IP"] + '/sdapi/v1/skip';
+        try {
+            // Send a POST request to the stable diffusion API
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } catch (e) {
+            ui.notifications.warn('Error while sending request to stable diffusion');
+        }
+    }
+    postInterrupt() {
+        let apiUrl = game.settings.get("stable-images", "stable-settings")["server-IP"] + '/sdapi/v1/interrupt';
+        try {
+            // Send a POST request to the stable diffusion API
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } catch (e) {
+            ui.notifications.warn('Error while sending request to stable diffusion');
+        }
+    }
     /**
      * Generates the full prompt by combining the pre-prompt, user prompt, and lora prompt from the settings.
      * @param {string} userPrompt - The user input prompt

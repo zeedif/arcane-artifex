@@ -7,14 +7,22 @@
         {{/if}}
     </h3>
     {{#if send}}
-    <h4 class="flexrow stable-job">working : <i
-            class="fa-solid fa-spinner fa-spin"></i></h4>
+    <div class="stable-image-block">
 
-    <div class="stable-progress-container">
-        <div class="stable-progress-bar"></div>
-        <div class="stable-progress-state"></div>
+        <h4 class="flexrow stable-job">working : <i
+                class="fa-solid fa-spinner fa-spin"></i></h4>
+
+        <div class="stable-progress-container">
+            <div class="stable-progress-bar"></div>
+            <div class="stable-progress-state"></div>
+        </div>
+        <img src class="stable-temp-image">
+        <div class="stable-buttons">
+            <a class="stable-image-skip">skip</a>
+            <a class="stable-image-interrupt">interrupt</a>
+
+        </div>
     </div>
-    <img src class="temp-image">
     {{/if}}
     {{#each images as |image|}}
     <div class="stable-image-block" data-image-id="{{image.id}}">

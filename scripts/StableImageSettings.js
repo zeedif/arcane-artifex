@@ -26,7 +26,8 @@ export default class StableImageSettings extends FormApplication {
             template: "modules/stable-images/templates/stable-settings.hbs",
             width: 800,
             height: "auto",
-            title: "settings for stable diffusion image generation"
+            title: "settings for stable diffusion image generation",
+            rezisable: true
         });
     }
 
@@ -54,6 +55,7 @@ export default class StableImageSettings extends FormApplication {
      */
     activateListeners(html) {
         super.activateListeners(html);
+        this.changeLoraPrompt()
 
 
         // Event listener for the choose-stable-storage button
@@ -137,14 +139,14 @@ export default class StableImageSettings extends FormApplication {
         if (!this.context.activeLoras) { this.context.activeLoras = [] }
         // Update the stable-settings in game settings and render the form
         await game.settings.set('stable-images', 'stable-settings', this.context);
-        await this.render(true);
+        this.render(true);
     }
 
     /**
      * Handles the lora prompt change event.
      * @param {Event} ev - The event object
      */
-    async changeLoraPrompt(ev) {
+    async changeLoraPrompt() {
         //getting the form element
         let html = this.form;
         //initiating the prompt string for loras

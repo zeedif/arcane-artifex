@@ -57,9 +57,20 @@ class StableImagesChatListenner {
         html.on("click", '.stable-image-actor-image', async (event) => {
             this.updateActorImg(event);
         });
+        html.on("click", '.stable-image-skip', async (event) => {
+            this.callSkip(event);
+        });
+        html.on("click", '.stable-image-interrupt', async (event) => {
+            this.callInterrupt(event);
+        });
     };
 
-
+    async callInterrupt(ev) {
+        await sdAPIClient.postInterrupt()
+    }
+    async callSkip(ev) {
+        await sdAPIClient.postSkip()
+    }
     /**
      * Updates the actor image with the clicked stable image
      * @param {Event} ev - The click event
@@ -163,7 +174,8 @@ class StableImagesChatListenner {
         /**
          * Initializes a progress request using the 'initProgressRequest' function of the 'sdAPIClient' with the message.
          */
-        sdAPIClient.initProgressRequest(message);
+        setTimeout(sdAPIClient.initProgressRequest(message), 500)
+
     }
 
     /**
@@ -243,7 +255,7 @@ class StableImagesChatListenner {
      * Extracts the prompt command from the chat message and generates an image
      * @param {Object} message - The chat message object
      */
-    getPromptCommand(message) {
+    async getPromptCommand(message) {
         // Check if the user is the GM and the stable-images connection is enabled
         if (!game.user.isGM || !sdAPIClient.connexion) { return }
         // Check if the message content starts with ":sd: "
@@ -252,14 +264,17 @@ class StableImagesChatListenner {
             let prompt = message.content.replace(":sd: ", "");
 
             // Update the message content with the progress bar
-            this.updateGMMessage(message, { send: true, title: prompt });
+            await this.updateGMMessage(message, { send: true, title: prompt });
 
             // Call the stable diffusion API to generate the image
             sdAPIClient.textToImg(prompt, message);
         };
     }
     displayProgress(message, data) {
-        let messageElement = document.querySelector(`[data-message-id=${message.id}]`);
+        let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
+        if (!messageElement) {
+            setTimeout(displayProgress(message, data), 300)
+        }
         let progressBarElement = messageElement.querySelector('.stable-progress-bar');
         let progressStateElement = messageElement.querySelector('.stable-progress-state');
         let titleEl = messageElement.querySelector('h4.stable-job');
