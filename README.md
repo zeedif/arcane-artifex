@@ -15,7 +15,7 @@ Before launching Foundry and your world where this module will reside, you'll ne
 
 They should initiate a chat message with ":sd: ", _remember the space at the end._ The content of the text sent in the chat will then become a part of the prompt sent to Stable Diffusion. The beginning of the prompt is editable in the module's settings.
 
-<figure class="video_container">
+<figure >
   <video controls="true" allowfullscreen="true" >
     <source src="https://github.com/rwanoux/stable-images/raw/master/demo3sd.mp4" type="video/mp4">  
   </video>
