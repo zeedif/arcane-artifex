@@ -43,6 +43,11 @@ export default class StableImageSettings extends FormApplication {
         context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
         context.models = sdAPIClient.models;
         context.styles = sdAPIClient.styles;
+    
+        // Get the active sampler from sdAPIClient.sdOptions
+        context.activeSampler = sdAPIClient.sdOptions.sampler_name;
+        context.samplers = sdAPIClient.samplers;
+    
         if (!context.activeLoras) { context.activeLoras = [] }
         // Store the context
         this.context = context;

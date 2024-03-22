@@ -39,6 +39,7 @@ class SdAPIClient {
          */
         this.loras = [];
         this.styles = [];
+        this.samplers = [];
     }
 
     /**
@@ -72,6 +73,7 @@ class SdAPIClient {
         await this.getModels();
         await this.getStyles();
         await this.getSdOptions();
+        await this.getSamplers(); 
         this.settings = game.settings.get("stable-images", "stable-settings");
         this.defaultRequestBody = {
             prompt: this.settings['pre-prompt'],
@@ -82,8 +84,7 @@ class SdAPIClient {
             n_iter: this.settings.batchCount,
             face_restoration: this.settings.face_restoration,
             steps: this.settings.steps,
-            cfg_scale: this.settings.cfgScale,
-            seed: -1
+            cfg_scale: this.settings.cfgScale
         };
     }
 
@@ -162,6 +163,24 @@ class SdAPIClient {
             ui.notifications.error("Erreur lors de la tentative d\'accès au options de stable diffusion ; erreur = " + error);
         }
     }
+    async getSamplers() {
+        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let samplersUrl = stIP + '/sdapi/v1/samplers';
+        try {
+            const response = await fetch(samplersUrl, { method: 'GET' });
+            if (response.ok) {
+                this.samplers = await response.json();
+            } else {
+                console.error(`Error while trying to access the samplers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
+                ui.notifications.error(`Error while trying to access the samplers from stable diffusion; error = Status Code ${response.status} - ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error("Error while trying to access the samplers from stable diffusion:", error);
+            ui.notifications.error(`Error while trying to access the samplers from stable diffusion; error = ${error}`);
+        }
+    }
+    
+    
     postSkip() {
         let apiUrl = game.settings.get("stable-images", "stable-settings")["server-IP"] + '/sdapi/v1/skip';
         try {
@@ -268,7 +287,6 @@ class SdAPIClient {
             sd_model_checkpoint: title,
         });
     }
-
     /**
      * Sends a POST request to the stable diffusion API to update an option.
      * @param {Object} option - The option to update
@@ -355,8 +373,13 @@ class SdAPIClient {
      * Initializes a progress request to track the progress of an image generation.
      * @param {Message} message - The chat message object
      */
-    async initProgressRequest(message) {
-        // Get the settings value
+    async initProgressRequest(message, attempt = 0) {
+        const maxAttempts = 30; // Maximum number of attempts to check progress
+        if (attempt >= maxAttempts) {
+            console.warn("Max progress check attempts reached, stopping further checks.");
+            return; // Exit if the maximum number of attempts has been reached
+        }
+    
         let apiUrl = this.settings['server-IP'] + '/sdapi/v1/progress';
         // Send a GET request to the stable diffusion API to get the progress
         fetch(apiUrl)
@@ -368,13 +391,11 @@ class SdAPIClient {
                 }
             })
             .then(async data => {
-                chatListenner.displayProgress(message, data)
-
-                // Get the HTML elements
-
-                if (data.progress < 0.99) {
+                chatListenner.displayProgress(message, data);
+    
+                if (data.progress < 1.0) {
                     // Call the initProgressRequest function again after a delay if the progress is not complete
-                    setTimeout(() => { this.initProgressRequest(message) }, 1000);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1) }, 1000);
                 }
             })
             .catch(error => {

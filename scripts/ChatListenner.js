@@ -273,21 +273,27 @@ class StableImagesChatListenner {
     displayProgress(message, data) {
         let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
         if (!messageElement) {
-            setTimeout(displayProgress(message, data), 300)
+            // Correctly delay the execution
+            setTimeout(() => this.displayProgress(message, data), 500);
+            return;
         }
         let progressBarElement = messageElement.querySelector('.stable-progress-bar');
         let progressStateElement = messageElement.querySelector('.stable-progress-state');
         let titleEl = messageElement.querySelector('h4.stable-job');
         let img = messageElement.querySelector('img.stable-temp-image');
-
+    
+        if (!progressBarElement || !progressStateElement || !titleEl || !img) {
+            console.warn("One or more elements could not be found.");
+            return;
+        }
+    
         let percent = Math.trunc(data.progress * 100);
-        progressBarElement.style = `width:${percent}%`;
+        progressBarElement.style.width = `${percent}%`;
         progressStateElement.innerText = `${percent}%`;
         titleEl.innerText = "Working : " + data.state.job;
         img.src = "data:image/png;base64," + data.current_image;
-
-
     }
+    
     /**
      * Creates the image in the chat message
      * @param {Object} data - The response data from the stable diffusion API
