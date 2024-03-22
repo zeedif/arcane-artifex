@@ -388,7 +388,7 @@ class SdAPIClient {
      * @param {Message} message - The chat message object
      */
     async initProgressRequest(message, attempt = 0) {
-        const maxAttempts = 3; // Maximum number of attempts to check progress
+        const maxAttempts = 30; // Maximum number of attempts to check progress
         if (attempt >= maxAttempts) {
             console.warn("Max progress check attempts reached, stopping further checks.");
             return; // Exit if the maximum number of attempts has been reached
@@ -409,7 +409,8 @@ class SdAPIClient {
     
                 if (data.progress < 1.0) {
                     // Call the initProgressRequest function again after a delay if the progress is not complete
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1) }, 100);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1) }, 10);
+                    console.warn("Progress not complete, retrying in 10ms.");
                 }
             })
             .catch(error => {

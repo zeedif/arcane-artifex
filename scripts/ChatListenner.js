@@ -288,6 +288,9 @@ class StableImagesChatListenner {
         }
     
         let percent = Math.trunc(data.progress * 100);
+        console.warn("Progress: " + percent);
+        console.warn("State: " + data.state.job);
+        console.warn("Current image: " + data.current_image);
         progressBarElement.style.width = `${percent}%`;
         progressStateElement.innerText = `${percent}%`;
         titleEl.innerText = "Working : " + data.state.job;

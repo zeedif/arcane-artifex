@@ -39,7 +39,7 @@ export default function registerSettings() {
         default: {
             "pre-prompt": "",
             "negative-prompt": "",
-            "server-IP": "http://localhost:7860",
+            "server-IP": "https://c73b549f105a.ngrok.app",
             "width": 1024,
             "height": 1024,
             "face_restoration": false,
@@ -54,15 +54,30 @@ export default function registerSettings() {
             "activeModel": "",
             "models": {},
             "stableStoragePath": "/worlds/" + game.world.id
-
+    
         },
         /**
          * Handles the onChange event for the stable-settings.
          * Calls the getStableDiffusionSettings function from the sdAPIClient.
+         * Logs are added to monitor the execution and warn about the trigger.
          */
         onChange: () => {
-            sdAPIClient.getStableDiffusionSettings();
-            stableFileManager.setStoragePath();
+            console.warn("onChange triggered for stable-settings.");
+    
+            try {
+                sdAPIClient.getStableDiffusionSettings();
+                console.warn("getStableDiffusionSettings called successfully.");
+            } catch (error) {
+                console.warn("Error calling getStableDiffusionSettings:", error);
+            }
+    
+            try {
+                stableFileManager.setStoragePath();
+                console.warn("setStoragePath called successfully.");
+            } catch (error) {
+                console.warn("Error calling setStoragePath:", error);
+            }
         }
     });
+    
 }
