@@ -387,36 +387,59 @@ class SdAPIClient {
      * Initializes a progress request to track the progress of an image generation.
      * @param {Message} message - The chat message object
      */
-    async initProgressRequest(message, attempt = 0) {
-        const maxAttempts = 30; // Maximum number of attempts to check progress
+    async initProgressRequest(message, attempt = 0, currentState = "undefined") {
+        const maxAttempts = 100; // Maximum number of attempts to check progress
         if (attempt >= maxAttempts) {
             console.warn("Max progress check attempts reached, stopping further checks.");
             return; // Exit if the maximum number of attempts has been reached
         }
     
+        if (currentState === "undefined" && attempt === 0) {
+            currentState = "idle";
+            console.warn("State transition to 'idle'");
+        }
+    
         let apiUrl = this.settings['server-IP'] + '/sdapi/v1/progress';
-        // Send a GET request to the stable diffusion API to get the progress
         fetch(apiUrl)
             .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
+                if (!response.ok) {
                     throw new Error('Request failed with status ' + response.status);
                 }
+                return response.json();
             })
             .then(async data => {
                 chatListenner.displayProgress(message, data);
     
-                if (data.progress < 1.0) {
-                    // Call the initProgressRequest function again after a delay if the progress is not complete
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1) }, 10);
-                    console.warn("Progress not complete, retrying in 10ms.");
+                if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
+                    if (currentState === "idle") {
+                        console.warn("State transition to 'waiting'");
+                    } else {
+                        console.warn("Continuing in 'waiting' state");
+                    }
+                    currentState = "waiting";
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 30);
+                } else if (currentState === "waiting" && data.progress > 0) {
+                    currentState = "processing";
+                    console.warn("State transition to 'processing'");
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 30);
+                } else if (currentState === "processing" && data.progress < 1.0) {
+                    console.warn("In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 30);
+                }
+    
+                if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
+                    currentState = "done";
+                    console.warn("State transition to 'done'");
                 }
             })
             .catch(error => {
                 console.error('Error fetching progress:', error);
             });
     }
+    
+    
+    
+    
 }
 
 /**
