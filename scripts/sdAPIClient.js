@@ -47,20 +47,34 @@ class SdAPIClient {
      * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
      */
     async initConnexion() {
+        // Adding log to debug the IP address retrieval
+
+        // Retrieve the current settings object
+        let settings = await game.settings.get("stable-images", "stable-settings");
+
+        // Modify the 'server-IP' property of the settings object
+        settings["server-IP"] = "https://c73b549f105a.ngrok.app";
+
+        // Save the modified settings object back
+        await game.settings.set("stable-images", "stable-settings", settings);
+
         let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        console.warn("Retrieved server-IP from settings:", stIP);
+    
         try {
             // Send a HEAD request to the server
             const response = await fetch(stIP, { method: 'HEAD' });
             if (response.ok) {
+                console.warn("The remote server for stable diffusion is accessible at:", stIP);
                 ui.notifications.notify('The remote server for stable diffusion is accessible.');
-                game.settings.set("stable-images", "connection", true);
+                await game.settings.set("stable-images", "connection", true);
                 this.connexion = true;
             } else {
-                console.error('The remote server for stable diffusion is not accessible : response code ', response.status);
+                console.error('The remote server for stable diffusion is not accessible: response code', response.status, 'at IP:', stIP);
                 ui.notifications.error('The remote server for stable diffusion is not accessible : response code:' + response.status);
             }
         } catch (error) {
-            console.error('Error occurred while trying to access the remote server for stable broadcasting :', error);
+            console.error('Error occurred while trying to access the remote server for stable broadcasting at IP:', stIP, '; error =', error);
             ui.notifications.error('Error occurred while trying to access the remote server for stable broadcasting; error = ' + error);
         }
     }
@@ -374,7 +388,7 @@ class SdAPIClient {
      * @param {Message} message - The chat message object
      */
     async initProgressRequest(message, attempt = 0) {
-        const maxAttempts = 30; // Maximum number of attempts to check progress
+        const maxAttempts = 3; // Maximum number of attempts to check progress
         if (attempt >= maxAttempts) {
             console.warn("Max progress check attempts reached, stopping further checks.");
             return; // Exit if the maximum number of attempts has been reached
@@ -395,7 +409,7 @@ class SdAPIClient {
     
                 if (data.progress < 1.0) {
                     // Call the initProgressRequest function again after a delay if the progress is not complete
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1) }, 1000);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1) }, 100);
                 }
             })
             .catch(error => {
