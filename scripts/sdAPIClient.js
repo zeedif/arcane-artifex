@@ -53,7 +53,7 @@ class SdAPIClient {
         let settings = await game.settings.get("stable-images", "stable-settings");
 
         // Modify the 'server-IP' property of the settings object
-        settings["server-IP"] = "https://c73b549f105a.ngrok.app";
+        settings["server-IP"] = "http://127.0.0.1:7860";
 
         // Save the modified settings object back
         await game.settings.set("stable-images", "stable-settings", settings);
@@ -116,9 +116,8 @@ class SdAPIClient {
             } else {
                 // Handle error
             }
-        } catch (error) {
-            console.error('Erreur lors de la tentative d\'accès au loras de stable diffusion :', error);
-            ui.notifications.error('Erreur lors de la tentative d\'accès au loras de stable diffusion ; erreur = ' + error);
+            console.error('Error while attempting to access the stable diffusion loras:', error);
+            ui.notifications.error('Error while attempting to access the stable diffusion loras; error = ' + error);
         }
     }
     async getStyles() {
@@ -133,8 +132,8 @@ class SdAPIClient {
                 // Handle error
             }
         } catch (error) {
-            console.error('Erreur lors de la tentative d\'accès au loras de stable diffusion :', error);
-            ui.notifications.error('Erreur lors de la tentative d\'accès au styles de stable diffusion ; erreur = ' + error);
+            console.error('Error while attempting to access the stable diffusion styles:', error);
+            ui.notifications.error('Error while attempting to access the stable diffusion styles; error = ' + error);    
         }
     }
 
@@ -153,8 +152,8 @@ class SdAPIClient {
                 // Handle error
             }
         } catch (error) {
-            console.error("Erreur lors de la tentative d\'accès au loras de stable diffusion :", error);
-            ui.notifications.error("Erreur lors de la tentative d\'accès au loras de stable diffusion ; erreur = " + error);
+            console.error("Error while attempting to access the stable diffusion models:", error);
+            ui.notifications.error("Error while attempting to access the stable diffusion models; error = " + error);            
         }
     }
 
@@ -173,8 +172,8 @@ class SdAPIClient {
                 // Handle error
             }
         } catch (error) {
-            console.error("Erreur lors de la tentative d\'accès au options de stable diffusion :", error);
-            ui.notifications.error("Erreur lors de la tentative d\'accès au options de stable diffusion ; erreur = " + error);
+            console.error("Error while attempting to access the stable diffusion options:", error);
+            ui.notifications.error("Error while attempting to access the stable diffusion options; error = " + error);
         }
     }
     async getSamplers() {
@@ -417,14 +416,14 @@ class SdAPIClient {
                         console.warn("Continuing in 'waiting' state");
                     }
                     currentState = "waiting";
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 30);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 250);
                 } else if (currentState === "waiting" && data.progress > 0) {
                     currentState = "processing";
                     console.warn("State transition to 'processing'");
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 30);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 250);
                 } else if (currentState === "processing" && data.progress < 1.0) {
                     console.warn("In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 30);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 250);
                 }
     
                 if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
