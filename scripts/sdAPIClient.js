@@ -116,6 +116,7 @@ class SdAPIClient {
             } else {
                 // Handle error
             }
+        } catch (error) {
             console.error('Error while attempting to access the stable diffusion loras:', error);
             ui.notifications.error('Error while attempting to access the stable diffusion loras; error = ' + error);
         }
@@ -133,7 +134,7 @@ class SdAPIClient {
             }
         } catch (error) {
             console.error('Error while attempting to access the stable diffusion styles:', error);
-            ui.notifications.error('Error while attempting to access the stable diffusion styles; error = ' + error);    
+            ui.notifications.error('Error while attempting to access the stable diffusion styles; error = ' + error);
         }
     }
 
@@ -153,7 +154,7 @@ class SdAPIClient {
             }
         } catch (error) {
             console.error("Error while attempting to access the stable diffusion models:", error);
-            ui.notifications.error("Error while attempting to access the stable diffusion models; error = " + error);            
+            ui.notifications.error("Error while attempting to access the stable diffusion models; error = " + error);
         }
     }
 
