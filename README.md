@@ -1,4 +1,4 @@
-## _This module enables communication between Foundry VTT and an instance of Automatic 1111 webUI Stable Diffusion installed on the same machine_
+## _This module enables communication between Foundry VTT and an instance of Automatic 1111 webUI Stable Diffusion installed on a machine accessible to FoundryVTT - either local or through a tunneling service like ngrok_
 
 Before launching Foundry and your world where this module will reside, you'll need to start Stable Diffusion with these options:
 <br>
