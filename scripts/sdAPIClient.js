@@ -60,25 +60,36 @@ class SdAPIClient {
         await game.settings.set("stable-images", "stable-settings", settings);
 
         let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
-        console.warn("Retrieved server-IP from settings:", stIP);
+        let cpIP = await game.settings.get("stable-images", "stable-settings")["comfy-IP"];
+        console.warn("Retrieved A1111 server-IP from settings:", stIP);
+        console.warn("Retrieved Comfy server-IP from settings:", cpIP);
     
+        await this.attemptServerConnection(settings["server-IP"], "Stable Diffusion");
+
+        // Attempt to connect to the Comfy server
+        await this.attemptServerConnection(settings["comfy-IP"], "Comfy");
+    }
+
+
+    async attemptServerConnection(serverIp, serverName) {
+        console.warn(`Attempting to connect to ${serverName} server at:`, serverIp);
         try {
-            // Send a HEAD request to the server
-            const response = await fetch(stIP, { method: 'HEAD' });
+            const response = await fetch(serverIp, { method: 'HEAD' });
             if (response.ok) {
-                console.warn("The remote server for stable diffusion is accessible at:", stIP);
-                ui.notifications.notify('The remote server for stable diffusion is accessible.');
+                console.warn(`${serverName} server is accessible at:`, serverIp);
+                ui.notifications.notify(`${serverName} server is accessible.`);
                 await game.settings.set("stable-images", "connection", true);
                 this.connexion = true;
             } else {
-                console.error('The remote server for stable diffusion is not accessible: response code', response.status, 'at IP:', stIP);
-                ui.notifications.error('The remote server for stable diffusion is not accessible : response code:' + response.status);
+                console.error(`${serverName} server is not accessible: response code`, response.status, 'at IP:', serverIp);
+                ui.notifications.error(`${serverName} server is not accessible: response code: ${response.status}`);
             }
         } catch (error) {
-            console.error('Error occurred while trying to access the remote server for stable broadcasting at IP:', stIP, '; error =', error);
-            ui.notifications.error('Error occurred while trying to access the remote server for stable broadcasting; error = ' + error);
+            console.error(`Error occurred while trying to access ${serverName} server at IP:`, serverIp, '; error =', error);
+            ui.notifications.error(`Error occurred while trying to access ${serverName} server; error = ${error}`);
         }
     }
+
 
     /**
      * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
