@@ -1,5 +1,6 @@
 import stableFileManager from "./StableFileManager.js";
 import sdAPIClient from "./sdAPIClient.js";
+import comfyAPIClient from "./comfyAPIClient.js";
 
 /**
  * Class representing the Stable Images Chat Listener
@@ -256,20 +257,39 @@ class StableImagesChatListenner {
      * @param {Object} message - The chat message object
      */
     async getPromptCommand(message) {
-        // Check if the user is the GM and the stable-images connection is enabled
-        if (!game.user.isGM || !sdAPIClient.connexion) { return }
+        // Check if the user is a GM and the stable-images connection is enabled
+        if (!game.user.isGM || !sdAPIClient.connexion) { return; }
         // Check if the message content starts with ":sd: "
-        if (message.content.indexOf(":sd: ") == 0) {
+        if (message.content.startsWith(":sd: ")) {
             // Extract the prompt from the message content
-            let prompt = message.content.replace(":sd: ", "");
-
-            // Update the message content with the progress bar
+            let prompt = message.content.substring(":sd: ".length);
+    
+            // Assuming an updateGMMessage function exists to handle message updates
             await this.updateGMMessage(message, { send: true, title: prompt });
-
-            // Call the stable diffusion API to generate the image
+    
+            // Assuming sdAPIClient has a method textToImg for image generation
             sdAPIClient.textToImg(prompt, message);
-        };
+        }
+        // Check if the message content starts with ":comfy:"
+        else if (message.content.startsWith(":comfy:")) {
+            console.error("Processing :comfy: command");
+            try {
+                // Assuming comfyApiClient has a method checkQueueStatus to fetch queue status
+                const status = await comfyAPIClient.checkQueueStatus();
+                console.error("Comfy queue status received:", status);
+                const statusMessage = JSON.stringify(status, null, 2); // Beautify the JSON string
+    
+                // Output the formatted status message to chat
+                ChatMessage.create({ content: `Comfy Queue Status: <pre>${statusMessage}</pre>` });
+            } catch (error) {
+                console.error("Failed to retrieve Comfy Queue Status:", error);
+                ChatMessage.create({ content: "Failed to retrieve Comfy Queue Status. Check console for details." });
+            }
+        }
     }
+    
+   
+    
     displayProgress(message, data) {
         let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
         if (!messageElement) {
@@ -288,8 +308,6 @@ class StableImagesChatListenner {
         }
     
         let percent = Math.trunc(data.progress * 100);
-        console.warn("Progress: " + percent);
-        console.warn("State: " + data.state.job);
         progressBarElement.style.width = `${percent}%`;
         progressStateElement.innerText = `${percent}%`;
         titleEl.innerText = "Working : " + data.state.job;
