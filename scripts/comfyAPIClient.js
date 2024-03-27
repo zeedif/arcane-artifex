@@ -1,6 +1,26 @@
 class comfyAPIClient {
     constructor() {
         console.error("comfyAPIClient initialized");
+        this.initializeWebSocket();
+    }
+
+    initializeWebSocket() {
+        // Define the WebSocket URL. Adjust this URL to your server's WebSocket endpoint
+        const wsUrl = "ws://127.0.0.1:8188/ws";
+        this.ws = new WebSocket(wsUrl);
+
+        this.ws.onopen = () => {
+            console.error("WebSocket connection successfully established.");
+        };
+
+        this.ws.onerror = (error) => {
+            console.error("WebSocket connection error:", error);
+        };
+
+        // Add any additional WebSocket event listeners as needed, for example:
+        // this.ws.onmessage = (message) => {
+        //     console.error("WebSocket message received:", message.data);
+        // };
     }
 
     async checkQueueStatus() {
