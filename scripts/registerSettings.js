@@ -1,8 +1,10 @@
 //import the form app that manage the stable-images settings
 import stableFileManager from "./StableFileManager.js";
 import StableImageSettings from "./StableImageSettings.js";
+import ComfyUIImageSettings from "./ComfyUISettings.js";
 //import the api client
 import sdAPIClient from "./sdAPIClient.js";
+
 
 /**
  * Registers the settings for the Stable Images module.
@@ -20,13 +22,25 @@ export default function registerSettings() {
 
     // Creating the sub menu for Stable Images Settings
     game.settings.registerMenu("stable-images", "stable-image-menu", {
-        name: "Stable Images Settings",
-        label: "Stable Images Settings",
-        hint: "A window to set parameters for image generation.",
+        name: "Local A1111 Images Settings",
+        label: "Local A1111 Images Settings",
+        hint: "A window to set parameters for A1111 image generation.",
         icon: "fas fa-images",
         type: StableImageSettings,
         restricted: true
     });
+
+    game.settings.registerMenu("stable-images", "comfyui-image-settings", {
+        name: "ComfyUI Images Settings",
+        label: "Configure ComfyUI",
+        hint: "Configure the IP address for the ComfyUI server.",
+        icon: "fas fa-network-wired",
+        type: ComfyUIImageSettings,
+        restricted: true,
+    });
+    
+
+
 
     /**
      * Represents the default stable-settings object.
