@@ -275,7 +275,7 @@ class StableImagesChatListenner {
             console.error("Processing :comfy: command");
             try {
                 // Assuming comfyApiClient has a method checkQueueStatus to fetch queue status
-                const status = await comfyAPIClient.checkQueueStatus();
+                const status = await comfyAPIClient.sendPrompt();
                 console.error("Comfy queue status received:", status);
                 const statusMessage = JSON.stringify(status, null, 2); // Beautify the JSON string
     

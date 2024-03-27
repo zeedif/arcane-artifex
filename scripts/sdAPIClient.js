@@ -54,6 +54,7 @@ class SdAPIClient {
 
         // Modify the 'server-IP' property of the settings object
         settings["server-IP"] = "http://127.0.0.1:7860";
+        settings["comfy-IP"]  = "http://127.0.0.1:8188";
 
         // Save the modified settings object back
         await game.settings.set("stable-images", "stable-settings", settings);

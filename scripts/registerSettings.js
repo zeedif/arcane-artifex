@@ -39,7 +39,8 @@ export default function registerSettings() {
         default: {
             "pre-prompt": "",
             "negative-prompt": "",
-            "server-IP": "https://c73b549f105a.ngrok.app",
+            "server-IP": "http://127.0.0.1:7860",
+            "comfy-IP": "http://127.0.0.1:8188",
             "width": 1024,
             "height": 1024,
             "face_restoration": false,
