@@ -7,6 +7,18 @@ import ComfyUIImageSettings from "./ComfyUISettings.js";
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
 
+const defaultPrefix = 'best quality, absurdres, aesthetic,';
+const defaultNegative = 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry';
+
+const defaultStyles = [
+    {
+        name: 'Default',
+        negative: defaultNegative,
+        prefix: defaultPrefix,
+    },
+];
+
+const promptTemplates = {};
 
 const defaultSettings = {
     // CFG Scale
@@ -29,12 +41,79 @@ const defaultSettings = {
     width: 512,
     height: 512,
 
-    prompt_prefix: '',
-    negative_prompt: '',
+    prompt_prefix: defaultPrefix,
+    negative_prompt: defaultNegative,
     sampler: 'DDIM',
     model: '',
     vae: '',
     
+    // Automatic1111/Horde exclusives
+    restore_faces: false,
+    enable_hr: false,
+
+    // Horde settings
+    horde: false,
+    horde_nsfw: false,
+    horde_karras: true,
+    horde_sanitize: true,
+
+    // Refine mode
+    refine_mode: false,
+    expand: false,
+    interactive_mode: false,
+    multimodal_captioning: false,
+    snap: false,
+
+    prompts: promptTemplates,
+    
+    // AUTOMATIC1111 settings
+    auto_url: 'http://localhost:7860',
+    auto_auth: '',
+
+    vlad_url: 'http://localhost:7860',
+    vlad_auth: '',
+
+    hr_upscaler: 'Latent',
+    hr_scale: 2.0,
+    hr_scale_min: 1.0,
+    hr_scale_max: 4.0,
+    hr_scale_step: 0.1,
+    denoising_strength: 0.7,
+    denoising_strength_min: 0.0,
+    denoising_strength_max: 1.0,
+    denoising_strength_step: 0.01,
+    hr_second_pass_steps: 0,
+    hr_second_pass_steps_min: 0,
+    hr_second_pass_steps_max: 150,
+    hr_second_pass_steps_step: 1,
+
+    // NovelAI settings
+    novel_upscale_ratio_min: 1.0,
+    novel_upscale_ratio_max: 4.0,
+    novel_upscale_ratio_step: 0.1,
+    novel_upscale_ratio: 1.0,
+    novel_anlas_guard: false,
+
+    // OpenAI settings
+    openai_style: 'vivid',
+    openai_quality: 'standard',
+
+    style: 'Default',
+    styles: defaultStyles,
+
+    // ComyUI settings
+    comfy_url: 'http://127.0.0.1:8188',
+    comfy_workflow: 'Default_Comfy_Workflow.json',
+
+    // stable-images old settings TO BE DEPRECATED
+    batchCount: 1,
+    loras: [],
+    styles: [],
+    loraPrompt: '',
+    activeLoras: [],
+    activeModel: '',
+    models: {},
+
 };
 
 
