@@ -92,14 +92,13 @@
         <section class="commons">
             <h2>PROMPTS</h2>
             <div class="form-group">
-                <label>CFG scale</label>
+                <label>CFG SCALE</label>
                 <div class="form-fields">
-
                     <input type="range" name="scale" data-dtype="Number"
-                        value="{{scale}}" min="1" max="25" step="1">
+                        value="{{scale}}" min="{{scale_min}}" max="{{scale_max}}" step="{{scale_step}}">
                     <span class="range-value">{{scale}}</span>
-
                 </div>
+
 
                 <p class="notes">How strongly the image should conform to your
                     prompt</p>
@@ -117,7 +116,7 @@
             <div class="form-group">
                 <label>negative prompt</label>
                 <div class="form-fields">
-                    <textarea name="negative-prompt">{{negative-prompt}}</textarea>
+                    <textarea name="negative_prompt">{{negative_prompt}}</textarea>
                 </div>
                 <p class="notes">text that will be add to each request as
                     negative

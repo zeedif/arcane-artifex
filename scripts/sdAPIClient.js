@@ -116,7 +116,7 @@ class SdAPIClient {
             seed: -1,
             height: this.settings.height,
             width: this.settings.width,
-            negative_prompt: this.settings['negative-prompt'],
+            negative_prompt: this.settings['negative_prompt'],
             n_iter: this.settings.batchCount,
             restore_faces: this.settings.restore_faces,
             steps: this.settings.steps,

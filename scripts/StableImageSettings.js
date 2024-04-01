@@ -36,7 +36,11 @@ export default class StableImageSettings extends FormApplication {
      * @returns {Object} - The data for the form
      */
     getData() {
+        
         let context = game.settings.get('stable-images', 'stable-settings');
+        console.error("scale_min:", context.scale_min);
+        console.error("scale_max:", context.scale_max);
+        console.error("scale_step:", context.scale_step);
         context.loras = sdAPIClient.loras || [];
         context.activeModel = sdAPIClient.sdOptions?.sd_model_checkpoint || "";
         context.models = sdAPIClient.models || [];

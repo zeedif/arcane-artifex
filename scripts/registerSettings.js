@@ -74,27 +74,7 @@ export default function registerSettings() {
         scope: 'world',
         config: false,
         type: Object,
-        default: {
-            prompt_prefix: '',
-            "negative-prompt": "",
-            auto_url: 'http://localhost:7860',
-            comfy_url: 'http://127.0.0.1:8088',
-            "width": 512,
-            "height": 1024,
-            "restore_faces": false,
-            "denoising_strength": 1.0,
-            "steps": 8,
-            "scale": 1.5,
-            "batchCount": 1,
-            "loras": [],
-            "styles": [],
-            "loraPrompt": "",
-            "activeLoras": [],
-            "activeModel": "",
-            "models": {},
-            "stableStoragePath": "/worlds/" + game.world.id
-    
-        },
+        default: {},
         /**
          * Handles the onChange event for the stable-settings.
          * Calls the getStableDiffusionSettings function from the sdAPIClient.
