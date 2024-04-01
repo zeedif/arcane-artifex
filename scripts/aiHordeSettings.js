@@ -5,9 +5,9 @@ export default class AiHordeSettings extends FormApplication {
             classes: ['stable-images'],
             title: 'AI Horde Settings',
             template: 'modules/stable-images/templates/aihorde-settings.hbs',
-            closeOnSubmit: true,
-            submitOnChange: true,
-            submitOnClose: true,
+            width: 800,
+            height: "auto",
+            rezisable: true
         });
     }
 
