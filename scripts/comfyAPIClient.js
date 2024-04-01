@@ -27,7 +27,7 @@ class comfyAPIClient {
         console.error("Checking queue status...");
     
         try {
-            const comfyAPIUrl = await game.settings.get("stable-images", "stable-settings")["comfy-IP"];
+            const comfyAPIUrl = await game.settings.get("stable-images", "stable-settings")["comfy_url"];
             const apiUrl = comfyAPIUrl + '/queue';
     
             const response = await fetch(apiUrl, {
@@ -50,7 +50,7 @@ class comfyAPIClient {
     }
     async checkImageStatus(executionId) {
         try {
-            const comfyAPIUrl = await game.settings.get("stable-images", "stable-settings")["comfy-IP"];
+            const comfyAPIUrl = await game.settings.get("stable-images", "stable-settings")["comfy_url"];
             const statusUrl = comfyAPIUrl + `/status/${executionId}`;
     
             const response = await fetch(statusUrl);
@@ -199,7 +199,7 @@ class comfyAPIClient {
         };
     
         try {
-            const comfyAPIUrl = await game.settings.get("stable-images", "stable-settings")["comfy-IP"];
+            const comfyAPIUrl = await game.settings.get("stable-images", "stable-settings")["comfy_url"];
             const apiUrl = comfyAPIUrl + '/prompt';
     
             const response = await fetch(apiUrl, {

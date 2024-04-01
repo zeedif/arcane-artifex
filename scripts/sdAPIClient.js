@@ -52,22 +52,23 @@ class SdAPIClient {
         // Retrieve the current settings object
         let settings = await game.settings.get("stable-images", "stable-settings");
 
-        // Modify the 'server-IP' property of the settings object
-        settings["server-IP"] = "http://127.0.0.1:7860";
-        settings["comfy-IP"]  = "http://127.0.0.1:8188";
+        // Modify the 'auto_url' property of the settings object
+        settings["auto_url"] = "http://127.0.0.1:7860";
+        settings.auto_url = 'http://127.0.0.1:7860';
+        settings["comfy_url"]  = "http://127.0.0.1:8188";
 
         // Save the modified settings object back
         await game.settings.set("stable-images", "stable-settings", settings);
 
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
-        let cpIP = await game.settings.get("stable-images", "stable-settings")["comfy-IP"];
-        console.warn("Retrieved A1111 server-IP from settings:", stIP);
-        console.warn("Retrieved Comfy server-IP from settings:", cpIP);
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let cpIP = await game.settings.get("stable-images", "stable-settings")["comfy_url"];
+        console.warn("Retrieved A1111 auto_url from settings:", stIP);
+        console.warn("Retrieved Comfy auto_url from settings:", cpIP);
     
-        await this.attemptServerConnection(settings["server-IP"], "Stable Diffusion");
+        await this.attemptServerConnection(settings["auto_url"], "Stable Diffusion");
 
         // Attempt to connect to the Comfy server
-        await this.attemptServerConnection(settings["comfy-IP"], "Comfy");
+        await this.attemptServerConnection(settings["comfy_url"], "Comfy");
     }
 
 
@@ -111,15 +112,15 @@ class SdAPIClient {
         await this.getSamplers();
         this.settings = game.settings.get("stable-images", "stable-settings");
         this.defaultRequestBody = {
-            prompt: this.settings['pre-prompt'],
+            prompt: this.settings['prompt_prefix'],
             seed: -1,
             height: this.settings.height,
             width: this.settings.width,
             negative_prompt: this.settings['negative-prompt'],
             n_iter: this.settings.batchCount,
-            face_restoration: this.settings.face_restoration,
+            restore_faces: this.settings.restore_faces,
             steps: this.settings.steps,
-            cfg_scale: this.settings.cfgScale
+            cfg_scale: this.settings.scale
         };
     }
 
@@ -127,7 +128,7 @@ class SdAPIClient {
      * Retrieves the list of loras from the stable diffusion API.
      */
     async getLoras() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let lorasUrl = stIP + '/sdapi/v1/loras';
         try {
             // Send a GET request to the server
@@ -143,7 +144,7 @@ class SdAPIClient {
         }
     }
     async getStyles() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let styleUrl = stIP + '/sdapi/v1/prompt-styles';
         try {
             // Send a GET request to the server
@@ -163,7 +164,7 @@ class SdAPIClient {
      * Retrieves the list of models from the stable diffusion API.
      */
     async getModels() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let modelsUrl = stIP + '/sdapi/v1/sd-models';
         try {
             // Send a GET request to the server
@@ -183,7 +184,7 @@ class SdAPIClient {
      * Retrieves the stable diffusion options from the stable diffusion API.
      */
     async getSdOptions() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
             // Send a GET request to the server
@@ -199,7 +200,7 @@ class SdAPIClient {
         }
     }
     async getSamplers() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let samplersUrl = stIP + '/sdapi/v1/samplers';
         try {
             const response = await fetch(samplersUrl, { method: 'GET' });
@@ -217,7 +218,7 @@ class SdAPIClient {
     
     
     postSkip() {
-        let apiUrl = game.settings.get("stable-images", "stable-settings")["server-IP"] + '/sdapi/v1/skip';
+        let apiUrl = game.settings.get("stable-images", "stable-settings")["auto_url"] + '/sdapi/v1/skip';
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -240,7 +241,7 @@ class SdAPIClient {
         }
     }
     postInterrupt() {
-        let apiUrl = game.settings.get("stable-images", "stable-settings")["server-IP"] + '/sdapi/v1/interrupt';
+        let apiUrl = game.settings.get("stable-images", "stable-settings")["auto_url"] + '/sdapi/v1/interrupt';
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -263,12 +264,12 @@ class SdAPIClient {
         }
     }
     /**
-     * Generates the full prompt by combining the pre-prompt, user prompt, and lora prompt from the settings.
+     * Generates the full prompt by combining the prompt_prefix, user prompt, and lora prompt from the settings.
      * @param {string} userPrompt - The user input prompt
      * @returns {string} - The full prompt
      */
     getFullPrompt(userPrompt) {
-        return this.settings['pre-prompt'] + ', ' + userPrompt + ', ' + this.settings.loraPrompt;
+        return this.settings['prompt_prefix'] + ', ' + userPrompt + ', ' + this.settings.loraPrompt;
     }
 
     /**
@@ -282,7 +283,7 @@ class SdAPIClient {
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
-        let apiUrl = this.settings['server-IP'] + '/sdapi/v1/txt2img/';
+        let apiUrl = this.settings['auto_url'] + '/sdapi/v1/txt2img/';
         this.working = true;
         try {
             // Send a POST request to the stable diffusion API
@@ -328,7 +329,7 @@ class SdAPIClient {
      * @returns {Promise}
      */
     async postOption(option) {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["server-IP"];
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
             // Send a POST request to the server
@@ -373,8 +374,8 @@ class SdAPIClient {
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
-        requestBody.denoising_strength = this.settings.imgDenoising;
-        let apiUrl = this.settings['server-IP'] + '/sdapi/v1/img2img/';
+        requestBody.denoising_strength = this.settings.denoising_strength;
+        let apiUrl = this.settings['auto_url'] + '/sdapi/v1/img2img/';
         this.working = true;
         try {
             // Send a POST request to the stable diffusion API
@@ -420,7 +421,7 @@ class SdAPIClient {
             console.warn("State transition to 'idle'");
         }
     
-        let apiUrl = this.settings['server-IP'] + '/sdapi/v1/progress';
+        let apiUrl = this.settings['auto_url'] + '/sdapi/v1/progress';
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {

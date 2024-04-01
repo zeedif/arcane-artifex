@@ -18,7 +18,7 @@ export default class ComfyUIImageSettings extends FormApplication {
     getData() {
         // Retrieve and return the current settings to populate the form
         return {
-            'comfy-IP': game.settings.get('stable-images', 'stable-settings')['comfy-IP'],
+            'comfy_url': game.settings.get('stable-images', 'stable-settings')['comfy_url'],
         };
     }
 
@@ -26,7 +26,7 @@ export default class ComfyUIImageSettings extends FormApplication {
         // Update the game settings with the new ComfyUI IP address
         await game.settings.set('stable-images', 'stable-settings', {
             ...game.settings.get('stable-images', 'stable-settings'),
-            'comfy-IP': formData['comfy-IP'],
+            'comfy_url': formData['comfy_url'],
         });
     }
 }
