@@ -14,6 +14,8 @@ import chatListenner from './ChatListenner.js';
 import sdAPIClient from "./sdAPIClient.js";
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
+import { aiHordeApiClient } from './aiHordeApiClient.js';
+import AiHordeSettings from './aiHordeSettings.js';
 
 /**
  * Hook that runs when the game is initialized
@@ -29,7 +31,6 @@ Hooks.on('init', async function () {
 Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
     if (game.user.isGM) {
         // Add a button to generate art
-
         buttons.unshift({
             label: 'generate art',
             class: 'stable-image-actor',
@@ -37,10 +38,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
             onclick: () => generateActorChatCommand(actor5eSheet)
         })
     }
-
 });
-
-
 
 /**
  * Hook that runs once the game is ready
@@ -53,13 +51,12 @@ Hooks.once('ready', async function () {
     // Initialize the stable diffusion API client if the user is the GM
     if (game.user.isGM) {
         sdAPIClient.initConnexion();
+        checkAiHordeStatus();
     }
-
 });
 
 // Activate listeners for the chat log
 Hooks.on('renderChatLog', async (log, html, data) => chatListenner.activateListenners(html));
-
 
 Hooks.on('renderChatMessage', async function (message, html, data) {
     // Remove the stable image buttons from chat messages if the user is not the GM
@@ -68,11 +65,8 @@ Hooks.on('renderChatMessage', async function (message, html, data) {
     }
     if (message.user.id == game.user.id && game.user.isGM) {
         chatListenner.getPromptCommand(message);
-
     }
-
 });
-
 
 /**
  * Generates an image based on the actor's information
@@ -84,8 +78,6 @@ async function generateActorChatCommand(sheet) {
     if (game.user.isGM && game.settings.get('stable-images', 'connection')) {
         // Generate the prompt from the actor's information
         generatePromptFromActor(sheet);
-
-
     }
 };
 
@@ -129,3 +121,28 @@ function generatePromptFromActor(sheet) {
     }
     new PromptApplication(prompt, sheet.actor.uuid).render(true)
 }
+
+async function checkAiHordeStatus() {
+    const aiHordeUrl = game.settings.get('stable-images', 'aihorde-url');
+    console.warn('Attempting to connect to AI Horde server at:', aiHordeUrl);
+    try {
+        const response = await fetch(aiHordeUrl + '/api/v2/status/heartbeat', { method: 'GET' });
+        if (response.ok) {
+            console.warn('AI Horde server is accessible at:', aiHordeUrl);
+            ui.notifications.notify('AI Horde server is accessible.');
+            await game.settings.set('stable-images', 'aihorde-connection', true);
+        } else {
+            console.error('AI Horde server is not accessible: response code', response.status, 'at URL:', aiHordeUrl);
+            ui.notifications.error(`AI Horde server is not accessible: response code: ${response.status}`);
+            await game.settings.set('stable-images', 'aihorde-connection', false);
+        }
+    } catch (error) {
+        console.error('Error occurred while trying to access AI Horde server at URL:', aiHordeUrl, '; error =', error);
+        ui.notifications.error(`Error occurred while trying to access AI Horde server; error = ${error}`);
+        await game.settings.set('stable-images', 'aihorde-connection', false);
+    }
+}
+
+Hooks.on('renderAiHordeSettings', (app, html) => {
+    html.find('#aihorde-test-connection').on('click', checkAiHordeStatus);
+});

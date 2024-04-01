@@ -4,6 +4,7 @@ import StableImageSettings from "./StableImageSettings.js";
 import ComfyUIImageSettings from "./ComfyUISettings.js";
 //import the api client
 import sdAPIClient from "./sdAPIClient.js";
+import AiHordeSettings from "./aiHordeSettings.js";
 
 
 /**
@@ -39,7 +40,30 @@ export default function registerSettings() {
         restricted: true,
     });
     
+    game.settings.register('stable-images', 'aihorde-url', {
+        name: 'AI Horde API URL',
+        scope: 'world',
+        config: false,
+        type: String,
+        default: 'https://stablehorde.net',
+    });
 
+    game.settings.register('stable-images', 'aihorde-connection', {
+        name: 'AI Horde Connection',
+        scope: 'world',
+        config: false,
+        type: Boolean,
+        default: false,
+    });
+
+    game.settings.registerMenu('stable-images', 'aihorde-settings', {
+        name: 'AI Horde Settings',
+        label: 'AI Horde Settings',
+        hint: 'Configure the connection to the AI Horde API.',
+        icon: 'fas fa-cog',
+        type: AiHordeSettings,
+        restricted: true,
+    });
 
 
     /**
