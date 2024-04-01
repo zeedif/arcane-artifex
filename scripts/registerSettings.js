@@ -3,8 +3,39 @@ import stableFileManager from "./StableFileManager.js";
 import StableImageSettings from "./StableImageSettings.js";
 import ComfyUIImageSettings from "./ComfyUISettings.js";
 //import the api client
+
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
+
+
+const defaultSettings = {
+    // CFG Scale
+    scale_min: 1,
+    scale_max: 30,
+    scale_step: 0.5,
+    scale: 7,
+    // Sampler steps
+    steps_min: 1,
+    steps_max: 150,
+    steps_step: 1,
+    steps: 20,
+
+    // Scheduler
+    scheduler: 'normal',
+    // Image dimensions (Width & Height)
+    dimension_min: 64,
+    dimension_max: 2048,
+    dimension_step: 64,
+    width: 512,
+    height: 512,
+
+    prompt_prefix: '',
+    negative_prompt: '',
+    sampler: 'DDIM',
+    model: '',
+    vae: '',
+    
+};
 
 
 /**
@@ -102,3 +133,5 @@ export default function registerSettings() {
     });
     
 }
+
+export { defaultSettings };

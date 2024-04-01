@@ -1,4 +1,5 @@
 import sdAPIClient from "./sdAPIClient.js";
+import { defaultSettings } from './registerSettings.js';
 
 /**
  * Represents the StableImageSettings class.
@@ -36,8 +37,12 @@ export default class StableImageSettings extends FormApplication {
      * @returns {Object} - The data for the form
      */
     getData() {
-        
-        let context = game.settings.get('stable-images', 'stable-settings');
+        // Get current settings or fallback to an empty object
+        let savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
+
+        // Merge defaults with saved settings, with saved settings taking precedence
+        let context = mergeObject(defaultSettings, savedSettings);
+
         console.error("scale_min:", context.scale_min);
         console.error("scale_max:", context.scale_max);
         console.error("scale_step:", context.scale_step);
