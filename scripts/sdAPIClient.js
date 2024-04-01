@@ -83,10 +83,14 @@ class SdAPIClient {
             } else {
                 console.error(`${serverName} server is not accessible: response code`, response.status, 'at IP:', serverIp);
                 ui.notifications.error(`${serverName} server is not accessible: response code: ${response.status}`);
+                await game.settings.set("stable-images", "connection", false);
+                this.connexion = false;
             }
         } catch (error) {
             console.error(`Error occurred while trying to access ${serverName} server at IP:`, serverIp, '; error =', error);
             ui.notifications.error(`Error occurred while trying to access ${serverName} server; error = ${error}`);
+            await game.settings.set("stable-images", "connection", false);
+            this.connexion = false;
         }
     }
 
@@ -95,11 +99,16 @@ class SdAPIClient {
      * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
      */
     async getStableDiffusionSettings() {
+        if (!this.connexion) {
+            console.warn("Stable Diffusion connection not established. Skipping API calls.");
+            return;
+        }
+    
         await this.getLoras();
         await this.getModels();
         await this.getStyles();
         await this.getSdOptions();
-        await this.getSamplers(); 
+        await this.getSamplers();
         this.settings = game.settings.get("stable-images", "stable-settings");
         this.defaultRequestBody = {
             prompt: this.settings['pre-prompt'],

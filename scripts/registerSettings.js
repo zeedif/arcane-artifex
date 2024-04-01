@@ -76,21 +76,23 @@ export default function registerSettings() {
          * Calls the getStableDiffusionSettings function from the sdAPIClient.
          * Logs are added to monitor the execution and warn about the trigger.
          */
-        onChange: () => {
+        onChange: async () => {
             console.warn("onChange triggered for stable-settings.");
-    
+        
             try {
-                sdAPIClient.getStableDiffusionSettings();
+                await sdAPIClient.getStableDiffusionSettings();
                 console.warn("getStableDiffusionSettings called successfully.");
             } catch (error) {
                 console.warn("Error calling getStableDiffusionSettings:", error);
+                ui.notifications.warn("Failed to retrieve Stable Diffusion settings. Check the console for more details.");
             }
-    
+        
             try {
-                stableFileManager.setStoragePath();
+                await stableFileManager.setStoragePath();
                 console.warn("setStoragePath called successfully.");
             } catch (error) {
                 console.warn("Error calling setStoragePath:", error);
+                ui.notifications.warn("Failed to set the storage path. Check the console for more details.");
             }
         }
     });
