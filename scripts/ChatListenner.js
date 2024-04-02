@@ -1,6 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
 import sdAPIClient from "./sdAPIClient.js";
-import comfyAPIClient from "./comfyAPIClient.js";
 
 /**
  * Class representing the Stable Images Chat Listener
@@ -269,22 +268,6 @@ class StableImagesChatListenner {
     
             // Assuming sdAPIClient has a method textToImg for image generation
             sdAPIClient.textToImg(prompt, message);
-        }
-        // Check if the message content starts with ":comfy:"
-        else if (message.content.startsWith(":comfy:")) {
-            console.error("Processing :comfy: command");
-            try {
-                // Assuming comfyApiClient has a method checkQueueStatus to fetch queue status
-                const status = await comfyAPIClient.sendPrompt();
-                console.error("Comfy queue status received:", status);
-                const statusMessage = JSON.stringify(status, null, 2); // Beautify the JSON string
-    
-                // Output the formatted status message to chat
-                ChatMessage.create({ content: `Comfy Queue Status: <pre>${statusMessage}</pre>` });
-            } catch (error) {
-                console.error("Failed to retrieve Comfy Queue Status:", error);
-                ChatMessage.create({ content: "Failed to retrieve Comfy Queue Status. Check console for details." });
-            }
         }
     }
     

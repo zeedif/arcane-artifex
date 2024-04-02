@@ -1,7 +1,6 @@
 //import the form app that manage the stable-images settings
 import stableFileManager from "./StableFileManager.js";
 import StableImageSettings from "./StableImageSettings.js";
-import ComfyUIImageSettings from "./ComfyUISettings.js";
 //import the api client
 
 import sdAPIClient from "./sdAPIClient.js";
@@ -52,10 +51,13 @@ const defaultSettings = {
     enable_hr: false,
 
     // Horde settings
+    horde_url: 'https://stablehorde.net',
     horde: false,
     horde_nsfw: false,
     horde_karras: true,
     horde_sanitize: true,
+    horde_model: '',
+    horde_models: [],
 
     // Refine mode
     refine_mode: false,
@@ -117,19 +119,11 @@ const defaultSettings = {
 };
 
 
+
 /**
  * Registers the settings for the Stable Images module.
  */
 export default function registerSettings() {
-    // Initiating the connection state with Stable Diffusion
-    game.settings.register("stable-images", "connection", {
-        name: "connection",
-        hint: "connection",
-        scope: "world",
-        config: false,
-        type: Boolean,
-        default: false
-    });
 
     // Creating the sub menu for Stable Images Settings
     game.settings.registerMenu("stable-images", "stable-image-menu", {
@@ -140,32 +134,7 @@ export default function registerSettings() {
         type: StableImageSettings,
         restricted: true
     });
-
-    game.settings.registerMenu("stable-images", "comfyui-image-settings", {
-        name: "ComfyUI Images Settings",
-        label: "Configure ComfyUI",
-        hint: "Configure the IP address for the ComfyUI server.",
-        icon: "fas fa-network-wired",
-        type: ComfyUIImageSettings,
-        restricted: true,
-    });
     
-    game.settings.register('stable-images', 'aihorde-url', {
-        name: 'AI Horde API URL',
-        scope: 'world',
-        config: false,
-        type: String,
-        default: 'https://stablehorde.net',
-    });
-
-    game.settings.register('stable-images', 'aihorde-connection', {
-        name: 'AI Horde Connection',
-        scope: 'world',
-        config: false,
-        type: Boolean,
-        default: false,
-    });
-
     game.settings.registerMenu('stable-images', 'aihorde-settings', {
         name: 'AI Horde Settings',
         label: 'AI Horde Settings',
@@ -175,11 +144,6 @@ export default function registerSettings() {
         restricted: true,
     });
 
-
-    /**
-     * Represents the default stable-settings object.
-     * @type {Object}
-     */
     game.settings.register('stable-images', 'stable-settings', {
         scope: 'world',
         config: false,

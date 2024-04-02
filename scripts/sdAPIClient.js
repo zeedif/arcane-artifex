@@ -1,4 +1,5 @@
 import chatListenner from "./ChatListenner.js";
+import { defaultSettings } from './registerSettings.js';
 /**
  * Represents the SdAPIClient class.
  * This class handles the communication with the stable diffusion API.
@@ -47,28 +48,26 @@ class SdAPIClient {
      * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
      */
     async initConnexion() {
-        // Adding log to debug the IP address retrieval
+        let savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
+        console.error("savedSettings:", savedSettings);
 
-        // Retrieve the current settings object
-        let settings = await game.settings.get("stable-images", "stable-settings");
-
-        // Modify the 'auto_url' property of the settings object
-        settings["auto_url"] = "http://127.0.0.1:7860";
-        settings.auto_url = 'http://127.0.0.1:7860';
-        settings["comfy_url"]  = "http://127.0.0.1:8188";
+        // Merge defaults with saved settings, with saved settings taking precedence
+        let context = mergeObject(defaultSettings, savedSettings);
+        console.error("context after merging defaults and saved settings:", context);
 
         // Save the modified settings object back
         await game.settings.set("stable-images", "stable-settings", settings);
 
         let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         let cpIP = await game.settings.get("stable-images", "stable-settings")["comfy_url"];
+        let aihIP = await game.setttings.get("stable-images", "stable-settings")["horde_url"];
         console.warn("Retrieved A1111 auto_url from settings:", stIP);
         console.warn("Retrieved Comfy auto_url from settings:", cpIP);
-    
-        await this.attemptServerConnection(settings["auto_url"], "Stable Diffusion");
+        console.warn("Retrieved AI Horde auto_url from settings:", aihIP);
 
-        // Attempt to connect to the Comfy server
+        await this.attemptServerConnection(settings["auto_url"], "Stable Diffusion");
         await this.attemptServerConnection(settings["comfy_url"], "Comfy");
+        await this.attemptServerConnection(settings["horde_url"], "AI Horde");
     }
 
 
