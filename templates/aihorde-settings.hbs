@@ -54,10 +54,8 @@
             </div>
             <div class="samplers">
                 <h2>SAMPLERS</h2>
-                <select id="sampler-select">
-                    {{#each samplers as |sampler|}}
-                    <option value="{{sampler.name}}">{{sampler.name}}</option>
-                    {{/each}}
+                <select id="sampler-select" name="horde_sampler">
+                    <option value="k_euler">k_euler</option>
                 </select>
             </div>
         </section>
@@ -121,18 +119,6 @@
                 <p class="notes">height of generated image</p>
             </div>
             <div class="form-group">
-                <label>batch count</label>
-                <div class="form-fields">
-
-                    <input type="range" name="batchCount" data-dtype="Number"
-                        value="{{batchCount}}" min="1" max="20" step="1">
-                    <span class="range-value">{{batchCount}}</span>
-
-                </div>
-
-                <p class="notes">how many batches image to create</p>
-            </div>
-            <div class="form-group">
                 <label>sampling steps</label>
                 <div class="form-fields">
 
@@ -145,7 +131,7 @@
                 <p class="notes">numbers of iterations for image generation</p>
             </div>
             <div class="form-group">
-                <label>variations </label>
+                <label>denoising_strength</label>
                 <div class="form-fields">
 
                     <input type="range" name="denoising_strength" data-dtype="Number"
@@ -154,7 +140,7 @@
 
                 </div>
 
-                <p class="notes">variation weight from the source image</p>
+                <p class="notes">how far to finish the image</p>
             </div>
             <div class="form-group">
                 <label>restore faces</label>

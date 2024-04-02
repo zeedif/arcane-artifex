@@ -23,6 +23,8 @@ import AiHordeSettings from './aiHordeSettings.js';
 Hooks.on('init', async function () {
     // Enable debug hooks
     CONFIG.debug.hooks = true;
+    // Register the settings
+    registerSettings();
 });
 
 /**
@@ -44,11 +46,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
  * Hook that runs once the game is ready
  */
 Hooks.once('ready', async function () {
-    // Register the settings
-    registerSettings();
-    sdAPIClient.getStableDiffusionSettings();
-    stableFileManager.setStoragePath();
-    // Initialize the stable diffusion API client if the user is the GM
+
     if (game.user.isGM) {
         sdAPIClient.initConnexion();
         checkAiHordeStatus();
@@ -123,23 +121,23 @@ function generatePromptFromActor(sheet) {
 }
 
 async function checkAiHordeStatus() {
-    const aiHordeUrl = game.settings.get('stable-images', 'aihorde-url');
+    const aiHordeUrl = game.settings.get('stable-images', 'horde_url');
     console.warn('Attempting to connect to AI Horde server at:', aiHordeUrl);
     try {
         const response = await fetch(aiHordeUrl + '/api/v2/status/heartbeat', { method: 'GET' });
         if (response.ok) {
             console.warn('AI Horde server is accessible at:', aiHordeUrl);
             ui.notifications.notify('AI Horde server is accessible.');
-            await game.settings.set('stable-images', 'aihorde-connection', true);
+            await game.settings.set('stable-images', 'horde', true);
         } else {
             console.error('AI Horde server is not accessible: response code', response.status, 'at URL:', aiHordeUrl);
             ui.notifications.error(`AI Horde server is not accessible: response code: ${response.status}`);
-            await game.settings.set('stable-images', 'aihorde-connection', false);
+            await game.settings.set('stable-images', 'horde', false);
         }
     } catch (error) {
         console.error('Error occurred while trying to access AI Horde server at URL:', aiHordeUrl, '; error =', error);
         ui.notifications.error(`Error occurred while trying to access AI Horde server; error = ${error}`);
-        await game.settings.set('stable-images', 'aihorde-connection', false);
+        await game.settings.set('stable-images', 'horde', false);
     }
 }
 

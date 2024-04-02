@@ -10,9 +10,6 @@ class StableFileManager {
         this.storagePath = ''
     }
 
-    setStoragePath(path) {
-        this.storagePath = game.settings.get('stable-images', 'stable-settings').stableStoragePath + '/'
-    }
     /** 
      * Checks if a file exists by sending a HEAD request to the storagePath + filename. 
      * @param {string} filename - The name of the file to check. 

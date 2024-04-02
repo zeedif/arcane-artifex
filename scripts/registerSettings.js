@@ -5,6 +5,7 @@ import StableImageSettings from "./StableImageSettings.js";
 
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
+import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
 const defaultNegative = 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry';
@@ -124,8 +125,25 @@ const defaultSettings = {
  * Registers the settings for the Stable Images module.
  */
 export default function registerSettings() {
+    console.error("Starting dynamic settings registration for 'stable-images'.");
 
-    // Creating the sub menu for Stable Images Settings
+    // Presuming defaultSettings is accessible here
+    Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
+        console.log(`Registering setting for 'stable-images': ${key}`);
+        game.settings.register('stable-images', key, {
+            name: key, // Simplified for demonstration; consider more descriptive names
+            hint: `Setting for ${key}`, // Consider more helpful hints
+            scope: 'world', // 'world' or 'client' as appropriate
+            config: false, // Show in the module's configuration settings
+            type: determineSettingType(defaultValue),
+            default: defaultValue,
+            onChange: value => console.error(`Setting '${key}' changed to:`, value)
+        });
+    });
+
+    console.error("Finished dynamic settings registration for 'stable-images'.");
+
+    // Existing code to register menus remains unchanged
     game.settings.registerMenu("stable-images", "stable-image-menu", {
         name: "Local A1111 Images Settings",
         label: "Local A1111 Images Settings",
@@ -159,22 +177,24 @@ export default function registerSettings() {
         
             try {
                 await sdAPIClient.getStableDiffusionSettings();
+                await aiHordeApiClient.getAiHordeSettings();
                 console.warn("getStableDiffusionSettings called successfully.");
             } catch (error) {
                 console.warn("Error calling getStableDiffusionSettings:", error);
                 ui.notifications.warn("Failed to retrieve Stable Diffusion settings. Check the console for more details.");
             }
-        
-            try {
-                await stableFileManager.setStoragePath();
-                console.warn("setStoragePath called successfully.");
-            } catch (error) {
-                console.warn("Error calling setStoragePath:", error);
-                ui.notifications.warn("Failed to set the storage path. Check the console for more details.");
-            }
         }
     });
-    
 }
+
+function determineSettingType(value) {
+    if (typeof value === 'boolean') return Boolean;
+    if (typeof value === 'number') return Number;
+    if (Array.isArray(value)) return Array;
+    if (typeof value === 'object' && value !== null) return Object;
+    return String; // Default to string for everything else
+}
+
+
 
 export { defaultSettings };

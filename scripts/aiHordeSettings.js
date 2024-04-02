@@ -1,4 +1,4 @@
-import registerSettings from './registerSettings.js';
+import {defaultSettings} from './registerSettings.js';
 
 export default class AiHordeSettings extends FormApplication {
     static get defaultOptions() {
@@ -13,31 +13,32 @@ export default class AiHordeSettings extends FormApplication {
         });
     }
 
-
-
-    
+   
     async getData() {
-
-        registerDynamicSettings();
         console.error("getData called");
     
         let savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
         console.error("savedSettings:", savedSettings);
     
-        // Retrieve AI Horde models and activeModel
-        const { models, activeModel } = await this.loadHordeModels();
-        console.error("models:", models);
-        console.error("activeModel:", activeModel);
+        // Retrieve AI Horde horde_models and horde_model
+        const { horde_models, horde_model } = await this.loadHordeModels();
+        console.error("horde_models:", horde_models);
+        console.error("horde_model:", horde_model);
     
+    
+        // Fetch samplers
+        const samplers = await this.loadHordeSamplers();
+
+
         // Merge defaults with saved settings, with saved settings taking precedence
         let context = mergeObject(defaultSettings, savedSettings);
         console.error("context after merging defaults and saved settings:", context);
     
-        // Add the retrieved models and activeModel to the context
-        context.models = models; // Assign the 'models' array directly to the context
-        context.activeModel = activeModel;
+        // Add the retrieved horde_models and horde_model to the context
+        context.horde_models = horde_models; // Assign the 'horde_models' array directly to the context
+        context.horde_model = horde_model;
     
-        console.error("context after adding models and activeModel:", context);
+        console.error("context after adding horde_models and horde_model:", context);
     
         this.context = context;
         console.error("this.context:", this.context);
@@ -63,57 +64,71 @@ export default class AiHordeSettings extends FormApplication {
     
                 data.sort((a, b) => b.count - a.count);
     
-                const models = data.map(x => ({
+                const horde_models = data.map(x => ({
                     value: x.name,
                     text: `${x.name} (ETA: ${x.eta}s, Queue: ${x.queued}, Workers: ${x.count})`
                 }));
     
-                // Retrieve the activeModel from the settings
+                // Retrieve the horde_model from the settings
                 const savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-                let activeModel = savedSettings.activeModel;
+                let horde_model = savedSettings.horde_model;
     
-                // If the activeModel is not set or is not in the models array, set it to the first model
-                if (!activeModel || !models.some(model => model.value === activeModel)) {
-                    activeModel = models[0].value;
+                // If the horde_model is not set or is not in the horde_models array, set it to the first model
+                if (!horde_model || !horde_models.some(model => model.value === horde_model)) {
+                    horde_model = horde_models[0].value;
                 }
     
-                console.error("activeModel:", activeModel);
+                console.error("horde_model:", horde_model);
     
-                return { models, activeModel };
+                return { horde_models, horde_model };
             } else {
                 console.error("Error while attempting to retrieve Horde models:", response.statusText);
                 ui.notifications.error("Error while attempting to retrieve Horde models; error = " + response.statusText);
-                return { models: [], activeModel: '' };
+                return { horde_models: [], horde_model: '' };
             }
         } catch (error) {
             console.error("Error while attempting to retrieve Horde models:", error);
             ui.notifications.error("Error while attempting to retrieve Horde models; error = " + error);
-            return { models: [], activeModel: '' };
+            return { horde_models: [], horde_model: '' };
         }
     }
+    async loadHordeSamplers() {
+        // Directly return an array with a single sampler object
+        return [{ name: 'k_euler' }];
+    }
+    
+    
+
+
+
     activateListeners(html) {
         super.activateListeners(html);
         console.error("Activating listeners for aiHorde form.");
+    
+        // Add change listener for the NSFW toggle
+        html.find('[name="horde_nsfw"]').change(event => this.onToggleChange(event));
+    }
 
-        // Event listener for the model change
-       // html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
-       // console.error("Listener for model change activated.");
+    async onToggleChange(event) {
+        // Example: Update a specific setting directly on toggle change, or store it for form submission
+        console.error("Toggle changed", event.currentTarget.checked);
 
     }
 
     async _updateObject(event, formData) {
-        console.error("_updateObject called");
-        console.error("formData:", formData);
-
-        // Directly update the settings with the formData without re-fetching the models
-        // Since the models are already loaded in getData, we can omit loading them again here.
-        await game.settings.set('stable-images', 'stable-settings', {
-            ...this.context, // Use existing context which includes models and activeModel
-            ...formData // Apply the form changes
-        });
+        console.error("_updateObject called with formData:", formData);
+    
+        // Directly merge formData into saved settings and save
+        const savedSettings = game.settings.get('stable-images', 'stable-settings');
+        const updatedSettings = mergeObject(savedSettings, formData);
+        await game.settings.set('stable-images', 'stable-settings', updatedSettings);
+        console.error("Settings updated successfully.");
     
         // Re-render the form with the updated data
+        // This call is correct; 'true' would also work and is often recommended to force re-render
         this.render(true);
     }
+    
+    
     
 }

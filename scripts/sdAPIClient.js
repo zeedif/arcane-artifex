@@ -48,26 +48,7 @@ class SdAPIClient {
      * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
      */
     async initConnexion() {
-        let savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-        console.error("savedSettings:", savedSettings);
 
-        // Merge defaults with saved settings, with saved settings taking precedence
-        let context = mergeObject(defaultSettings, savedSettings);
-        console.error("context after merging defaults and saved settings:", context);
-
-        // Save the modified settings object back
-        await game.settings.set("stable-images", "stable-settings", settings);
-
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
-        let cpIP = await game.settings.get("stable-images", "stable-settings")["comfy_url"];
-        let aihIP = await game.setttings.get("stable-images", "stable-settings")["horde_url"];
-        console.warn("Retrieved A1111 auto_url from settings:", stIP);
-        console.warn("Retrieved Comfy auto_url from settings:", cpIP);
-        console.warn("Retrieved AI Horde auto_url from settings:", aihIP);
-
-        await this.attemptServerConnection(settings["auto_url"], "Stable Diffusion");
-        await this.attemptServerConnection(settings["comfy_url"], "Comfy");
-        await this.attemptServerConnection(settings["horde_url"], "AI Horde");
     }
 
 
