@@ -19,14 +19,14 @@
                 <div class="form-group">
                     <label>Allow NSFW?</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" checked="{{horde_nsfw}}">
+                        <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}>
                         <p class="notes">Allow NSFW images from Horde</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Sanitize prompts?</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="horde_sanitize" data-dtype="Boolean" checked="{{horde_sanitize}}">
+                        <input type="checkbox" name="horde_sanitize" data-dtype="Boolean" {{#if horde_sanitize}}checked{{/if}}>
                         <p class="notes">(recommended)</p>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                 <div class="form-group">
                     <label>Karras</label>
                     <div class="form-fields">
-                        <input type="checkbox" name="horde_karras" data-dtype="Boolean" checked="{{horde_karras}}">
+                        <input type="checkbox" name="horde_karras" data-dtype="Boolean" {{#if horde_karras}}checked{{/if}}>
                         <p class="notes">(not all samplers supported)</p>
                     </div>
                 </div>
@@ -145,11 +145,7 @@
             <div class="form-group">
                 <label>restore faces</label>
                 <div class="form-fields">
-
-                    <input type="checkbox" name="restore_faces"
-                        data-dtype="Boolean"
-                        checked="{{restore_faces}}">
-
+                    <input type="checkbox" name="restore_faces" data-dtype="Boolean" {{#if restore_faces}}checked{{/if}}>
                 </div>
 
                 <p class="notes">restore faces</p>

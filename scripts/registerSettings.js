@@ -177,7 +177,6 @@ export default function registerSettings() {
         
             try {
                 await sdAPIClient.getStableDiffusionSettings();
-                await aiHordeApiClient.getAiHordeSettings();
                 console.warn("getStableDiffusionSettings called successfully.");
             } catch (error) {
                 console.warn("Error calling getStableDiffusionSettings:", error);
