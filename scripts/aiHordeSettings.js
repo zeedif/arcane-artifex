@@ -1,4 +1,6 @@
 import {defaultSettings} from './registerSettings.js';
+import {resolutionOptions} from './registerSettings.js';
+
 
 export default class AiHordeSettings extends FormApplication {
     static get defaultOptions() {
@@ -7,7 +9,7 @@ export default class AiHordeSettings extends FormApplication {
             classes: ['stable-images'],
             title: 'AI Horde Settings',
             template: 'modules/stable-images/templates/aihorde-settings.hbs',
-            width: 800,
+            width: 700,
             height: "auto",
             rezisable: true
         });
@@ -33,6 +35,7 @@ export default class AiHordeSettings extends FormApplication {
         // Merge defaults with saved settings, with saved settings taking precedence
         let context = mergeObject(defaultSettings, savedSettings);
         console.error("context after merging defaults and saved settings:", context);
+        context.resolutionOptions = resolutionOptions;
     
         // Add the retrieved horde_models and horde_model to the context
         context.horde_models = horde_models; // Assign the 'horde_models' array directly to the context
@@ -117,10 +120,14 @@ export default class AiHordeSettings extends FormApplication {
 
     async _updateObject(event, formData) {
         console.error("_updateObject called with formData:", formData);
+
     
         // Directly merge formData into saved settings and save
         const savedSettings = game.settings.get('stable-images', 'stable-settings');
         const updatedSettings = mergeObject(savedSettings, formData);
+        const selectedResolution = resolutionOptions[formData.sd_resolution];
+        formData.width = selectedResolution.width;
+        formData.height = selectedResolution.height;
         await game.settings.set('stable-images', 'stable-settings', updatedSettings);
         console.error("Settings updated successfully.");
     

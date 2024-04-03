@@ -73,6 +73,8 @@ const defaultSettings = {
     restore_faces: false,
     enable_hr: false,
 
+    sd_resolution: 'sd_res_512x512',
+
     // Horde settings
     horde_url: 'https://stablehorde.net',
     horde: false,
@@ -217,5 +219,5 @@ function determineSettingType(value) {
 }
 
 
-
+export { resolutionOptions };
 export { defaultSettings };
