@@ -4,8 +4,8 @@
             <div class="source">
                 <h2>SOURCE</h2>
                 <select id="source-dropdown" name="source">
-                    {{#each SOURCE_OPTIONS}}
-                    <option value="{{value}}">{{label}}</option>
+                    {{#each defaultSettings.SOURCE_OPTIONS}}
+                        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
                     {{/each}}
                 </select>
             <div class="source">

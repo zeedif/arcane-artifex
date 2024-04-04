@@ -162,10 +162,9 @@ const defaultSettings = {
     
     // Source options
     SOURCE_OPTIONS: [
-        { value: 'stable-horde', label: 'Stable Horde' },
-        { value: 'automatic1111', label: 'Stable Diffusion Web UI (AUTOMATIC1111)' }
+        { value: 'stable-horde', label: 'Stable Horde', selected: true },
+        { value: 'automatic1111', label: 'Stable Diffusion Web UI (AUTOMATIC1111)', selected: false }
     ],
-
 };
 
 /**
