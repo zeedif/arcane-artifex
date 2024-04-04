@@ -1,15 +1,11 @@
-//import the form app that manage the stable-images settings
 import stableFileManager from "./StableFileManager.js";
 import StableImageSettings from "./StableImageSettings.js";
-//import the api client
-
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
 const defaultNegative = 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry';
-
 const defaultStyles = [
     {
         name: 'Default',
@@ -143,31 +139,24 @@ const defaultSettings = {
 
 };
 
-
-
 /**
  * Registers the settings for the Stable Images module.
  */
 export default function registerSettings() {
-    console.error("Starting dynamic settings registration for 'stable-images'.");
-
-    // Presuming defaultSettings is accessible here
+    // Dynamically register settings based on defaultSettings
     Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
-        console.log(`Registering setting for 'stable-images': ${key}`);
         game.settings.register('stable-images', key, {
-            name: key, // Simplified for demonstration; consider more descriptive names
-            hint: `Setting for ${key}`, // Consider more helpful hints
-            scope: 'world', // 'world' or 'client' as appropriate
-            config: false, // Show in the module's configuration settings
+            name: key,
+            hint: `Setting for ${key}`,
+            scope: 'world',
+            config: false,
             type: determineSettingType(defaultValue),
             default: defaultValue,
-            onChange: value => console.error(`Setting '${key}' changed to:`, value)
+            onChange: value => console.log(`Setting '${key}' changed to:`, value)
         });
     });
 
-    console.error("Finished dynamic settings registration for 'stable-images'.");
-
-    // Existing code to register menus remains unchanged
+    // Register menus
     game.settings.registerMenu("stable-images", "stable-image-menu", {
         name: "Local A1111 Images Settings",
         label: "Local A1111 Images Settings",
@@ -176,7 +165,7 @@ export default function registerSettings() {
         type: StableImageSettings,
         restricted: true
     });
-    
+
     game.settings.registerMenu('stable-images', 'aihorde-settings', {
         name: 'AI Horde Settings',
         label: 'AI Horde Settings',
@@ -186,6 +175,7 @@ export default function registerSettings() {
         restricted: true,
     });
 
+    // Register stable-settings
     game.settings.register('stable-images', 'stable-settings', {
         scope: 'world',
         config: false,
@@ -194,22 +184,23 @@ export default function registerSettings() {
         /**
          * Handles the onChange event for the stable-settings.
          * Calls the getStableDiffusionSettings function from the sdAPIClient.
-         * Logs are added to monitor the execution and warn about the trigger.
          */
         onChange: async () => {
-            console.warn("onChange triggered for stable-settings.");
-        
             try {
                 await sdAPIClient.getStableDiffusionSettings();
-                console.warn("getStableDiffusionSettings called successfully.");
             } catch (error) {
-                console.warn("Error calling getStableDiffusionSettings:", error);
-                ui.notifications.warn("Failed to retrieve Stable Diffusion settings. Check the console for more details.");
+                console.error("Error calling getStableDiffusionSettings:", error);
+                ui.notifications.error("Failed to retrieve Stable Diffusion settings. Check the console for more details.");
             }
         }
     });
 }
 
+/**
+ * Determines the setting type based on the provided value.
+ * @param {*} value - The value to determine the setting type for.
+ * @returns {Function} The determined setting type.
+ */
 function determineSettingType(value) {
     if (typeof value === 'boolean') return Boolean;
     if (typeof value === 'number') return Number;
@@ -217,7 +208,6 @@ function determineSettingType(value) {
     if (typeof value === 'object' && value !== null) return Object;
     return String; // Default to string for everything else
 }
-
 
 export { resolutionOptions };
 export { defaultSettings };

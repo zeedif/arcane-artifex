@@ -1,6 +1,6 @@
 class AiHordeApiClient {
     async checkStatus() {
-        const aiHordeUrl = game.settings.get('stable-images', 'aihorde-url');
+        const aiHordeUrl = game.settings.get('stable-images', 'horde_url');
         const statusUrl = `${aiHordeUrl}/api/v2/status/heartbeat`;
 
         try {

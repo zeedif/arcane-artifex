@@ -48,6 +48,23 @@ class SdAPIClient {
      * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
      */
     async initConnexion() {
+        let sdSavedSettings = game.settings.get('stable-images', 'stable-settings') || {};
+        console.error("sdSavedSettings:", sdSavedSettings);
+
+        // Merge defaults with saved settings, with saved settings taking precedence
+        let context = mergeObject(defaultSettings, sdSavedSettings);
+        console.error("context after merging defaults and saved settings:", context);
+
+        // Save the modified settings object back
+        await game.settings.set("stable-images", "stable-settings", settings);
+
+        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+
+        console.warn("Retrieved A1111 auto_url from settings:", stIP);
+
+
+        await this.attemptServerConnection(settings["auto_url"], "Stable Diffusion");
+
 
     }
 
