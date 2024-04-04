@@ -1,5 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
-import StableImageSettings from "./StableImageSettings.js";
+import localA1111Settings from "./localA1111Settings.js";
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
@@ -162,8 +162,8 @@ const defaultSettings = {
     
     // Source options
     SOURCE_OPTIONS: [
-        { value: 'stable-horde', label: 'Stable Horde', selected: true },
-        { value: 'automatic1111', label: 'Stable Diffusion Web UI (AUTOMATIC1111)', selected: false }
+        { value: 'stable-horde', label: 'Stable Horde', selected: false },
+        { value: 'automatic1111', label: 'Stable Diffusion Web UI (AUTOMATIC1111)', selected: true }
     ],
 };
 
@@ -190,7 +190,7 @@ export default function registerSettings() {
         label: "Local A1111 Images Settings",
         hint: "A window to set parameters for A1111 image generation.",
         icon: "fas fa-images",
-        type: StableImageSettings,
+        type: localA1111Settings,
         restricted: true
     });
 
@@ -211,14 +211,14 @@ export default function registerSettings() {
         default: {},
         /**
          * Handles the onChange event for the stable-settings.
-         * Calls the getStableDiffusionSettings function from the sdAPIClient.
+         * Calls the getLocalA1111Settings function from the sdAPIClient.
          */
         onChange: async () => {
             try {
-                await sdAPIClient.getStableDiffusionSettings();
+                await sdAPIClient.getLocalA1111Settings();
             } catch (error) {
-                console.error("Error calling getStableDiffusionSettings:", error);
-                ui.notifications.error("Failed to retrieve Stable Diffusion settings. Check the console for more details.");
+                console.error("Error calling getLocalA1111Settings:", error);
+                ui.notifications.error("Failed to retrieve Local A1111 settings. Check the console for more details.");
             }
         }
     });

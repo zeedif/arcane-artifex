@@ -47,24 +47,27 @@ class SdAPIClient {
      * Initializes the connection with the stable diffusion API.
      * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
      */
-    async initConnexion() {
-        let sdSavedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-        console.error("sdSavedSettings:", sdSavedSettings);
-
-        // Merge defaults with saved settings, with saved settings taking precedence
-        let context = mergeObject(defaultSettings, sdSavedSettings);
-        console.error("context after merging defaults and saved settings:", context);
-
-
-        const a1111url = game.settings.get('stable-images', 'auto_url');
-
-        console.warn("Retrieved A1111 auto_url from settings:", a1111url);
-
-
-        await this.attemptServerConnection(a1111url, "Stable Diffusion");
-
-
+    async initConnection() {
+        // Retrieve the source options from the game settings
+        const sourceOptions = game.settings.get('stable-images', 'SOURCE_OPTIONS') || [];
+    
+        // Find the automatic1111 option and check if it is selected
+        const automatic1111Selected = sourceOptions.find(option => option.value === 'automatic1111')?.selected;
+    
+        // Only proceed if the automatic1111 option is selected
+        if (automatic1111Selected) {
+            let sdSavedSettings = game.settings.get('stable-images', 'stable-settings') || {};
+            let context = mergeObject(defaultSettings, sdSavedSettings);
+            
+            const a1111url = game.settings.get('stable-images', 'auto_url');
+            console.error("Retrieved A1111 auto_url from settings:", a1111url);
+            
+            await this.attemptServerConnection(a1111url, "Stable Diffusion");
+        } else {
+            console.error("Automatic1111 is not selected. Skipping connection attempt.");
+        }
     }
+    
 
 
     async attemptServerConnection(serverIp, serverName) {
@@ -94,7 +97,7 @@ class SdAPIClient {
     /**
      * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
      */
-    async getStableDiffusionSettings() {
+    async getLocalA1111Settings() {
         if (!this.connexion) {
             console.warn("Stable Diffusion connection not established. Skipping API calls.");
             return;

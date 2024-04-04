@@ -35,7 +35,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
  */
 Hooks.once('ready', async function () {
     if (game.user.isGM) {
-        sdAPIClient.initConnexion();
+        sdAPIClient.initConnection();
         checkAiHordeStatus();
     }
 });

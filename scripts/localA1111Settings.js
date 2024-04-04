@@ -2,10 +2,10 @@ import sdAPIClient from "./sdAPIClient.js";
 import { defaultSettings } from './registerSettings.js';
 
 /**
- * Represents the StableImageSettings class.
+ * Represents the localA1111Settings class.
  * This class extends the FormApplication class and handles the settings for stable diffusion image generation.
  */
-export default class StableImageSettings extends FormApplication {
+export default class localA1111Settings extends FormApplication {
 
 
     constructor(...args) {
@@ -18,7 +18,7 @@ export default class StableImageSettings extends FormApplication {
         this.loadingModel = false;
     }
 /**
-     * Retrieves the default options for the StableImageSettings class.
+     * Retrieves the default options for the localA1111Settings class.
      * @returns {Object} - The default options
      */
     static get defaultOptions() {
@@ -33,7 +33,7 @@ export default class StableImageSettings extends FormApplication {
     }
 
     /**
-     * Retrieves the data for the StableImageSettings form.
+     * Retrieves the data for the localA1111Settings form.
      * @returns {Object} - The data for the form
      */
     getData() {
@@ -60,7 +60,7 @@ export default class StableImageSettings extends FormApplication {
      */
     activateListeners(html) {
         super.activateListeners(html);
-        console.error("Activating listeners for StableImageSettings form.");
+        console.error("Activating listeners for localA1111Settings form.");
         this.changeLoraPrompt()
 
 
