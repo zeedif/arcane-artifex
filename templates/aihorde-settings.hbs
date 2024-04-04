@@ -1,42 +1,38 @@
 <form autocomplete="on">
-    <div class="sheet-body flexrow">
-        <section>
-            <div class="horde_url">
-                <h2>SERVER IP</h2>
-                <div class="form-group">
-                    <label>AI Horde server IP</label>
-                    <div class="form-fields">
-                        <input name="horde_url" type="text"
-                            value="{{horde_url}}" />
-                    </div>
-                </div>
-            </div>
-            <div class="horde_url">
-                <h2>AI HORDE TOGGLES</h2>
-                <div class="form-group">
+  <div class="sheet-body flexrow">
+    <section>
+            <div class="source">
+                <h2>SOURCE</h2>
+                <select id="source-dropdown" name="source">
+                    {{#each SOURCE_OPTIONS}}
+                    <option value="{{value}}">{{label}}</option>
+                    {{/each}}
+                </select>
+            <div class="source">
+                    <h2>AI HORDE TOGGLES</h2>
+                    <div class="form-group">
                     <label>Allow NSFW?</label>
                     <div class="form-fields">
                         <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}>
                         <p class="notes">Allow NSFW images from Horde</p>
                     </div>
-                </div>
-                <div class="form-group">
+                    </div>
+                    <div class="form-group">
                     <label>Sanitize prompts?</label>
                     <div class="form-fields">
                         <input type="checkbox" name="horde_sanitize" data-dtype="Boolean" {{#if horde_sanitize}}checked{{/if}}>
                         <p class="notes">(recommended)</p>
                     </div>
-                </div>
-
-                <div class="form-group">
+                    </div>
+                    <div class="form-group">
                     <label>Karras</label>
                     <div class="form-fields">
                         <input type="checkbox" name="horde_karras" data-dtype="Boolean" {{#if horde_karras}}checked{{/if}}>
                         <p class="notes">(not all samplers supported)</p>
                     </div>
+                    </div>
                 </div>
-            </div>
-            <div class="models">
+                <div class="models">
                 <h2>MODELS</h2>
                 <h4>active model : {{horde_model}}</h4>
                 <select id="change-model" name="horde_model">
@@ -81,8 +77,8 @@
                 <label>Resolution</label>
                 <div class="form-fields">
                     <select name="sd_resolution">
-                        {{#each resolutionOptions}}
-                        <option value="{{@key}}" {{#if (eq @key ../sd_resolution)}}selected{{/if}}>{{this.name}}</option>
+                        {{#each defaultSettings.resolutionOptions}}
+                            <option value="{{@key}}" {{#if (eq @key ../../sd_resolution)}}selected{{/if}}>{{this.name}}</option>
                         {{/each}}
                     </select>
                 </div>

@@ -1,7 +1,14 @@
 <form autocomplete="on">
-    <div class="sheet-body flexrow">
-        <section>
-            <div class="auto_url">
+  <div class="sheet-body flexrow">
+    <section>
+            <div class="source">
+                <h2>SOURCE</h2>
+                <select id="source-dropdown" name="source">
+                    {{#each SOURCE_OPTIONS}}
+                    <option value="{{value}}">{{label}}</option>
+                    {{/each}}
+                </select>
+            <div class="source">
                 <h2>SERVER IP</h2>
                 <div class="form-group">
                     <label>stable diffusion server IP</label>

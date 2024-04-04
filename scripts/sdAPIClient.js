@@ -55,15 +55,13 @@ class SdAPIClient {
         let context = mergeObject(defaultSettings, sdSavedSettings);
         console.error("context after merging defaults and saved settings:", context);
 
-        // Save the modified settings object back
-        await game.settings.set("stable-images", "stable-settings", settings);
 
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        const a1111url = game.settings.get('stable-images', 'auto_url');
 
-        console.warn("Retrieved A1111 auto_url from settings:", stIP);
+        console.warn("Retrieved A1111 auto_url from settings:", a1111url);
 
 
-        await this.attemptServerConnection(settings["auto_url"], "Stable Diffusion");
+        await this.attemptServerConnection(a1111url, "Stable Diffusion");
 
 
     }
