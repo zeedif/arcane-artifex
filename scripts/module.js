@@ -3,7 +3,7 @@ import chatListenner from './ChatListenner.js';
 import sdAPIClient from "./sdAPIClient.js";
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
-import { aiHordeApiClient } from './aiHordeApiClient.js';
+import aiHordeApiClient from './aiHordeApiClient.js';
 import AiHordeSettings from './aiHordeSettings.js';
 
 /**
@@ -36,7 +36,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
 Hooks.once('ready', async function () {
     if (game.user.isGM) {
         sdAPIClient.initConnection();
-        checkAiHordeStatus();
+        aiHordeApiClient.checkStatus();
     }
 });
 
@@ -111,30 +111,6 @@ function generatePromptFromActor(sheet) {
     }
 
     new PromptApplication(prompt, sheet.actor.uuid).render(true);
-}
-
-/**
- * Checks the status of the AI Horde server.
- */
-async function checkAiHordeStatus() {
-    const aiHordeUrl = game.settings.get('stable-images', 'horde_url');
-
-    try {
-        const response = await fetch(aiHordeUrl + '/api/v2/status/heartbeat', { method: 'GET' });
-        if (response.ok) {
-            console.log('AI Horde server is accessible at:', aiHordeUrl);
-            ui.notifications.info('AI Horde server is accessible.');
-            await game.settings.set('stable-images', 'horde', true);
-        } else {
-            console.error('AI Horde server is not accessible: response code', response.status, 'at URL:', aiHordeUrl);
-            ui.notifications.error(`AI Horde server is not accessible: response code: ${response.status}`);
-            await game.settings.set('stable-images', 'horde', false);
-        }
-    } catch (error) {
-        console.error('Error occurred while trying to access AI Horde server at URL:', aiHordeUrl, '; error =', error);
-        ui.notifications.error(`Error occurred while trying to access AI Horde server; error = ${error}`);
-        await game.settings.set('stable-images', 'horde', false);
-    }
 }
 
 /**

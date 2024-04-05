@@ -137,18 +137,32 @@ const defaultSettings = {
         sd_res_1536x640: { width: 1536, height: 640, name: '1536x640 (24:10, SDXL)' },
         sd_res_640x1536: { width: 640, height: 1536, name: '640x1536 (10:24, SDXL)' },
     },
-    
-    // Source options
-    SOURCE_OPTIONS: [
-        { value: 'stable-horde', label: 'Stable Horde', selected: false },
-        { value: 'automatic1111', label: 'Stable Diffusion Web UI (AUTOMATIC1111)', selected: true }
-    ],
 };
 
 /**
  * Registers the settings for the Stable Images module.
  */
+
+
+
+
+
 export default function registerSettings() {
+
+    game.settings.register("stable-images", "source", {
+        name: "Source",
+        hint: "Select the source for image generation",
+        scope: "world",
+        type: String,
+        choices: {
+          "stable-horde": "Stable Horde",
+          "automatic1111": "Stable Diffusion Web UI (AUTOMATIC1111)"
+        },
+        default: "automatic1111",
+        config: true
+      });
+
+
     // Dynamically register settings based on defaultSettings
     Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
         game.settings.register('stable-images', key, {
