@@ -71,7 +71,7 @@ async function generateActorChatCommand(sheet) {
     if (sdAPIClient.working) {
         return ui.notifications.warn('Please wait until the previous job is finished.');
     }
-    if (game.user.isGM && game.settings.get('stable-images', 'connection')) {
+    if (game.user.isGM && game.settings.get('stable-images', 'connected')) {
         generatePromptFromActor(sheet);
     }
 }

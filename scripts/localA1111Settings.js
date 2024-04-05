@@ -36,13 +36,11 @@ export default class localA1111Settings extends FormApplication {
      * @returns {Object} - The data for the form
      */
     getData() {
-        
         // Get the stable-settings from game settings
         let context = game.settings.get('stable-images', 'stable-settings');
-        context.source = game.settings.get("stable-images", "source");
         // Assign loras, activeModel, and models from sdAPIClient
         context.loras = sdAPIClient.loras;
-        //context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
+        context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
         context.models = sdAPIClient.models;
         context.styles = sdAPIClient.styles;
         if (!context.activeLoras) { context.activeLoras = [] }

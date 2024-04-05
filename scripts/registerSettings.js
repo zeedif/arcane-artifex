@@ -163,6 +163,9 @@ export default function registerSettings() {
       config: false,
     });
 
+
+
+    
     // Register main configuration page options
 
     game.settings.register("stable-images", "stableStoragePath", {
