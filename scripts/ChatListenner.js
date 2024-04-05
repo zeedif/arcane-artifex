@@ -1,5 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
-import sdAPIClient from "./localA1111APIClient.js";
+import sdAPIClient from "./sdAPIClient.js";
 
 /**
  * Class representing the Stable Images Chat Listener

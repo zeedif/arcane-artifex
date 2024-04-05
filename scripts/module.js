@@ -1,6 +1,6 @@
 import registerSettings from "./registerSettings.js";
 import chatListenner from './ChatListenner.js';
-import sdAPIClient from "./localA1111APIClient.js";
+import sdAPIClient from "./sdAPIClient.js";
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import { aiHordeApiClient } from './aiHordeApiClient.js';

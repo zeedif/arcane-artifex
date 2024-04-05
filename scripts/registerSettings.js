@@ -1,6 +1,6 @@
 import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
-import sdAPIClient from "./localA1111APIClient.js";
+import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
