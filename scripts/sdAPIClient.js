@@ -443,14 +443,14 @@ class SdAPIClient {
                         console.warn("Continuing in 'waiting' state");
                     }
                     currentState = "waiting";
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 250);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1000);
                 } else if (currentState === "waiting" && data.progress > 0) {
                     currentState = "processing";
                     console.warn("State transition to 'processing'");
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 250);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1000);
                 } else if (currentState === "processing" && data.progress < 1.0) {
                     console.warn("In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 250);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1000);
                 }
     
                 if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
