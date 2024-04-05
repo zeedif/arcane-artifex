@@ -29,20 +29,6 @@
                     </div>
                 </div>
             </div>
-            <div class="models">
-                <h2>MODELS</h2>
-                <h4>active model : {{activeModel}}</h4>
-                <select id="change-model">
-                    <option>change model here</option>
-                    {{#each models as |model index|}}
-                    <option class="model" value="{{model.title}}">
-                        {{model.model_name}}
-                    </option>
-                    {{/each}}
-                </select>
-                <p class="note">This.may take some time, please wait for changes
-                    to appear</p>
-            </div>
             <div class="samplers">
                 <h2>SAMPLERS</h2>
                 <select id="sampler-select">
@@ -87,46 +73,7 @@
             </div>
         </section>
         <section class="commons">
-            <h2>PROMPTS</h2>
-            <div class="form-group">
-                <label>prompt_prefix</label>
-                <div class="form-fields">
-                    <textarea name="prompt_prefix">{{prompt_prefix}}</textarea>
-                </div>
-                <p class="notes">text that will be add to each request at the
-                    beginning
-                    of the prompt</p>
-            </div>
-            <div class="form-group">
-                <label>negative_prompt</label>
-                <div class="form-fields">
-                    <textarea name="negative_prompt">{{negative_prompt}}</textarea>
-                </div>
-                <p class="notes">text that will be add to each request as
-                    negative
-                    prompt</p>
-            </div>
             <h2>IMAGES</h2>
-            <div class="form-group">
-                <label>width</label>
-                <div class="form-fields">
-
-                    <input type="range" name="width" data-dtype="Number"
-                        value="{{width}}" min="128" max="1024" step="64">
-                    <span class="range-value">{{width}}</span>
-                </div>
-                <p class="notes">width of generated image</p>
-            </div>
-            <div class="form-group">
-                <label>height</label>
-                <div class="form-fields">
-
-                    <input type="range" name="height" data-dtype="Number"
-                        value="{{height}}" min="128" max="1024" step="64">
-                    <span class="range-value">{{height}}</span>
-                </div>
-                <p class="notes">height of generated image</p>
-            </div>
             <div class="form-group">
                 <label>batch count</label>
                 <div class="form-fields">

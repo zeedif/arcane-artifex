@@ -119,5 +119,5 @@ function generatePromptFromActor(sheet) {
  * @param {Object} html - The HTML element.
  */
 Hooks.on('renderAiHordeSettings', (app, html) => {
-    html.find('#aihorde-test-connection').on('click', checkAiHordeStatus);
+    html.find('#aihorde-test-connection').on('click', aiHordeApiClient.checkStatus());
 });

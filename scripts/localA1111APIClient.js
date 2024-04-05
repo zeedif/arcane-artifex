@@ -3,8 +3,8 @@ class LocalA1111ApiClient {
         // Retrieve the selected source from the game settings
         const selectedSource = game.settings.get('stable-images', 'source');
     
-        // Only proceed if the stable-horde option is selected
-        if (selectedSource === 'stable-horde') {
+        // Only proceed if the stableHorde option is selected
+        if (selectedSource === 'stableHorde') {
           const aiHordeUrl = game.settings.get('stable-images', 'horde_url');
           const statusUrl = `${aiHordeUrl}/api/v2/status/heartbeat`;
           

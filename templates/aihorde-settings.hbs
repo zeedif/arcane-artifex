@@ -24,50 +24,13 @@
                     </div>
                     </div>
                 </div>
-                <div class="models">
-                <h2>MODELS</h2>
-                <h4>active model : {{horde_model}}</h4>
-                <select id="change-model" name="horde_model">
-                    <option>change model here</option>
-                    {{#each horde_models as |model|}}
-                        <option class="model" value="{{model.value}}">
-                            {{model.text}}
-                        </option>
-                    {{/each}}
-                </select>
-            </div>
             <div class="samplers">
                 <h2>SAMPLERS</h2>
                 <select id="sampler-select" name="horde_sampler">
                     <option value="k_euler">k_euler</option>
                 </select>
             </div>
-            <h2>PROMPTS</h2>
-            <div class="form-group">
-                <label>prompt_prefix</label>
-                <div class="form-fields">
-                    <textarea name="prompt_prefix">{{prompt_prefix}}</textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>negative_prompt</label>
-                <div class="form-fields">
-                    <textarea name="negative_prompt">{{negative_prompt}}</textarea>
-                </div>
-            </div>
             <h2>IMAGES</h2>
-            <div class="form-group">
-                <label>Resolution</label>
-                <div class="form-fields">
-                    <select name="sd_resolution">
-                        {{#each resolutionOptions}}
-                            <option value="{{@key}}" {{#if (eq @key ../../sd_resolution)}}selected{{/if}}>{{this.name}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-                <p class="notes">Select the resolution for the generated image</p>
-            </div>
             <div class="form-group">
                 <label>denoising_strength</label>
                 <div class="form-fields">

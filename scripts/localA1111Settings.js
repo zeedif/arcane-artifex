@@ -68,10 +68,6 @@ export default class localA1111Settings extends FormApplication {
         html.find('#choose-stable-storage').click(this.onChooseStableStorage.bind(this));
         console.error("Listener for 'choose-stable-storage' button activated.");
 
-        // Event listener for the model change
-        html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
-        console.error("Listener for model change activated.");
-
         // Event listeners for lora choices
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
             // Check if the span's innerText is in the activeLoras aliases
@@ -113,18 +109,7 @@ export default class localA1111Settings extends FormApplication {
         };
         new FilePicker(pickerOptions).browse();
     }
-    /**
-     * Handles the model change event.
-     * @param {Event} ev - The event object
-     */
-    async changeModel(ev) {
-        ev.preventDefault();
-        console.error("changeModel event triggered.");
-        let sel = ev.currentTarget;
-        let modelTitle = sel.options[sel.selectedIndex].value;
-        // Change the model using sdAPIClient and render the form
-        sdAPIClient.changeModel(modelTitle).then(this.render(true));
-    }
+
 
     /**
      * Handles the lora toggle event.

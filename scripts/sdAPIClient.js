@@ -59,7 +59,7 @@ class SdAPIClient {
           console.error("Retrieved A1111 auto_url from settings:", a1111url);
           await this.attemptServerConnection(a1111url, "Stable Diffusion");
         } else {
-          console.error("Automatic1111 is not selected. Skipping connection attempt.");
+          console.warn("Automatic1111 is not selected. Skipping connection attempt.");
         }
       }
 
