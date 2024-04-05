@@ -41,15 +41,7 @@ const resolutionOptions = {
 const defaultSettings = {
     // Scheduler
     scheduler: 'normal',
-    // Image dimensions (Width & Height)
-    dimension_min: 64,
-    dimension_max: 2048,
-    dimension_step: 64,
-    width: 512,
-    height: 512,
 
-    prompt_prefix: defaultPrefix,
-    negative_prompt: defaultNegative,
     sampler: 'DDIM',
     model: '',
     vae: '',
@@ -66,8 +58,6 @@ const defaultSettings = {
     horde_nsfw: false,
     horde_karras: true,
     horde_sanitize: true,
-    horde_model: '',
-    horde_models: [],
 
     // Refine mode
     refine_mode: false,
@@ -123,8 +113,6 @@ const defaultSettings = {
     styles: [],
     loraPrompt: '',
     activeLoras: [],
-    activeModel: '',
-    models: {},
 };
 
 /**
@@ -149,23 +137,23 @@ export default function registerSettings() {
         default: "automatic1111",
         config: true,
         onChange: async (value) => {
-          const models = await fetchModels();
-          await game.settings.set("stable-images", "models", models);
+          const sdmodels = await fetchModels();
+          await game.settings.set("stable-images", "sdmodels", sdmodels);
         }
       });
 
     game.settings.register("stable-images", "cfgScale", {
-    name: "CFG Scale",
-    hint: "Set the CFG scale value",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-        min: 1,
-        max: 30,
-        step: 0.5
-    },
-    default: 1.5
+        name: "CFG Scale",
+        hint: "Set the CFG scale value",
+        scope: "world",
+        config: true,
+        type: Number,
+        range: {
+            min: 1,
+            max: 30,
+            step: 0.5
+        },
+        default: 1.5
     });
 
     game.settings.register("stable-images", "samplerSteps", {
@@ -183,22 +171,22 @@ export default function registerSettings() {
       });
 
     game.settings.register("stable-images", "promptPrefix", {
-    name: "Prompt Prefix",
-    hint: "Set the default prompt prefix",
-    scope: "world",
-    config: true,
-    type: String,
-    default: 'best quality, absurdres, aesthetic,'
+        name: "Prompt Prefix",
+        hint: "Set the default prompt prefix",
+        scope: "world",
+        config: true,
+        type: String,
+        default: 'best quality, absurdres, aesthetic,'
     });
 
     // Register the Negative Prompt setting
     game.settings.register("stable-images", "negativePrompt", {
-    name: "Negative Prompt",
-    hint: "Set the default negative prompt",
-    scope: "world",
-    config: true,
-    type: String,
-    default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
+        name: "Negative Prompt",
+        hint: "Set the default negative prompt",
+        scope: "world",
+        config: true,
+        type: String,
+        default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
     });
 
 
@@ -220,13 +208,14 @@ export default function registerSettings() {
         }
       });
 
-      game.settings.register("stable-images", "models", {
+      game.settings.register("stable-images", "sdmodels", {
         name: "Models",
         hint: "Available models based on the selected source",
         scope: "world",
-        type: Array,
-        default: [],
-        config: false
+        type: String,
+        choices: {},
+        default: "",
+        config: true
       });
 
     // Dynamically register settings based on defaultSettings
@@ -298,14 +287,20 @@ function determineSettingType(value) {
 
 async function fetchModels() {
     const selectedSource = game.settings.get('stable-images', 'source');
+    console.error("Selected source:", selectedSource);
+  
     const sourceHandlers = {
       automatic1111: async () => {
         const stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
         const modelsUrl = stIP + '/sdapi/v1/sd-models';
+        console.error("Fetching A1111 models from URL:", modelsUrl);
+  
         try {
           const response = await fetch(modelsUrl, { method: 'GET' });
           if (response.ok) {
-            return await response.json();
+            const data = await response.json();
+            console.error("A1111 models fetched successfully");
+            return data.map(model => ({ [model.title]: model.model_name }));
           } else {
             console.error("Error while fetching A1111 models:", response.statusText);
             ui.notifications.error("Error while fetching A1111 models");
@@ -315,6 +310,7 @@ async function fetchModels() {
           ui.notifications.error("Error while attempting to access the stable diffusion models; error = " + error);
         }
       },
+  
       'stableHorde': async () => {
         try {
           const hordeUrl = game.settings.get('stable-images', 'horde_url');
@@ -322,13 +318,24 @@ async function fetchModels() {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
           });
+          console.error("Fetching Stable Horde models from URL:", `${hordeUrl}/api/v2/status/models`);
+  
           if (response.ok) {
             const data = await response.json();
+            console.error("Stable Horde models fetched successfully");
+            console.error("Fetched models data:", data);
+          
             data.sort((a, b) => b.count - a.count);
-            return data.map(x => ({
-              value: x.name,
-              text: `${x.name} (ETA: ${x.eta}s, Queue: ${x.queued}, Workers: ${x.count})`
-            }));
+            console.error("Sorted models data:", data);
+          
+            const choices = data.reduce((choices, model) => {
+              choices[model.name] = `${model.name} (ETA: ${model.eta}s, Queue: ${model.queued}, Workers: ${model.count})`;
+              return choices;
+            }, {});
+          
+            console.error("Formatted choices object:", choices);
+          
+            return choices;
           } else {
             console.error("Error while fetching Horde models:", response.statusText);
             ui.notifications.error("Error while fetching Horde models");
@@ -338,16 +345,20 @@ async function fetchModels() {
           ui.notifications.error("Error while retrieving Horde models: " + error);
         }
       },
+  
       // Add more source handlers here as needed
     };
   
     const fetchHandler = sourceHandlers[selectedSource];
+    console.error("Fetch handler:", fetchHandler);
+  
     if (fetchHandler) {
+      console.error("Calling fetch handler for source:", selectedSource);
       return await fetchHandler();
     } else {
       console.error("Unsupported source:", selectedSource);
       ui.notifications.error("Unsupported source: " + selectedSource);
-      return [];
+      return {};
     }
   }
 
