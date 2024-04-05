@@ -14,7 +14,7 @@ class SdAPIClient {
          * Represents the connection status with the stable diffusion API.
          * @type {boolean}
          */
-        this.connexion = false;
+        this.connection = false;
 
         /**
          * Represents the settings for the stable diffusion API.
@@ -71,19 +71,19 @@ class SdAPIClient {
             if (response.ok) {
                 console.warn(`${serverName} server is accessible at:`, serverIp);
                 ui.notifications.notify(`${serverName} server is accessible.`);
-                await game.settings.set("stable-images", "connection", true);
-                this.connexion = true;
+                await game.settings.set("stable-images", "connected", true);
+                this.connection = true;
             } else {
                 console.error(`${serverName} server is not accessible: response code`, response.status, 'at IP:', serverIp);
                 ui.notifications.error(`${serverName} server is not accessible: response code: ${response.status}`);
-                await game.settings.set("stable-images", "connection", false);
-                this.connexion = false;
+                await game.settings.set("stable-images", "connected", false);
+                this.connection = false;
             }
         } catch (error) {
             console.error(`Error occurred while trying to access ${serverName} server at IP:`, serverIp, '; error =', error);
             ui.notifications.error(`Error occurred while trying to access ${serverName} server; error = ${error}`);
-            await game.settings.set("stable-images", "connection", false);
-            this.connexion = false;
+            await game.settings.set("stable-images", "connected", false);
+            this.connection = false;
         }
     }
 
@@ -92,7 +92,7 @@ class SdAPIClient {
      * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
      */
     async getLocalA1111Settings() {
-        if (!this.connexion) {
+        if (!this.connection) {
             console.warn("Stable Diffusion connection not established. Skipping API calls.");
             return;
         }

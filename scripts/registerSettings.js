@@ -142,6 +142,25 @@ export default function registerSettings() {
         }
       });
 
+    // Register the 'connected' Boolean setting to represent the connection status
+    game.settings.register("stable-images", "connected", {
+        name: "Connection Status",
+        scope: "world",
+        config: false, // Not visible in the UI
+        type: Boolean,
+        default: false
+    });
+
+    game.settings.register('stable-images', 'sdModels', {
+      scope: 'world',
+      config: true,
+      type: Object,
+      default: {
+          "activeModel": "",
+          "models": {},
+      }
+    });
+
     game.settings.register("stable-images", "cfgScale", {
         name: "CFG Scale",
         hint: "Set the CFG scale value",
@@ -217,6 +236,24 @@ export default function registerSettings() {
         default: "",
         config: true
       });
+
+      game.settings.register('stable-images', 'sdModels', {
+        scope: 'world',
+        config: false,
+        type: Object,
+        default: {
+            "activeModel": "",
+            "models": {}
+        },
+        /**
+         * Handles the onChange event for the stable-settings.
+         * Calls the getStableDiffusionSettings function from the sdAPIClient.
+         */
+        onChange: () => {
+            sdAPIClient.getLocalA1111Settings();
+        }
+    });
+
 
     // Dynamically register settings based on defaultSettings
     Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
@@ -299,7 +336,7 @@ async function fetchModels() {
           const response = await fetch(modelsUrl, { method: 'GET' });
           if (response.ok) {
             const data = await response.json();
-            console.error("A1111 models fetched successfully");
+            console.error("A1111 models fetched successfully", data);
             return data.map(model => ({ [model.title]: model.model_name }));
           } else {
             console.error("Error while fetching A1111 models:", response.statusText);

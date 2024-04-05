@@ -1,5 +1,4 @@
 import sdAPIClient from "./sdAPIClient.js";
-import { defaultSettings } from './registerSettings.js';
 
 /**
  * Represents the localA1111Settings class.
@@ -17,7 +16,7 @@ export default class localA1111Settings extends FormApplication {
          */
         this.loadingModel = false;
     }
-/**
+    /**
      * Retrieves the default options for the localA1111Settings class.
      * @returns {Object} - The default options
      */
@@ -37,19 +36,15 @@ export default class localA1111Settings extends FormApplication {
      * @returns {Object} - The data for the form
      */
     getData() {
-        // Get current settings or fallback to an empty object
-        let savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-
-        // Merge defaults with saved settings, with saved settings taking precedence
-        let context = mergeObject(defaultSettings, savedSettings);
-
-        context.loras = sdAPIClient.loras || [];
-        context.activeModel = sdAPIClient.sdOptions?.sd_model_checkpoint || "";
-        context.models = sdAPIClient.models || [];
-        context.styles = sdAPIClient.styles || [];
-        context.activeSampler = sdAPIClient.sdOptions?.sampler_name || "";
-        context.samplers = sdAPIClient.samplers || [];
-        context.activeLoras = context.activeLoras || [];
+        // Get the stable-settings from game settings
+        let context = game.settings.get('stable-images', 'stable-settings');
+        // Assign loras, activeModel, and models from sdAPIClient
+        context.loras = sdAPIClient.loras;
+        //context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
+        context.models = sdAPIClient.models;
+        context.styles = sdAPIClient.styles;
+        if (!context.activeLoras) { context.activeLoras = [] }
+        // Store the context
         this.context = context;
         return context;
     }
@@ -60,13 +55,14 @@ export default class localA1111Settings extends FormApplication {
      */
     activateListeners(html) {
         super.activateListeners(html);
-        console.error("Activating listeners for localA1111Settings form.");
         this.changeLoraPrompt()
 
 
         // Event listener for the choose-stable-storage button
         html.find('#choose-stable-storage').click(this.onChooseStableStorage.bind(this));
-        console.error("Listener for 'choose-stable-storage' button activated.");
+
+        // Event listener for the model change
+        html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
 
         // Event listeners for lora choices
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
@@ -77,13 +73,11 @@ export default class localA1111Settings extends FormApplication {
             }
             span.addEventListener('click', this.toggleLora.bind(this));
         }
-        console.error("Listeners for Lora choices activated.");
 
         // Event listeners for activeLora selections
         for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
             range.addEventListener('change', this.changeLoraPrompt.bind(this));
         }
-        console.error("Listeners for active Lora selections activated.");
     }
     /**
   * Opens the file picker dialog to choose a stable storage directory.
@@ -91,7 +85,6 @@ export default class localA1111Settings extends FormApplication {
   */
     async onChooseStableStorage(event) {
         event.preventDefault();
-        console.error("onChooseStableStorage event triggered.");
         // Open the file picker dialog
         const pickerOptions = {
             /**
@@ -109,14 +102,23 @@ export default class localA1111Settings extends FormApplication {
         };
         new FilePicker(pickerOptions).browse();
     }
-
+    /**
+     * Handles the model change event.
+     * @param {Event} ev - The event object
+     */
+    async changeModel(ev) {
+        ev.preventDefault();
+        let sel = ev.currentTarget;
+        let modelTitle = sel.options[sel.selectedIndex].value;
+        // Change the model using sdAPIClient and render the form
+        sdAPIClient.changeModel(modelTitle).then(this.render(true));
+    }
 
     /**
      * Handles the lora toggle event.
      * @param {Event} ev - The event object
      */
     async toggleLora(ev) {
-        console.error("toggleLora event triggered.");
         let loraAlias = ev.currentTarget.innerText;
         let lora = this.context.loras.find(l => l.alias === loraAlias);
         lora.value = 0;
@@ -145,7 +147,6 @@ export default class localA1111Settings extends FormApplication {
      * @param {Event} ev - The event object
      */
     async changeLoraPrompt() {
-        console.error("changeLoraPrompt event triggered.");
         //getting the form element
         let html = this.form;
         //initiating the prompt string for loras
@@ -180,7 +181,6 @@ export default class localA1111Settings extends FormApplication {
      * @param {Object} formData - The form data
      */
     _updateObject(event, formData) {
-        console.error("_updateObject event triggered.");
         const data = { ...this.context, ...expandObject(formData) };
         // Update the stable-settings in game settings
         game.settings.set('stable-images', 'stable-settings', data);
