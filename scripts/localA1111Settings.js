@@ -1,4 +1,4 @@
-import sdAPIClient from "./sdAPIClient.js";
+import sdAPIClient from "./localA1111APIClient.js";
 import { defaultSettings } from './registerSettings.js';
 
 /**
