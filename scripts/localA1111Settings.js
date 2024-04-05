@@ -36,8 +36,10 @@ export default class localA1111Settings extends FormApplication {
      * @returns {Object} - The data for the form
      */
     getData() {
+        
         // Get the stable-settings from game settings
         let context = game.settings.get('stable-images', 'stable-settings');
+        context.source = game.settings.get("stable-images", "source");
         // Assign loras, activeModel, and models from sdAPIClient
         context.loras = sdAPIClient.loras;
         //context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
@@ -78,6 +80,12 @@ export default class localA1111Settings extends FormApplication {
         for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
             range.addEventListener('change', this.changeLoraPrompt.bind(this));
         }
+
+        // Add event listener for source selection change
+        html.find('select[name="source"]').on("change", async (event) => {
+            await game.settings.set("stable-images", "source", event.target.value);
+            this.render();
+        });
     }
     /**
   * Opens the file picker dialog to choose a stable storage directory.

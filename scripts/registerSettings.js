@@ -2,6 +2,7 @@ import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
+import SourceSettings from "./SourceSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
@@ -124,25 +125,34 @@ const defaultSettings = {
 
 
 export default function registerSettings() {
+    // Register menus
+    game.settings.registerMenu("stable-images", "source-menu", {
+      name: "Source",
+      label: "Source",
+      icon: "fas fa-cog",
+      type: SourceSettings,
+      restricted: true
+    });
 
-    game.settings.register("stable-images", "source", {
-        name: "Source",
-        hint: "Select the source for image generation",
-        scope: "world",
-        type: String,
-        choices: {
-          "stableHorde": "Stable Horde",
-          "automatic1111": "Stable Diffusion Web UI (AUTOMATIC1111)"
-        },
-        default: "automatic1111",
-        config: true,
-        onChange: async (value) => {
-          const sdmodels = await fetchModels();
-          await game.settings.set("stable-images", "sdmodels", sdmodels);
-        }
-      });
+    game.settings.registerMenu("stable-images", "stable-image-menu", {
+      name: "Local A1111 Images Settings",
+      label: "Local A1111 Images Settings",
+      hint: "A window to set parameters for A1111 image generation.",
+      icon: "fas fa-images",
+      type: localA1111Settings,
+      restricted: true
+    });
 
-    // Register the 'connected' Boolean setting to represent the connection status
+    game.settings.registerMenu('stable-images', 'aihorde-settings', {
+      name: 'AI Horde Settings',
+      label: 'AI Horde Settings',
+      hint: 'Configure the connection to the AI Horde API.',
+      icon: 'fas fa-cog',
+      type: AiHordeSettings,
+      restricted: true,
+    });
+
+    // Register non-configurable settings
     game.settings.register("stable-images", "connected", {
         name: "Connection Status",
         scope: "world",
@@ -151,6 +161,15 @@ export default function registerSettings() {
         default: false
     });
 
+    game.settings.register("stable-images", "source", {
+      name: "Source",
+      scope: "world",
+      type: String,
+      default: "automatic1111",
+      config: false,
+    });
+
+    // Register main configuration page options
     game.settings.register("stable-images", "cfgScale", {
         name: "CFG Scale",
         hint: "Set the CFG scale value",
@@ -177,7 +196,7 @@ export default function registerSettings() {
           step: 1
         },
         default: 20
-      });
+    });
 
     game.settings.register("stable-images", "promptPrefix", {
         name: "Prompt Prefix",
@@ -188,7 +207,6 @@ export default function registerSettings() {
         default: 'best quality, absurdres, aesthetic,'
     });
 
-    // Register the Negative Prompt setting
     game.settings.register("stable-images", "negativePrompt", {
         name: "Negative Prompt",
         hint: "Set the default negative prompt",
@@ -198,24 +216,23 @@ export default function registerSettings() {
         default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
     });
 
-
-      game.settings.register("stable-images", "resolutionOptions", {
-        name: "Resolution Options",
-        hint: "Select a predefined resolution",
-        scope: "world",
-        config: true,
-        type: String,
-        choices: Object.keys(resolutionOptions).reduce((choices, key) => {
-          choices[key] = resolutionOptions[key].name;
-          return choices;
-        }, {}),
-        default: "sd_res_512x512",
-        onChange: value => {
-          const selectedResolution = resolutionOptions[value];
-          game.settings.set("stable-images", "sdwidth", selectedResolution.width);
-          game.settings.set("stable-images", "sdheight", selectedResolution.height);
-        }
-      });
+    game.settings.register("stable-images", "resolutionOptions", {
+      name: "Resolution Options",
+      hint: "Select a predefined resolution",
+      scope: "world",
+      config: true,
+      type: String,
+      choices: Object.keys(resolutionOptions).reduce((choices, key) => {
+        choices[key] = resolutionOptions[key].name;
+        return choices;
+      }, {}),
+      default: "sd_res_512x512",
+      onChange: value => {
+        const selectedResolution = resolutionOptions[value];
+        game.settings.set("stable-images", "sdwidth", selectedResolution.width);
+        game.settings.set("stable-images", "sdheight", selectedResolution.height);
+      }
+    });
 
     // Dynamically register settings based on defaultSettings
     Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
@@ -230,24 +247,6 @@ export default function registerSettings() {
         });
     });
 
-    // Register menus
-    game.settings.registerMenu("stable-images", "stable-image-menu", {
-        name: "Local A1111 Images Settings",
-        label: "Local A1111 Images Settings",
-        hint: "A window to set parameters for A1111 image generation.",
-        icon: "fas fa-images",
-        type: localA1111Settings,
-        restricted: true
-    });
-
-    game.settings.registerMenu('stable-images', 'aihorde-settings', {
-        name: 'AI Horde Settings',
-        label: 'AI Horde Settings',
-        hint: 'Configure the connection to the AI Horde API.',
-        icon: 'fas fa-cog',
-        type: AiHordeSettings,
-        restricted: true,
-    });
 
     // Register stable-settings
     game.settings.register('stable-images', 'stable-settings', {

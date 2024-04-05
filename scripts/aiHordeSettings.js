@@ -20,14 +20,15 @@ export default class AiHordeSettings extends FormApplication {
     async getData() {
         const savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
         console.error("savedSettings:", savedSettings);
-
+      
         const samplers = await this.loadHordeSamplers();
-
+      
         // Merge defaults with saved settings, with saved settings taking precedence
         const context = mergeObject(defaultSettings, savedSettings);
+        context.source = game.settings.get("stable-images", "source");
         this.context = context;
         return context;
-    }
+      }
 
     /**
      * Load Horde samplers.
@@ -44,7 +45,13 @@ export default class AiHordeSettings extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         html.find('[name="horde_nsfw"]').change(event => this.onToggleChange(event));
-    }
+      
+        // Add event listener for source selection change
+        html.find('select[name="source"]').on("change", async (event) => {
+          await game.settings.set("stable-images", "source", event.target.value);
+          this.render();
+        });
+      }
 
     /**
      * Handle toggle change event.
