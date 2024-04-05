@@ -1,66 +1,73 @@
 <form autocomplete="on">
   <div class="sheet-body flexrow">
     <section>
-                    <h2>AI HORDE TOGGLES</h2>
-                    <div class="form-group">
-                    <label>Allow NSFW?</label>
-                    <div class="form-fields">
-                        <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}>
-                        <p class="notes">Allow NSFW images from Horde</p>
-                    </div>
-                    </div>
-                    <div class="form-group">
-                    <label>Sanitize prompts?</label>
-                    <div class="form-fields">
-                        <input type="checkbox" name="horde_sanitize" data-dtype="Boolean" {{#if horde_sanitize}}checked{{/if}}>
-                        <p class="notes">(recommended)</p>
-                    </div>
-                    </div>
-                    <div class="form-group">
-                    <label>Karras</label>
-                    <div class="form-fields">
-                        <input type="checkbox" name="horde_karras" data-dtype="Boolean" {{#if horde_karras}}checked{{/if}}>
-                        <p class="notes">(not all samplers supported)</p>
-                    </div>
-                    </div>
-                </div>
-            <div class="samplers">
-                <h2>SAMPLERS</h2>
-                <select id="sampler-select" name="horde_sampler">
-                    <option value="k_euler">k_euler</option>
-                </select>
-            </div>
-            <h2>IMAGES</h2>
-            <div class="form-group">
-                <label>denoising_strength</label>
-                <div class="form-fields">
-                    <input type="range" name="denoising_strength" data-dtype="Number"
-                        value="{{denoising_strength}}" min="0.1" max="1" step="0.05">
-                    <span class="range-value">{{denoising_strength}}</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Restore Faces</label>
-                <div class="form-fields">
-                    <input type="checkbox" name="restore_faces" data-dtype="Boolean" {{#if restore_faces}}checked{{/if}}>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Hires. Fix</label>
-                <div class="form-fields">
-                    <input type="checkbox" name="enable_hr" data-dtype="Boolean" {{#if enable_hr}}checked{{/if}}>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <div class="sheet-footer">
-        <button type="submit">
-            <i class="far fa-save"></i>
-            {{ localize "Submit"}}
-
-        </button>
-    </div>
-
+      {{#if (eq source "stableHorde")}}
+        <h2>AI HORDE TOGGLES</h2>
+        <div class="form-group">
+          <label>Allow NSFW?</label>
+          <div class="form-fields">
+            <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}>
+            <p class="notes">Allow NSFW images from Horde</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Sanitize prompts?</label>
+          <div class="form-fields">
+            <input type="checkbox" name="horde_sanitize" data-dtype="Boolean" {{#if horde_sanitize}}checked{{/if}}>
+            <p class="notes">(recommended)</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Karras</label>
+          <div class="form-fields">
+            <input type="checkbox" name="horde_karras" data-dtype="Boolean" {{#if horde_karras}}checked{{/if}}>
+            <p class="notes">(not all samplers supported)</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Model</label>
+          <div class="form-fields">
+            <select name="horde_model">
+              {{#select horde_model}}
+                {{#each horde_models}}
+                  <option value="{{this.value}}">{{this.text}}</option>
+                {{/each}}
+              {{/select}}
+            </select>
+          </div>
+        </div>
+        <div class="samplers">
+          <h2>SAMPLERS</h2>
+          <select id="sampler-select" name="horde_sampler">
+            <option value="k_euler">k_euler</option>
+          </select>
+        </div>
+        <h2>IMAGES</h2>
+        <div class="form-group">
+          <label>Denoising Strength</label>
+          <div class="form-fields">
+            <input type="range" name="denoising_strength" data-dtype="Number" value="{{denoising_strength}}" min="0.1" max="1" step="0.05">
+            <span class="range-value">{{denoising_strength}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Restore Faces</label>
+          <div class="form-fields">
+            <input type="checkbox" name="restore_faces" data-dtype="Boolean" {{#if restore_faces}}checked{{/if}}>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Hires. Fix</label>
+          <div class="form-fields">
+            <input type="checkbox" name="enable_hr" data-dtype="Boolean" {{#if enable_hr}}checked{{/if}}>
+          </div>
+        </div>
+      {{/if}}
+    </section>
+  </div>
+  <div class="sheet-footer">
+    <button type="submit">
+      <i class="far fa-save"></i> {{ localize "Submit"}}
+    </button>
+  </div>
 </form>

@@ -59,6 +59,8 @@ const defaultSettings = {
     horde_nsfw: false,
     horde_karras: true,
     horde_sanitize: true,
+    horde_model: '',
+    horde_models: [],
 
     // Refine mode
     refine_mode: false,
@@ -165,7 +167,7 @@ export default function registerSettings() {
       name: "Source",
       scope: "world",
       type: String,
-      default: "automatic1111",
+      default: "stableHorde",
       config: false,
     });
 
