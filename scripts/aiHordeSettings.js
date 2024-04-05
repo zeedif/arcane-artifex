@@ -1,4 +1,4 @@
-import { defaultSettings, resolutionOptions } from './registerSettings.js';
+import { defaultSettings } from './registerSettings.js';
 
 export default class AiHordeSettings extends FormApplication {
     static get defaultOptions() {
@@ -25,7 +25,6 @@ export default class AiHordeSettings extends FormApplication {
 
         // Merge defaults with saved settings, with saved settings taking precedence
         const context = mergeObject(defaultSettings, savedSettings);
-        context.resolutionOptions = resolutionOptions;
         context.horde_models = horde_models;
         context.horde_model = horde_model;
 

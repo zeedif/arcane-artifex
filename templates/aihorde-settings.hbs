@@ -4,8 +4,8 @@
             <div class="source">
                 <h2>SOURCE</h2>
                 <select id="source-dropdown" name="source">
-                    {{#each defaultSettings.SOURCE_OPTIONS}}
-                        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                    {{#each SOURCE_OPTIONS}}
+                    <option value="{{value}}">{{label}}</option>
                     {{/each}}
                 </select>
             <div class="source">
@@ -77,7 +77,7 @@
                 <label>Resolution</label>
                 <div class="form-fields">
                     <select name="sd_resolution">
-                        {{#each defaultSettings.resolutionOptions}}
+                        {{#each resolutionOptions}}
                             <option value="{{@key}}" {{#if (eq @key ../../sd_resolution)}}selected{{/if}}>{{this.name}}</option>
                         {{/each}}
                     </select>
