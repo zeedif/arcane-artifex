@@ -73,6 +73,7 @@ class SdAPIClient {
                 ui.notifications.notify(`${serverName} server is accessible.`);
                 await game.settings.set("stable-images", "connected", true);
                 this.connection = true;
+                this.getLocalA1111Settings();
             } else {
                 console.error(`${serverName} server is not accessible: response code`, response.status, 'at IP:', serverIp);
                 ui.notifications.error(`${serverName} server is not accessible: response code: ${response.status}`);
@@ -93,28 +94,39 @@ class SdAPIClient {
      */
     async getLocalA1111Settings() {
         if (!this.connection) {
-            console.warn("Stable Diffusion connection not established. Skipping API calls.");
-            return;
+          console.error("Stable Diffusion connection not established. Skipping API calls.");
+          return;
         }
-    
+      
+        console.error("Fetching Loras, etc.");
         await this.getLoras();
         await this.getModels();
         await this.getStyles();
         await this.getSdOptions();
         await this.getSamplers();
+      
         this.settings = game.settings.get("stable-images", "stable-settings");
+        console.error("Settings:", this.settings);
+      
         this.defaultRequestBody = {
-            prompt: this.settings['prompt_prefix'],
-            seed: -1,
-            height: this.settings.height,
-            width: this.settings.width,
-            negative_prompt: this.settings['negative_prompt'],
-            n_iter: this.settings.batchCount,
-            restore_faces: this.settings.restore_faces,
-//            steps: this.settings.steps,
-            cfg_scale: this.settings.scale
+          prompt: this.settings['prompt_prefix'],
+          seed: -1,
+          height: this.settings.height,
+          width: this.settings.width,
+          negative_prompt: this.settings['negative_prompt'],
+          n_iter: this.settings.batchCount,
+          restore_faces: this.settings.restore_faces,
+          // steps: this.settings.steps,
+          cfg_scale: this.settings.scale
         };
-    }
+        console.error("Default Request Body:", this.defaultRequestBody);
+      
+        console.error("Loras:", this.loras);
+        console.error("Models:", this.models);
+        console.error("Styles:", this.styles);
+        console.error("SD Options:", this.sdOptions);
+        console.error("Samplers:", this.samplers);
+      }
 
     /**
      * Retrieves the list of loras from the stable diffusion API.
