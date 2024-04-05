@@ -44,14 +44,6 @@
             </div>
             <h2>PROMPTS</h2>
             <div class="form-group">
-                <label>CFG SCALE</label>
-                <div class="form-fields">
-                    <input type="range" name="scale" data-dtype="Number"
-                        value="{{scale}}" min="{{scale_min}}" max="{{scale_max}}" step="{{scale_step}}">
-                    <span class="range-value">{{scale}}</span>
-                </div>
-            </div>
-            <div class="form-group">
                 <label>prompt_prefix</label>
                 <div class="form-fields">
                     <textarea name="prompt_prefix">{{prompt_prefix}}</textarea>
@@ -75,14 +67,6 @@
                     </select>
                 </div>
                 <p class="notes">Select the resolution for the generated image</p>
-            </div>
-            <div class="form-group">
-                <label>sampling steps</label>
-                <div class="form-fields">
-                    <input type="range" name="steps" data-dtype="Number"
-                        value="{{steps}}" min="1" max="80" step="1">
-                    <span class="range-value">{{steps}}</span>
-                </div>
             </div>
             <div class="form-group">
                 <label>denoising_strength</label>

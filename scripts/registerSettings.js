@@ -17,17 +17,6 @@ const defaultStyles = [
 const promptTemplates = {};
 
 const defaultSettings = {
-    // CFG Scale
-    scale_min: 1,
-    scale_max: 30,
-    scale_step: 0.5,
-    scale: 7,
-    // Sampler steps
-    steps_min: 1,
-    steps_max: 150,
-    steps_step: 1,
-    steps: 20,
-
     // Scheduler
     scheduler: 'normal',
     // Image dimensions (Width & Height)
@@ -160,6 +149,34 @@ export default function registerSettings() {
         },
         default: "automatic1111",
         config: true
+      });
+
+    game.settings.register("stable-images", "cfgScale", {
+    name: "CFG Scale",
+    hint: "Set the CFG scale value",
+    scope: "world",
+    config: true,
+    type: Number,
+    range: {
+        min: 1,
+        max: 30,
+        step: 0.5
+    },
+    default: 1.5
+    });
+
+    game.settings.register("stable-images", "samplerSteps", {
+        name: "Sampler Steps",
+        hint: "Set the number of sampler steps",
+        scope: "world",
+        config: true,
+        type: Number,
+        range: {
+          min: 1,
+          max: 150,
+          step: 1
+        },
+        default: 20
       });
 
 

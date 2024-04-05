@@ -89,16 +89,6 @@
         <section class="commons">
             <h2>PROMPTS</h2>
             <div class="form-group">
-                <label>CFG SCALE</label>
-                <div class="form-fields">
-                    <input type="range" name="scale" data-dtype="Number"
-                        value="{{scale}}" min="{{scale_min}}" max="{{scale_max}}" step="{{scale_step}}">
-                    <span class="range-value">{{scale}}</span>
-                </div>
-                <p class="notes">How strongly the image should conform to your
-                    prompt</p>
-            </div>
-            <div class="form-group">
                 <label>prompt_prefix</label>
                 <div class="form-fields">
                     <textarea name="prompt_prefix">{{prompt_prefix}}</textarea>
@@ -146,15 +136,6 @@
                     <span class="range-value">{{batchCount}}</span>
                 </div>
                 <p class="notes">how many batches image to create</p>
-            </div>
-            <div class="form-group">
-                <label>sampling steps</label>
-                <div class="form-fields">
-                    <input type="range" name="steps" data-dtype="Number"
-                        value="{{steps}}" min="1" max="80" step="1">
-                    <span class="range-value">{{steps}}</span>
-                </div>
-                <p class="notes">numbers of iterations for image generation</p>
             </div>
             <div class="form-group">
                 <label>variations </label>
