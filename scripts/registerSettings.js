@@ -151,16 +151,6 @@ export default function registerSettings() {
         default: false
     });
 
-    game.settings.register('stable-images', 'sdModels', {
-      scope: 'world',
-      config: true,
-      type: Object,
-      default: {
-          "activeModel": "",
-          "models": {},
-      }
-    });
-
     game.settings.register("stable-images", "cfgScale", {
         name: "CFG Scale",
         hint: "Set the CFG scale value",
@@ -209,7 +199,7 @@ export default function registerSettings() {
     });
 
 
-    game.settings.register("stable-images", "resolutionOptions", {
+      game.settings.register("stable-images", "resolutionOptions", {
         name: "Resolution Options",
         hint: "Select a predefined resolution",
         scope: "world",
@@ -226,34 +216,6 @@ export default function registerSettings() {
           game.settings.set("stable-images", "sdheight", selectedResolution.height);
         }
       });
-
-      game.settings.register("stable-images", "sdmodels", {
-        name: "Models",
-        hint: "Available models based on the selected source",
-        scope: "world",
-        type: String,
-        choices: {},
-        default: "",
-        config: true
-      });
-
-      game.settings.register('stable-images', 'sdModels', {
-        scope: 'world',
-        config: false,
-        type: Object,
-        default: {
-            "activeModel": "",
-            "models": {}
-        },
-        /**
-         * Handles the onChange event for the stable-settings.
-         * Calls the getStableDiffusionSettings function from the sdAPIClient.
-         */
-        onChange: () => {
-            sdAPIClient.getLocalA1111Settings();
-        }
-    });
-
 
     // Dynamically register settings based on defaultSettings
     Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
