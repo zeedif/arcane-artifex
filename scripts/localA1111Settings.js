@@ -59,10 +59,6 @@ export default class localA1111Settings extends FormApplication {
         super.activateListeners(html);
         this.changeLoraPrompt()
 
-
-        // Event listener for the choose-stable-storage button
-        html.find('#choose-stable-storage').click(this.onChooseStableStorage.bind(this));
-
         // Event listener for the model change
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
 

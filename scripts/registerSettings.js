@@ -46,10 +46,7 @@ const defaultSettings = {
     sampler: 'DDIM',
     model: '',
     vae: '',
-    
-    // Automatic1111/Horde exclusives
-    restore_faces: false,
-    enable_hr: false,
+
 
     sd_resolution: 'sd_res_512x512',
 
@@ -83,10 +80,7 @@ const defaultSettings = {
     hr_scale_min: 1.0,
     hr_scale_max: 4.0,
     hr_scale_step: 0.1,
-    denoising_strength: 0.7,
-    denoising_strength_min: 0.0,
-    denoising_strength_max: 1.0,
-    denoising_strength_step: 0.01,
+
     hr_second_pass_steps: 0,
     hr_second_pass_steps_min: 0,
     hr_second_pass_steps_max: 150,
@@ -129,8 +123,8 @@ const defaultSettings = {
 export default function registerSettings() {
     // Register menus
     game.settings.registerMenu("stable-images", "source-menu", {
-      name: "Source",
-      label: "Source",
+      name: "Image Generation Source",
+      label: "Image Generation Source",
       icon: "fas fa-cog",
       type: SourceSettings,
       restricted: true
@@ -139,7 +133,6 @@ export default function registerSettings() {
     game.settings.registerMenu("stable-images", "stable-image-menu", {
       name: "Local A1111 Images Settings",
       label: "Local A1111 Images Settings",
-      hint: "A window to set parameters for A1111 image generation.",
       icon: "fas fa-images",
       type: localA1111Settings,
       restricted: true
@@ -148,7 +141,6 @@ export default function registerSettings() {
     game.settings.registerMenu('stable-images', 'aihorde-settings', {
       name: 'AI Horde Settings',
       label: 'AI Horde Settings',
-      hint: 'Configure the connection to the AI Horde API.',
       icon: 'fas fa-cog',
       type: AiHordeSettings,
       restricted: true,
@@ -172,6 +164,17 @@ export default function registerSettings() {
     });
 
     // Register main configuration page options
+
+    game.settings.register("stable-images", "stableStoragePath", {
+      name: "Storage Path",
+      hint: "Set the path for storing generated images",
+      scope: "world",
+      config: true,
+      type: String,
+      default: "",
+      filePicker: "folder"
+    });
+    
     game.settings.register("stable-images", "cfgScale", {
         name: "CFG Scale",
         hint: "Set the CFG scale value",
@@ -235,6 +238,36 @@ export default function registerSettings() {
         game.settings.set("stable-images", "sdheight", selectedResolution.height);
       }
     });
+
+    game.settings.register("stable-images", "restoreFaces", {
+      name: "Restore Faces",
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: true
+    });
+
+    game.settings.register("stable-images", "enableHr", {
+      name: "Hires. Fix",
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: true
+    });
+
+    game.settings.register("stable-images", "denoisingStrength", {
+      name: "Hires. Fix Denoising Strength",
+      hint: "How strongly the upscaler effects image generation",
+      scope: "world",
+      config: true,
+      type: Number,
+      range: {
+          min: 0.0,
+          max: 1.0,
+          step: 0.01
+      },
+      default: 0.7
+  });
 
     // Dynamically register settings based on defaultSettings
     Object.entries(defaultSettings).forEach(([key, defaultValue]) => {

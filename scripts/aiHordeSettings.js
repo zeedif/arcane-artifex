@@ -28,7 +28,10 @@ export default class AiHordeSettings extends FormApplication {
         const context = mergeObject(defaultSettings, savedSettings);
         context.horde_models = horde_models;
         context.horde_model = horde_model;
+        context.horde_sampler = savedSettings.horde_sampler || 'k_euler'; // Default to 'k_euler' if not set
+        context.samplers = await this.loadHordeSamplers();
         context.source = game.settings.get("stable-images", "source");
+      
       
         this.context = context;
         return context;
@@ -80,9 +83,21 @@ export default class AiHordeSettings extends FormApplication {
      * @returns {Promise<Array>} An array of sampler objects.
      */
     async loadHordeSamplers() {
-        return [{ name: 'k_euler' }];
-    }
-
+        return [
+          { name: 'k_lms' },
+          { name: 'k_heun' },
+          { name: 'k_euler' },
+          { name: 'k_dpm_2' },
+          { name: 'k_dpm_2_a' },
+          { name: 'DDIM' },
+          { name: 'PLMS' },
+          { name: 'k_dpm_fast' },
+          { name: 'k_dpm_adaptive' },
+          { name: 'k_dpmpp_2s_a' },
+          { name: 'k_dpmpp_2m' },
+          { name: 'dpmsolver' }
+        ];
+      }
     /**
      * Activate form listeners.
      * @param {JQuery} html - The form HTML.
