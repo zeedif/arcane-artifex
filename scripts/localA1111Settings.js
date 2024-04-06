@@ -40,7 +40,7 @@ export default class localA1111Settings extends FormApplication {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
         context.a1111Sampler = game.settings.get("stable-images", "a1111Sampler");
-        console.error("Context before adding data:", context);
+        console.log("Context before adding data:", context);
     
         // Assign loras, activeModel, and models from sdAPIClient
         context.loras = sdAPIClient.loras;
@@ -49,11 +49,11 @@ export default class localA1111Settings extends FormApplication {
         context.styles = sdAPIClient.styles;
         if (!context.activeLoras) { context.activeLoras = [] }
     
-        console.error("sdAPIClient.loras:", sdAPIClient.loras);
-        console.error("sdAPIClient.models:", sdAPIClient.models);
-        console.error("sdAPIClient.styles:", sdAPIClient.styles);
+        console.log("sdAPIClient.loras:", sdAPIClient.loras);
+        console.log("sdAPIClient.models:", sdAPIClient.models);
+        console.log("sdAPIClient.styles:", sdAPIClient.styles);
     
-        console.error("Context after adding data:", context);
+        console.log("Context after adding data:", context);
     
         // Store the context
         this.context = context;

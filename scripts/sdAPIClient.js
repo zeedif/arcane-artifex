@@ -114,7 +114,7 @@ class SdAPIClient {
         console.log("Default Request Body:", this.defaultRequestBody);
 
         console.log("SD Options:", this.sdOptions);
-        console.error("Samplers:", this.samplers);
+        console.log("Samplers:", this.samplers);
       }
 
     /**
