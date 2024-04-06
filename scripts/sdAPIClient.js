@@ -11,12 +11,6 @@ class SdAPIClient {
      */
     constructor() {
         /**
-         * Represents the connection status with the stable diffusion API.
-         * @type {boolean}
-         */
-        this.connection = false;
-
-        /**
          * Represents the settings for the stable diffusion API.
          * @type {Object}
          */
@@ -58,7 +52,7 @@ class SdAPIClient {
           
           try {
             const response =await fetch(statusUrl, { method: 'HEAD' });
-            console.error("response:", response);
+            console.log("response:", response);
             if (response.ok) {
               console.log('A1111 server is accessible at:', a1111url);
               ui.notifications.info('A1111 server is accessible.');
@@ -77,7 +71,7 @@ class SdAPIClient {
               await game.settings.set("stable-images", "connected", false);
           }
         } else {
-          console.error("Local A1111 is not selected. Skipping Local A1111 status check.");
+          console.warn("Local A1111 is not selected. Skipping Local A1111 status check.");
           // Optionally, you could return a message or handle the skipped check appropriately
           return 'Local A1111 is not selected. Skipping Local A1111 status check.';
         }
@@ -92,11 +86,10 @@ class SdAPIClient {
         const connection = game.settings.get('stable-images', 'connected');
 
         if (!connection) {
-          console.error("Stable Diffusion connection not established. Skipping API calls.");
+          console.warn("Stable Diffusion connection not established. Skipping API calls.");
           return;
         }
       
-        console.error("Fetching Loras, etc.");
         await this.getLoras();
         await this.getModels();
         await this.getStyles();
@@ -104,7 +97,7 @@ class SdAPIClient {
         await this.getSamplers();
       
         this.settings = game.settings.get("stable-images", "stable-settings");
-        console.error("Settings:", this.settings);
+        console.log("Settings:", this.settings);
       
         this.defaultRequestBody = {
           prompt: game.settings.get("stable-images", "promptPrefix"),
@@ -117,12 +110,9 @@ class SdAPIClient {
           steps: game.settings.get("stable-images", "samplerSteps"),
           cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
-        console.error("Default Request Body:", this.defaultRequestBody);
-      
-        console.error("Loras:", this.loras);
-        console.error("Models:", this.models);
-        console.error("Styles:", this.styles);
-        console.error("SD Options:", this.sdOptions);
+        console.log("Default Request Body:", this.defaultRequestBody);
+
+        console.log("SD Options:", this.sdOptions);
         console.error("Samplers:", this.samplers);
       }
 
@@ -142,7 +132,6 @@ class SdAPIClient {
             }
         } catch (error) {
             console.error('Error while attempting to access the stable diffusion loras:', error);
-            ui.notifications.error('Error while attempting to access the stable diffusion loras; error = ' + error);
         }
     }
     async getStyles() {
@@ -158,7 +147,6 @@ class SdAPIClient {
             }
         } catch (error) {
             console.error('Error while attempting to access the stable diffusion styles:', error);
-            ui.notifications.error('Error while attempting to access the stable diffusion styles; error = ' + error);
         }
     }
 
@@ -178,7 +166,6 @@ class SdAPIClient {
             }
         } catch (error) {
             console.error("Error while attempting to access the stable diffusion models:", error);
-            ui.notifications.error("Error while attempting to access the stable diffusion models; error = " + error);
         }
     }
 
@@ -198,7 +185,6 @@ class SdAPIClient {
             }
         } catch (error) {
             console.error("Error while attempting to access the stable diffusion options:", error);
-            ui.notifications.error("Error while attempting to access the stable diffusion options; error = " + error);
         }
     }
     async getSamplers() {
