@@ -11,12 +11,6 @@ class SdAPIClient {
      */
     constructor() {
         /**
-         * Represents the connection status with the stable diffusion API.
-         * @type {boolean}
-         */
-        this.connection = false;
-        
-        /**
          * Represents the settings for the stable diffusion API.
          * @type {Object}
          */
@@ -63,7 +57,6 @@ class SdAPIClient {
               console.log('A1111 server is accessible at:', a1111url);
               ui.notifications.info('A1111 server is accessible.');
               await game.settings.set("stable-images", "connected", true);
-              this.connection = true;
               this.getLocalA1111Settings();
               return 'A1111 API is accessible.';
             } else {

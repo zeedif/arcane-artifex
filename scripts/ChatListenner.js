@@ -257,7 +257,7 @@ class StableImagesChatListenner {
      */
     async getPromptCommand(message) {
         // Check if the user is a GM and the stable-images connection is enabled
-        if (!game.user.isGM || !sdAPIClient.connection) { return; }
+        if (!game.user.isGM || !game.settings.get('stable-images', 'connected')) { return; }
         // Check if the message content starts with ":sd: "
         if (message.content.startsWith(":sd: ")) {
             // Extract the prompt from the message content
