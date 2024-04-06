@@ -69,11 +69,7 @@ const defaultSettings = {
     prompts: promptTemplates,
     
     // AUTOMATIC1111 settings
-    auto_url: 'http://localhost:7860',
-    auto_auth: '',
 
-    vlad_url: 'http://localhost:7860',
-    vlad_auth: '',
 
     hr_upscaler: 'Latent',
     hr_scale: 2.0,
@@ -163,6 +159,21 @@ export default function registerSettings() {
       config: false,
     });
 
+    game.settings.register("stable-images", "auto_url", {
+      name: "auto_url",
+      scope: "world",
+      type: String,
+      default: "http://localhost:7860",
+      config: false,
+    });
+
+    game.settings.register("stable-images", "horde_url", {
+      name: "auto_url",
+      scope: "world",
+      type: String,
+      default: "https://stablehorde.net",
+      config: false,
+    });
 
     game.settings.register("stable-images", "sdwidth", {
       name: "Image Width",
@@ -341,7 +352,7 @@ async function fetchModels() {
   
     const sourceHandlers = {
       automatic1111: async () => {
-        const stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        const stIP = await game.settings.get("stable-images", "auto_url");
         const modelsUrl = stIP + '/sdapi/v1/sd-models';
         console.error("Fetching A1111 models from URL:", modelsUrl);
   

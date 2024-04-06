@@ -40,7 +40,7 @@ export default class AiHordeSettings extends FormApplication {
 
     async loadHordeModels() {
         try {
-            const hordeUrl = defaultSettings.horde_url;
+            const hordeUrl = game.settings.get('stable-images', 'horde_url');
             const response = await fetch(`${hordeUrl}/api/v2/status/models`, {
             method: 'GET',
             headers: {

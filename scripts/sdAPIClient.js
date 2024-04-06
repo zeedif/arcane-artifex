@@ -130,7 +130,7 @@ class SdAPIClient {
      * Retrieves the list of loras from the stable diffusion API.
      */
     async getLoras() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let stIP = await game.settings.get("stable-images", "auto_url");
         let lorasUrl = stIP + '/sdapi/v1/loras';
         try {
             // Send a GET request to the server
@@ -146,7 +146,7 @@ class SdAPIClient {
         }
     }
     async getStyles() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let stIP = await game.settings.get("stable-images", "auto_url");
         let styleUrl = stIP + '/sdapi/v1/prompt-styles';
         try {
             // Send a GET request to the server
@@ -166,7 +166,7 @@ class SdAPIClient {
      * Retrieves the list of models from the stable diffusion API.
      */
     async getModels() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let stIP = await game.settings.get("stable-images", "auto_url");
         let modelsUrl = stIP + '/sdapi/v1/sd-models';
         try {
             // Send a GET request to the server
@@ -186,7 +186,7 @@ class SdAPIClient {
      * Retrieves the stable diffusion options from the stable diffusion API.
      */
     async getSdOptions() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let stIP = await game.settings.get("stable-images", "auto_url");
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
             // Send a GET request to the server
@@ -202,7 +202,7 @@ class SdAPIClient {
         }
     }
     async getSamplers() {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let stIP = await game.settings.get("stable-images", "auto_url");
         let samplersUrl = stIP + '/sdapi/v1/samplers';
         try {
             const response = await fetch(samplersUrl, { method: 'GET' });
@@ -220,7 +220,7 @@ class SdAPIClient {
     
     
     postSkip() {
-        let apiUrl = game.settings.get("stable-images", "stable-settings")["auto_url"] + '/sdapi/v1/skip';
+        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/skip';
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -243,7 +243,7 @@ class SdAPIClient {
         }
     }
     postInterrupt() {
-        let apiUrl = game.settings.get("stable-images", "stable-settings")["auto_url"] + '/sdapi/v1/interrupt';
+        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/interrupt';
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -285,7 +285,7 @@ class SdAPIClient {
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
-        let apiUrl = this.settings['auto_url'] + '/sdapi/v1/txt2img/';
+        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
         this.working = true;
         try {
             // Send a POST request to the stable diffusion API
@@ -331,7 +331,7 @@ class SdAPIClient {
      * @returns {Promise}
      */
     async postOption(option) {
-        let stIP = await game.settings.get("stable-images", "stable-settings")["auto_url"];
+        let stIP = await game.settings.get("stable-images", "auto_url");
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
             // Send a POST request to the server
@@ -377,7 +377,7 @@ class SdAPIClient {
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
         requestBody.denoising_strength = this.settings.denoising_strength;
-        let apiUrl = this.settings['auto_url'] + '/sdapi/v1/img2img/';
+        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/img2img/';
         this.working = true;
         try {
             // Send a POST request to the stable diffusion API
@@ -423,7 +423,7 @@ class SdAPIClient {
             console.warn("State transition to 'idle'");
         }
     
-        let apiUrl = this.settings['auto_url'] + '/sdapi/v1/progress';
+        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/progress';
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
