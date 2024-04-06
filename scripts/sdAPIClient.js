@@ -109,15 +109,15 @@ class SdAPIClient {
         console.error("Settings:", this.settings);
       
         this.defaultRequestBody = {
-          prompt: this.settings['prompt_prefix'],
+          prompt: game.settings.get("stable-images", "promptPrefix"),
           seed: -1,
-          height: this.settings.height,
-          width: this.settings.width,
-          negative_prompt: this.settings['negative_prompt'],
+          height: game.settings.get("stable-images", "sdheight"),
+          width: game.settings.get("stable-images", "sdwidth"),
+          negative_prompt: game.settings.get("stable-images", "negativePrompt"),
           n_iter: this.settings.batchCount,
-          restore_faces: this.settings.restore_faces,
-          // steps: this.settings.steps,
-          cfg_scale: this.settings.scale
+          restore_faces: game.settings.get("stable-images", "restoreFaces"),
+          steps: game.settings.get("stable-images", "samplerSteps"),
+          cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
         console.error("Default Request Body:", this.defaultRequestBody);
       

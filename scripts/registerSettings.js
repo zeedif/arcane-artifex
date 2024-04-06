@@ -164,7 +164,21 @@ export default function registerSettings() {
     });
 
 
-
+    game.settings.register("stable-images", "sdwidth", {
+      name: "Image Width",
+      scope: "world",
+      config: false,
+      type: Number,
+      default: 512
+    });
+  
+    game.settings.register("stable-images", "sdheight", {
+      name: "Image Height",
+      scope: "world",
+      config: false,
+      type: Number,
+      default: 512
+    });
     
     // Register main configuration page options
 
