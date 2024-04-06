@@ -47,53 +47,51 @@ class SdAPIClient {
      * Initializes the connection with the stable diffusion API.
      * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
      */
-    async initConnection() {
+    async checkStatus() {
         // Retrieve the selected source from the game settings
         const selectedSource = game.settings.get('stable-images', 'source');
-      
-        // Only proceed if the automatic1111 option is selected
-        if (selectedSource === 'automatic1111') {
-          let sdSavedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-          let context = mergeObject(defaultSettings, sdSavedSettings);
+    
+        // Only proceed if the stableHorde option is selected
+        if (selectedSource === 'automatic1111') { 
           const a1111url = game.settings.get('stable-images', 'auto_url');
-          console.error("Retrieved A1111 auto_url from settings:", a1111url);
-          await this.attemptServerConnection(a1111url, "Stable Diffusion");
+          const statusUrl = a1111url;
+          
+          try {
+            const response =await fetch(statusUrl, { method: 'HEAD' });
+            console.error("response:", response);
+            if (response.ok) {
+              console.log('A1111 server is accessible at:', a1111url);
+              ui.notifications.info('A1111 server is accessible.');
+              await game.settings.set("stable-images", "connected", true);
+              this.getLocalA1111Settings();
+              return 'A1111 API is accessible.';
+            } else {
+              console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
+              ui.notifications.error(`A1111 server is not accessible: response code: ${response.status}`);
+              await game.settings.set("stable-images", "connected", false);
+              throw new Error(`A1111 API returned an error: ${response.status}`);
+            }
+          } catch (error) {
+              console.error('Error occurred while trying to access A1111 server at URL:', a1111url, '; error =', error);
+              ui.notifications.error(`Error occurred while trying to access A1111 server; error = ${error}`);
+              await game.settings.set("stable-images", "connected", false);
+          }
         } else {
-          console.warn("Automatic1111 is not selected. Skipping connection attempt.");
+          console.error("Local A1111 is not selected. Skipping Local A1111 status check.");
+          // Optionally, you could return a message or handle the skipped check appropriately
+          return 'Local A1111 is not selected. Skipping Local A1111 status check.';
         }
       }
-
-
-    async attemptServerConnection(serverIp, serverName) {
-        console.warn(`Attempting to connect to ${serverName} server at:`, serverIp);
-        try {
-            const response = await fetch(serverIp, { method: 'HEAD' });
-            if (response.ok) {
-                console.warn(`${serverName} server is accessible at:`, serverIp);
-                ui.notifications.notify(`${serverName} server is accessible.`);
-                await game.settings.set("stable-images", "connected", true);
-                this.connection = true;
-                this.getLocalA1111Settings();
-            } else {
-                console.error(`${serverName} server is not accessible: response code`, response.status, 'at IP:', serverIp);
-                ui.notifications.error(`${serverName} server is not accessible: response code: ${response.status}`);
-                await game.settings.set("stable-images", "connected", false);
-                this.connection = false;
-            }
-        } catch (error) {
-            console.error(`Error occurred while trying to access ${serverName} server at IP:`, serverIp, '; error =', error);
-            ui.notifications.error(`Error occurred while trying to access ${serverName} server; error = ${error}`);
-            await game.settings.set("stable-images", "connected", false);
-            this.connection = false;
-        }
-    }
 
 
     /**
      * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
      */
     async getLocalA1111Settings() {
-        if (!this.connection) {
+
+        const connection = game.settings.get('stable-images', 'connected');
+
+        if (!connection) {
           console.error("Stable Diffusion connection not established. Skipping API calls.");
           return;
         }
