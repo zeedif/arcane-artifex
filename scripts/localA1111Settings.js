@@ -134,9 +134,9 @@ export default class localA1111Settings extends FormApplication {
     async changeSampler(ev) {
         ev.preventDefault();
         let sel = ev.currentTarget;
-        let samplerAlias = sel.options[sel.selectedIndex].value;
+        let samplerName = sel.options[sel.selectedIndex].value;
         // Update the "a1111Sampler" setting with the selected sampler
-        await game.settings.set("stable-images", "a1111Sampler", samplerAlias);
+        await game.settings.set("stable-images", "a1111Sampler", samplerName);
         
         // Re-render the form or perform any additional necessary updates
         this.render(true);

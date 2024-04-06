@@ -108,6 +108,7 @@ class SdAPIClient {
           n_iter: this.settings.batchCount,
           restore_faces: game.settings.get("stable-images", "restoreFaces"),
           steps: game.settings.get("stable-images", "samplerSteps"),
+          sampler_name: game.settings.get("stable-images", "a1111Sampler"),
           cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
         console.log("Default Request Body:", this.defaultRequestBody);
