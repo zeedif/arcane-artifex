@@ -273,6 +273,7 @@ class SdAPIClient {
         requestBody.prompt = this.getFullPrompt(prompt);
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
         this.working = true;
+        console.error('requestBody', requestBody);
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {

@@ -26,13 +26,18 @@
                     </option>
                     {{/each}}
                 </select>
-                <p class="note">This may take some time, please wait for changes
-                    to appear</p>
+                <p class="note">This may take some time, please wait for changes to appear</p>
             </div>
             <div class="samplers">
                 <h2>SAMPLING METHOD</h2>
+                <h4>active sampler : {{a1111Sampler}}</h4>
                 <select id="change-sampler">
                     <option>change sampler here</option>
+                    {{#each samplers as |sampler|}}
+                    <option class = "sampler" value="{{sampler.aliases}}">
+                        {{sampler.name}}
+                    </option>
+                    {{/each}}
                 </select>
             </div>
             <div class="loras">

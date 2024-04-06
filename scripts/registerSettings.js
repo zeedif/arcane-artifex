@@ -190,7 +190,15 @@ export default function registerSettings() {
       type: Number,
       default: 512
     });
-    
+
+    game.settings.register("stable-images", "a1111Sampler", {
+      name: "a1111Sampler",
+      scope: "world",
+      type: String,
+      default: "Euler SGMUniform",
+      config: false,
+    });
+
     // Register main configuration page options
 
     game.settings.register("stable-images", "stableStoragePath", {

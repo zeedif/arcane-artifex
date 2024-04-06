@@ -39,7 +39,7 @@ export default class localA1111Settings extends FormApplication {
         // Get the stable-settings from game settings
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-    
+        context.a1111Sampler = game.settings.get("stable-images", "a1111Sampler");
         console.error("Context before adding data:", context);
     
         // Assign loras, activeModel, and models from sdAPIClient
@@ -70,6 +70,10 @@ export default class localA1111Settings extends FormApplication {
 
         // Event listener for the model change
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
+
+        // Directly adding the event listener for the sampler change, mirroring the models approach
+        html[0].querySelector('select#change-sampler').addEventListener('change', this.changeSampler.bind(this));
+    
 
         // Event listeners for lora choices
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
@@ -126,6 +130,18 @@ export default class localA1111Settings extends FormApplication {
         // Change the model using sdAPIClient and render the form
         sdAPIClient.changeModel(modelTitle).then(this.render(true));
     }
+
+    async changeSampler(ev) {
+        ev.preventDefault();
+        let sel = ev.currentTarget;
+        let samplerAlias = sel.options[sel.selectedIndex].value;
+        // Update the "a1111Sampler" setting with the selected sampler
+        await game.settings.set("stable-images", "a1111Sampler", samplerAlias);
+        
+        // Re-render the form or perform any additional necessary updates
+        this.render(true);
+    }
+      
 
     /**
      * Handles the lora toggle event.
