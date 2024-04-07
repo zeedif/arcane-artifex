@@ -165,7 +165,7 @@ class StableImagesChatListenner {
         /**
          * Initializes a progress request using the 'initProgressRequest' function of the 'sdAPIClient' with the message.
          */
-        setTimeout(sdAPIClient.initProgressRequest(message), 500)
+        setTimeout(() => sdAPIClient.initProgressRequest(message), 500);
 
     }
 
