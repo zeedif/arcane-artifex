@@ -274,7 +274,7 @@ class SdAPIClient {
         requestBody.prompt = this.getFullPrompt(prompt);
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
         this.working = true;
-        console.error('requestBody', requestBody);
+        console.log('requestBody', requestBody);
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -402,7 +402,7 @@ class SdAPIClient {
     async initProgressRequest(message, attempt = 0, currentState = "undefined") {
         const maxAttempts = 100; // Maximum number of attempts to check progress
         if (attempt >= maxAttempts) {
-            console.warn("Max progress check attempts reached, stopping further checks.");
+            console.warn("stable-images: Max progress check attempts reached, stopping further checks.");
             return; // Exit if the maximum number of attempts has been reached
         }
     
@@ -413,8 +413,6 @@ class SdAPIClient {
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/progress';
         fetch(apiUrl)
             .then(response => {
-                console.error("API Response:", response);
-                console.error("Response Status:", response.status);
                 if (!response.ok) {
                     throw new Error('Request failed with status ' + response.status);
                 }
@@ -425,24 +423,22 @@ class SdAPIClient {
     
                 if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
                     if (currentState === "idle") {
-                        console.warn("State transition to 'waiting'");
-                    } else {
-                        console.warn("Continuing in 'waiting' state");
+                        console.log("stable-images: State transition to 'waiting'");
                     }
                     currentState = "waiting";
                     setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 } else if (currentState === "waiting" && data.progress > 0) {
                     currentState = "processing";
-                    console.warn("State transition to 'processing'");
+                    console.log("stable-images: State transition to 'processing'");
                     setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 } else if (currentState === "processing" && data.progress < 1.0) {
-                    console.warn("In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
+                    console.log("stable-images: In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
                     setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 }
     
                 if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
                     currentState = "done";
-                    console.warn("State transition to 'done'");
+                    console.log("stable-images: State transition to 'done'");
                 }
             })
             .catch(error => {
