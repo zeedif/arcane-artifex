@@ -16,12 +16,9 @@ class StableFileManager {
      * @returns {Promise<boolean>} - Returns a promise that resolves to true if the file exists, false otherwise. 
      */
     async checkFileExists(filename) {
-
         // Send a HEAD request to the storagePath + filename  
         try {
             const response = await fetch(game.settings.get("stable-images", "stableStoragePath") + "/" + filename, { method: 'HEAD' });
-            console.error("url", game.settings.get("stable-images", "stableStoragePath") + "/" + filename);
-            console.error("response", response);
             // Check if the response is successful (status in the range of 200-299)  
             if (response.ok) {
                 // Return true if the file exists  
@@ -33,6 +30,8 @@ class StableFileManager {
             return false;
         }
     }
+
+    
     /**
      * Save a file with base64 data.
      * @param {string} filename - The name of the file.
@@ -42,8 +41,6 @@ class StableFileManager {
         /** @type {string} - The path for stable storage. */
         /** @type {string} - The URL of the file. */
         let fileUrl = game.settings.get("stable-images", "stableStoragePath") + "/" +  filename;
-        console.error("fileUrl", fileUrl);
-
         await ImageHelper.uploadBase64(src, filename, game.settings.get("stable-images", "stableStoragePath"));
         return fileUrl;
 

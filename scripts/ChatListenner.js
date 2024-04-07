@@ -83,18 +83,9 @@ class StableImagesChatListenner {
         } else {
             let imgId = ev.currentTarget.closest(".stable-image-block").dataset.imageId
             let filename = actor.name + '_' + imgId + ".png";
-            stableFileManager.checkFileExists(filename).then(async (exist) => {
-                if (!!exist) {
-                    actor.update({ img: stableFileManager.storagePath + filename })
-                } else {
-                    await stableFileManager.saveBase64(filename, src).then(url => {
-                        actor.update({ img: url })
-                    })
-                }
-            });
-
-
-
+            await stableFileManager.saveBase64(filename, src).then(url => {
+                actor.update({ img: url })
+            })
         }
     }
 
