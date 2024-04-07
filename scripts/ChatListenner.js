@@ -132,7 +132,7 @@ class StableImagesChatListenner {
          * @type {Object}
          */
         let messageData = {
-            title: "variations",
+            title: "Refined version",
             prompt: prompt,
             sourceSrc: img.src,
             send: true,
