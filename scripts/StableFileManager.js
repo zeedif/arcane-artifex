@@ -20,13 +20,12 @@ class StableFileManager {
         // Send a HEAD request to the storagePath + filename  
         try {
             const response = await fetch(game.settings.get("stable-images", "stableStoragePath") + "/" + filename, { method: 'HEAD' });
+            console.error("url", game.settings.get("stable-images", "stableStoragePath") + "/" + filename);
+            console.error("response", response);
             // Check if the response is successful (status in the range of 200-299)  
             if (response.ok) {
                 // Return true if the file exists  
                 return true;
-            } else {
-                // Throw an error if the file is not found  
-                throw new Error("file not found: " + filename);
             }
         } catch (error) {
             // Log any errors to the console and return false  
@@ -43,6 +42,7 @@ class StableFileManager {
         /** @type {string} - The path for stable storage. */
         /** @type {string} - The URL of the file. */
         let fileUrl = game.settings.get("stable-images", "stableStoragePath") + "/" +  filename;
+        console.error("fileUrl", fileUrl);
 
         await ImageHelper.uploadBase64(src, filename, game.settings.get("stable-images", "stableStoragePath"));
         return fileUrl;
