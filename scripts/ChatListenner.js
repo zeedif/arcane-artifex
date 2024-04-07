@@ -294,8 +294,17 @@ class StableImagesChatListenner {
         progressBarElement.style.width = `${percent}%`;
         progressStateElement.innerText = `${percent}%`;
         titleEl.innerText = "Working : " + data.state.job;
-//        img.src = "data:image/png;base64," + data.current_image;
+    
+        // Check if current_image is null and choose the image source accordingly
+        if (data.current_image) {
+            img.src = "data:image/png;base64," + data.current_image;
+        } else {
+            // Path to the "working" GIF within your module's directory
+            // Ensure you adjust the path to correctly point to your GIF location
+            img.src = "/modules/stable-images/assets/stable-images-progress.webp";
+        }
     }
+    
     
     /**
      * Creates the image in the chat message

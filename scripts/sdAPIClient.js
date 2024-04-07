@@ -408,12 +408,13 @@ class SdAPIClient {
     
         if (currentState === "undefined" && attempt === 0) {
             currentState = "idle";
-            console.warn("State transition to 'idle'");
         }
     
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/progress';
         fetch(apiUrl)
             .then(response => {
+                console.error("API Response:", response);
+                console.error("Response Status:", response.status);
                 if (!response.ok) {
                     throw new Error('Request failed with status ' + response.status);
                 }
@@ -429,14 +430,14 @@ class SdAPIClient {
                         console.warn("Continuing in 'waiting' state");
                     }
                     currentState = "waiting";
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1000);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 } else if (currentState === "waiting" && data.progress > 0) {
                     currentState = "processing";
                     console.warn("State transition to 'processing'");
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1000);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 } else if (currentState === "processing" && data.progress < 1.0) {
                     console.warn("In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1000);
+                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 }
     
                 if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
