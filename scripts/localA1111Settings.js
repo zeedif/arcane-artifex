@@ -40,19 +40,26 @@ export default class localA1111Settings extends FormApplication {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
         context.a1111Sampler = game.settings.get("stable-images", "a1111Sampler");
+        context.a1111Upscaler = game.settings.get("stable-images", "a1111Upscaler");
+        context.numImages = game.settings.get("stable-images", "numImages");
         console.log("Context before adding data:", context);
     
+
+
         // Assign loras, activeModel, and models from sdAPIClient
         context.loras = sdAPIClient.loras;
         context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
         context.models = sdAPIClient.models;
         context.styles = sdAPIClient.styles;
+        context.upscalers = sdAPIClient.upscalers;
+        
+
         if (!context.activeLoras) { context.activeLoras = [] }
     
         console.log("sdAPIClient.loras:", sdAPIClient.loras);
         console.log("sdAPIClient.models:", sdAPIClient.models);
         console.log("sdAPIClient.styles:", sdAPIClient.styles);
-    
+        console.log("sdAPIClient.upscalers:", sdAPIClient.upscalers);
         console.log("Context after adding data:", context);
     
         // Store the context
@@ -74,6 +81,11 @@ export default class localA1111Settings extends FormApplication {
         // Directly adding the event listener for the sampler change, mirroring the models approach
         html[0].querySelector('select#change-sampler').addEventListener('change', this.changeSampler.bind(this));
     
+        // Directly adding the event listener for the upscaler change, mirroring the models approach
+        html[0].querySelector('select#change-upscaler').addEventListener('change', this.changeUpscaler.bind(this));
+    
+
+
 
         // Event listeners for lora choices
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
@@ -89,6 +101,11 @@ export default class localA1111Settings extends FormApplication {
         for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
             range.addEventListener('change', this.changeLoraPrompt.bind(this));
         }
+        
+        html.find('input[name="numImages"]').on("input", async (event) => {
+            await game.settings.set("stable-images", "numImages", parseInt(event.target.value));
+            this.render(true);
+          });
 
         // Add event listener for source selection change
         html.find('select[name="source"]').on("change", async (event) => {
@@ -142,6 +159,16 @@ export default class localA1111Settings extends FormApplication {
         this.render(true);
     }
       
+    async changeUpscaler(ev) {
+        ev.preventDefault();
+        let sel = ev.currentTarget;
+        let upscalerName = sel.options[sel.selectedIndex].value;
+        // Update the "a1111Upscaler" setting with the selected sampler
+        await game.settings.set("stable-images", "a1111Upscaler", upscalerName);
+        
+        // Re-render the form or perform any additional necessary updates
+        this.render(true);
+    }
 
     /**
      * Handles the lora toggle event.

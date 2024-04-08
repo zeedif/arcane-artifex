@@ -15,6 +15,16 @@
 
                 </div>
             </div>
+            <div class="numImages">
+            <h2>NUMBER OF IMAGES</h2>
+            <div class="form-group">
+            <label>Number of images per generation</label>
+            <div class="form-fields">
+                <input type="range" name="numImages" value="{{numImages}}" min="1" max="4" step="1" />
+                <span class="range-value">{{numImages}}</span>
+            </div>
+            <p class="notes">Specify the number of images to generate per request</p>
+            </div>
             <div class="models">
                 <h2>MODELS</h2>
                 <h4>active model : {{activeModel}}</h4>
@@ -42,7 +52,7 @@
             </div>
             <div class="upscalers">
                 <h2>UPSCALERS</h2>
-                <h4>active scalar : {{a1111Scalar}}</h4>
+                <h4>active upscalar : {{a1111Upscaler}}</h4>
                 <select id="change-upscaler">
                     <option>change upscaler here</option>
                     {{#each upscalers as |upscaler|}}

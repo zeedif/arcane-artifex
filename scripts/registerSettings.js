@@ -40,16 +40,6 @@ const resolutionOptions = {
   };
 
 const defaultSettings = {
-    // Scheduler
-    scheduler: 'normal',
-
-    sampler: 'DDIM',
-    model: '',
-    vae: '',
-
-
-    sd_resolution: 'sd_res_512x512',
-
     // Horde settings
     horde_url: 'https://stablehorde.net',
     horde: false,
@@ -67,20 +57,6 @@ const defaultSettings = {
     snap: false,
 
     prompts: promptTemplates,
-    
-    // AUTOMATIC1111 settings
-
-
-    hr_upscaler: 'Latent',
-    hr_scale: 2.0,
-    hr_scale_min: 1.0,
-    hr_scale_max: 4.0,
-    hr_scale_step: 0.1,
-
-    hr_second_pass_steps: 0,
-    hr_second_pass_steps_min: 0,
-    hr_second_pass_steps_max: 150,
-    hr_second_pass_steps_step: 1,
 
     // NovelAI settings
     novel_upscale_ratio_min: 1.0,
@@ -101,7 +77,7 @@ const defaultSettings = {
     comfy_workflow: 'Default_Comfy_Workflow.json',
 
     // stable-images old settings TO BE DEPRECATED
-    batchCount: 1,
+    batchCount: 4,
     loras: [],
     styles: [],
     loraPrompt: '',
@@ -199,6 +175,31 @@ export default function registerSettings() {
       config: false,
     });
 
+    game.settings.register("stable-images", "a1111Upscaler", {
+      name: "a1111Upscaler",
+      scope: "world",
+      type: String,
+      default: "4x_foolhardy_Remacri",
+      config: false,
+    });
+
+    game.settings.register("stable-images", "numImages", {
+      name: "numImages",
+      hint: "Numbner of images to produce per generation",
+      scope: "world",
+      config: false,
+      type: Number,
+      range: {
+          min: 0,
+          max: 4,
+          step: 1
+      },
+      default: 1,
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
+    });
+
     // Register main configuration page options
 
     game.settings.register("stable-images", "stableStoragePath", {
@@ -208,7 +209,10 @@ export default function registerSettings() {
       config: true,
       type: String,
       default: "",
-      filePicker: "folder"
+      filePicker: "folder",
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
     });
     
     game.settings.register("stable-images", "cfgScale", {
@@ -222,7 +226,10 @@ export default function registerSettings() {
             max: 30,
             step: 0.5
         },
-        default: 1.5
+        default: 1.5,
+        onChange: async () => {
+          await sdAPIClient.getLocalA1111Settings();
+        }
     });
 
     game.settings.register("stable-images", "samplerSteps", {
@@ -236,7 +243,10 @@ export default function registerSettings() {
           max: 150,
           step: 1
         },
-        default: 20
+        default: 20,
+        onChange: async () => {
+          await sdAPIClient.getLocalA1111Settings();
+        }
     });
 
     game.settings.register("stable-images", "promptPrefix", {
@@ -245,7 +255,10 @@ export default function registerSettings() {
         scope: "world",
         config: true,
         type: String,
-        default: 'best quality, absurdres, aesthetic,'
+        default: 'best quality, absurdres, aesthetic,',
+        onChange: async () => {
+          await sdAPIClient.getLocalA1111Settings();
+        }
     });
 
     game.settings.register("stable-images", "negativePrompt", {
@@ -254,7 +267,10 @@ export default function registerSettings() {
         scope: "world",
         config: true,
         type: String,
-        default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
+        default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry',
+        onChange: async () => {
+          await sdAPIClient.getLocalA1111Settings();
+        }
     });
 
     game.settings.register("stable-images", "resolutionOptions", {
@@ -268,10 +284,11 @@ export default function registerSettings() {
         return choices;
       }, {}),
       default: "sd_res_512x512",
-      onChange: value => {
+      onChange: async  value => {
         const selectedResolution = resolutionOptions[value];
-        game.settings.set("stable-images", "sdwidth", selectedResolution.width);
-        game.settings.set("stable-images", "sdheight", selectedResolution.height);
+        await game.settings.set("stable-images", "sdwidth", selectedResolution.width);
+        await game.settings.set("stable-images", "sdheight", selectedResolution.height);
+        await sdAPIClient.getLocalA1111Settings();
       }
     });
 
@@ -280,7 +297,10 @@ export default function registerSettings() {
       scope: "world",
       config: true,
       type: Boolean,
-      default: true
+      default: true,
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
     });
 
     game.settings.register("stable-images", "enableHr", {
@@ -288,7 +308,28 @@ export default function registerSettings() {
       scope: "world",
       config: true,
       type: Boolean,
-      default: true
+      default: true,
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
+    });
+
+    game.settings.register("stable-images", "hrScale", {
+      name: "Upscale by",
+      hint: "What to multiply the resolution by",
+      scope: "world",
+      config: true,
+      type: Number,
+      range: {
+          min: 1.0,
+          max: 4.0,
+          step: 0.1
+      },
+      default: 2.0,
+      default: true,
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
     });
 
     game.settings.register("stable-images", "denoisingStrength", {
@@ -302,7 +343,44 @@ export default function registerSettings() {
           max: 1.0,
           step: 0.01
       },
-      default: 0.7
+      default: 0.7,
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
+    });
+
+    game.settings.register("stable-images", "hrSecondPassSteps", {
+      name: "Numbner of second pass steps",
+      hint: "How many steps to take in the second pass",
+      scope: "world",
+      config: true,
+      type: Number,
+      range: {
+          min: 0,
+          max: 150,
+          step: 1
+      },
+      default: 0,
+      onChange: async () => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
+    });
+
+    game.settings.register("stable-images", "denoisingStrength", {
+      name: "Hires. Fix Denoising Strength",
+      hint: "How strongly the upscaler effects image generation",
+      scope: "world",
+      config: true,
+      type: Number,
+      range: {
+          min: 0.0,
+          max: 1.0,
+          step: 0.01
+      },
+      default: 0.7,
+              onChange: async () => {
+          await sdAPIClient.getLocalA1111Settings();
+        }
   });
 
     // Dynamically register settings based on defaultSettings
@@ -330,12 +408,7 @@ export default function registerSettings() {
          * Calls the getLocalA1111Settings function from the sdAPIClient.
          */
         onChange: async () => {
-            try {
-                await sdAPIClient.getLocalA1111Settings();
-            } catch (error) {
-                console.error("Error calling getLocalA1111Settings:", error);
-                ui.notifications.error("Failed to retrieve Local A1111 settings. Check the console for more details.");
-            }
+          await sdAPIClient.getLocalA1111Settings();
         }
     });
 }
@@ -353,83 +426,6 @@ function determineSettingType(value) {
     return String; // Default to string for everything else
 }
 
-
-async function fetchModels() {
-    const selectedSource = game.settings.get('stable-images', 'source');
-    console.error("Selected source:", selectedSource);
-  
-    const sourceHandlers = {
-      automatic1111: async () => {
-        const stIP = await game.settings.get("stable-images", "auto_url");
-        const modelsUrl = stIP + '/sdapi/v1/sd-models';
-        console.error("Fetching A1111 models from URL:", modelsUrl);
-  
-        try {
-          const response = await fetch(modelsUrl, { method: 'GET' });
-          if (response.ok) {
-            const data = await response.json();
-            console.error("A1111 models fetched successfully", data);
-            return data.map(model => ({ [model.title]: model.model_name }));
-          } else {
-            console.error("Error while fetching A1111 models:", response.statusText);
-            ui.notifications.error("Error while fetching A1111 models");
-          }
-        } catch (error) {
-          console.error("Error while attempting to access the stable diffusion models:", error);
-          ui.notifications.error("Error while attempting to access the stable diffusion models; error = " + error);
-        }
-      },
-  
-      'stableHorde': async () => {
-        try {
-          const hordeUrl = game.settings.get('stable-images', 'horde_url');
-          const response = await fetch(`${hordeUrl}/api/v2/status/models`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          });
-          console.error("Fetching Stable Horde models from URL:", `${hordeUrl}/api/v2/status/models`);
-  
-          if (response.ok) {
-            const data = await response.json();
-            console.error("Stable Horde models fetched successfully");
-            console.error("Fetched models data:", data);
-          
-            data.sort((a, b) => b.count - a.count);
-            console.error("Sorted models data:", data);
-          
-            const choices = data.reduce((choices, model) => {
-              choices[model.name] = `${model.name} (ETA: ${model.eta}s, Queue: ${model.queued}, Workers: ${model.count})`;
-              return choices;
-            }, {});
-          
-            console.error("Formatted choices object:", choices);
-          
-            return choices;
-          } else {
-            console.error("Error while fetching Horde models:", response.statusText);
-            ui.notifications.error("Error while fetching Horde models");
-          }
-        } catch (error) {
-          console.error("Error while retrieving Horde models:", error);
-          ui.notifications.error("Error while retrieving Horde models: " + error);
-        }
-      },
-  
-      // Add more source handlers here as needed
-    };
-  
-    const fetchHandler = sourceHandlers[selectedSource];
-    console.error("Fetch handler:", fetchHandler);
-  
-    if (fetchHandler) {
-      console.error("Calling fetch handler for source:", selectedSource);
-      return await fetchHandler();
-    } else {
-      console.error("Unsupported source:", selectedSource);
-      ui.notifications.error("Unsupported source: " + selectedSource);
-      return {};
-    }
-  }
 
 
 export { defaultSettings };

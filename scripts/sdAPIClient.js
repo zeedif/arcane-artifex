@@ -87,7 +87,7 @@ class SdAPIClient {
         const connection = game.settings.get('stable-images', 'connected');
 
         if (!connection) {
-          console.warn("Stable Diffusion connection not established. Skipping API calls.");
+          console.warn("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
           return;
         }
       
@@ -107,21 +107,18 @@ class SdAPIClient {
           height: game.settings.get("stable-images", "sdheight"),
           width: game.settings.get("stable-images", "sdwidth"),
           negative_prompt: game.settings.get("stable-images", "negativePrompt"),
-          n_iter: this.settings.batchCount,
+          n_iter: game.settings.get("stable-images", "numImages"),
           restore_faces: game.settings.get("stable-images", "restoreFaces"),
           steps: game.settings.get("stable-images", "samplerSteps"),
           sampler_name: game.settings.get("stable-images", "a1111Sampler"),
           enable_hr: game.settings.get("stable-images", "enableHr"),
-          hr_upscaler: '4x_foolhardy_Remacri',
+          hr_upscaler: game.settings.get("stable-images", "a1111Upscaler"),
           hr_scale: game.settings.get("stable-images", "hrScale"),
           denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
           hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
           cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
-        console.error("Default Request Body:", this.defaultRequestBody);
-
-        console.log("SD Options:", this.sdOptions);
-        console.log("Samplers:", this.samplers);
+        console.log("Default Request Body:", this.defaultRequestBody);
       }
 
     /**
