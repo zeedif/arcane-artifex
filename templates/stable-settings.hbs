@@ -40,6 +40,18 @@
                     {{/each}}
                 </select>
             </div>
+            <div class="upscalers">
+                <h2>UPSCALERS</h2>
+                <h4>active scalar : {{a1111Scalar}}</h4>
+                <select id="change-upscaler">
+                    <option>change upscaler here</option>
+                    {{#each upscalers as |upscaler|}}
+                    <option class = "upscaler" value="{{upscaler.name}}">
+                        {{upscaler.name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
             <div class="loras">
                 <h2 class="stable-loras">LORAS</h2>
 

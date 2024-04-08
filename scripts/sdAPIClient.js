@@ -35,6 +35,7 @@ class SdAPIClient {
         this.loras = [];
         this.styles = [];
         this.samplers = [];
+        this.upscalers = [];
     }
 
     /**
@@ -95,6 +96,7 @@ class SdAPIClient {
         await this.getStyles();
         await this.getSdOptions();
         await this.getSamplers();
+        await this.getUpscalers();
       
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
@@ -109,9 +111,14 @@ class SdAPIClient {
           restore_faces: game.settings.get("stable-images", "restoreFaces"),
           steps: game.settings.get("stable-images", "samplerSteps"),
           sampler_name: game.settings.get("stable-images", "a1111Sampler"),
+          enable_hr: game.settings.get("stable-images", "enableHr"),
+          hr_upscaler: '4x_foolhardy_Remacri',
+          hr_scale: game.settings.get("stable-images", "hrScale"),
+          denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
+          hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
           cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
-        console.log("Default Request Body:", this.defaultRequestBody);
+        console.error("Default Request Body:", this.defaultRequestBody);
 
         console.log("SD Options:", this.sdOptions);
         console.log("Samplers:", this.samplers);
@@ -205,6 +212,22 @@ class SdAPIClient {
         }
     }
     
+    async getUpscalers() {
+        let stIP = await game.settings.get("stable-images", "auto_url");
+        let upscalersUrl = stIP + '/sdapi/v1/upscalers';
+        try {
+            const response = await fetch(upscalersUrl, { method: 'GET' });
+            if (response.ok) {
+                this.upscalers = await response.json();
+            } else {
+                console.error(`Error while trying to access the upscalers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
+                ui.notifications.error(`Error while trying to access the upscalers from stable diffusion; error = Status Code ${response.status} - ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error("Error while trying to access the upscalers from stable diffusion:", error);
+            ui.notifications.error(`Error while trying to access the upscalers from stable diffusion; error = ${error}`);
+        }
+    }
     
     postSkip() {
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/skip';
