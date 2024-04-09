@@ -127,6 +127,14 @@ export default function registerSettings() {
         default: false
     });
 
+    game.settings.register("stable-images", "working", {
+      name: "Image Generation Status",
+      scope: "world",
+      config: false, // Not visible in the UI
+      type: Boolean,
+      default: false
+    });
+
     game.settings.register("stable-images", "source", {
       name: "Source",
       scope: "world",
@@ -199,6 +207,8 @@ export default function registerSettings() {
         await sdAPIClient.getLocalA1111Settings();
       }
     });
+
+    
 
     // Register main configuration page options
 

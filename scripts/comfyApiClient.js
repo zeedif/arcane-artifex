@@ -1,38 +1,11 @@
 import chatListenner from "./ChatListenner.js";
-import { defaultSettings } from './registerSettings.js';
 /**
- * Represents the SdAPIClient class.
+ * Represents the comfyApiClient class.
  * This class handles the communication with the stable diffusion API.
  */
-class SdAPIClient {
-    /**
-     * Constructs a new instance of the SdAPIClient class.
-     * Initializes the class properties.
-     */
+class comfyApiClient {
     constructor() {
-        /**
-         * Represents the settings for the stable diffusion API.
-         * @type {Object}
-         */
-        this.settings = {};
-
-        /**
-         * Represents the default request body for API requests.
-         * @type {Object}
-         */
         this.defaultRequestBody = {};
-
-        /**
-         * Represents the working status of the API client.
-         * @type {boolean}
-         */
-        this.working = false;
-
-        /**
-         * Represents the list of loras retrieved from the API.
-         * @type {Array}
-         */
-        this.models = [];
         this.loras = [];
         this.styles = [];
         this.samplers = [];
@@ -98,9 +71,6 @@ class SdAPIClient {
         await this.getSdOptions();
         await this.getSamplers();
         await this.getUpscalers();
-      
-        this.settings = game.settings.get("stable-images", "stable-settings");
-        console.log("Settings:", this.settings);
       
         this.defaultRequestBody = {
           prompt: game.settings.get("stable-images", "promptPrefix"),
@@ -274,12 +244,12 @@ class SdAPIClient {
         }
     }
     /**
-     * Generates the full prompt by combining the prompt_prefix, user prompt, and lora prompt from the settings.
+     * Generates the full prompt by combining the prompt_prefix and user prompt from the settings.
      * @param {string} userPrompt - The user input prompt
      * @returns {string} - The full prompt
      */
     getFullPrompt(userPrompt) {
-        return this.settings['prompt_prefix'] + ', ' + userPrompt + ', ' + this.settings.loraPrompt;
+        return game.settings.get("stable-images","promptPrefix") + ', ' + userPrompt;
     }
 
     /**
@@ -288,13 +258,13 @@ class SdAPIClient {
      * @param {Message} message - The chat message object
      */
     async textToImg(prompt, message) {
-        if (this.working) {
+        if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
-        this.working = true;
+        await game.settings.set("stable-images", "working", true);
         console.log('requestBody', requestBody);
         try {
             // Send a POST request to the stable diffusion API
@@ -314,7 +284,7 @@ class SdAPIClient {
                 .then(data => {
                     // Create the image based on the response data
                     chatListenner.createImage(data, prompt, message);
-                    this.working = false;
+                    game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -379,15 +349,15 @@ class SdAPIClient {
      * @param {string} source - The source image data
      */
     async imgToImg(prompt, message, source) {
-        if (this.working) {
+        if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
-        requestBody.denoising_strength = this.settings.denoising_strength;
+        requestBody.denoising_strength = game.settings.get("stable-images", "denoisingStrength");
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/img2img/';
-        this.working = true;
+        await game.settings.set("stable-images", "working", true);
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -406,7 +376,7 @@ class SdAPIClient {
                 .then(data => {
                     // Create the image based on the response data
                     chatListenner.createImage(data, prompt, message);
-                    this.working = false;
+                    game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -473,9 +443,9 @@ class SdAPIClient {
 }
 
 /**
- * Represents an instance of the SdAPIClient class.
- * @type {SdAPIClient}
+ * Represents an instance of the comfyApiClient class.
+ * @type {comfyApiClient}
  */
-const sdAPIClient = new SdAPIClient();
+const comfyApiClient = new comfyApiClient();
 
-export default sdAPIClient;
+export default comfyApiClient;
