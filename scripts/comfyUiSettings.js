@@ -1,10 +1,10 @@
 import sdAPIClient from "./sdAPIClient.js";
 
 /**
- * Represents the localA1111Settings class.
+ * Represents the comfyUiSettings class.
  * This class extends the FormApplication class and handles the settings for stable diffusion image generation.
  */
-export default class localA1111Settings extends FormApplication {
+export default class comfyUiSettings extends FormApplication {
 
 
     constructor(...args) {
@@ -17,7 +17,7 @@ export default class localA1111Settings extends FormApplication {
         this.loadingModel = false;
     }
     /**
-     * Retrieves the default options for the localA1111Settings class.
+     * Retrieves the default options for the comfyUiSettings class.
      * @returns {Object} - The default options
      */
     static get defaultOptions() {
@@ -32,15 +32,15 @@ export default class localA1111Settings extends FormApplication {
     }
 
     /**
-     * Retrieves the data for the localA1111Settings form.
+     * Retrieves the data for the comfyUiSettings form.
      * @returns {Object} - The data for the form
      */
     getData() {
         // Get the stable-settings from game settings
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-        context.a1111Sampler = game.settings.get("stable-images", "a1111Sampler");
-        context.a1111Upscaler = game.settings.get("stable-images", "a1111Upscaler");
+        context.comfyUiSampler = game.settings.get("stable-images", "comfyUiSampler");
+        context.comfyUiUpscaler = game.settings.get("stable-images", "comfyUiUpscaler");
         context.numImages = game.settings.get("stable-images", "numImages");
         console.log("Context before adding data:", context);
     
@@ -152,8 +152,8 @@ export default class localA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let samplerName = sel.options[sel.selectedIndex].value;
-        // Update the "a1111Sampler" setting with the selected sampler
-        await game.settings.set("stable-images", "a1111Sampler", samplerName);
+        // Update the "comfyUiSampler" setting with the selected sampler
+        await game.settings.set("stable-images", "comfyUiSampler", samplerName);
         
         // Re-render the form or perform any additional necessary updates
         this.render(true);
@@ -163,8 +163,8 @@ export default class localA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let upscalerName = sel.options[sel.selectedIndex].value;
-        // Update the "a1111Upscaler" setting with the selected sampler
-        await game.settings.set("stable-images", "a1111Upscaler", upscalerName);
+        // Update the "comfyUiUpscaler" setting with the selected sampler
+        await game.settings.set("stable-images", "comfyUiUpscaler", upscalerName);
         
         // Re-render the form or perform any additional necessary updates
         this.render(true);

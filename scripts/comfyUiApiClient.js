@@ -32,7 +32,7 @@ class comfyApiClient {
               console.log('A1111 server is accessible at:', a1111url);
               ui.notifications.info('A1111 server is accessible.');
               await game.settings.set("stable-images", "connected", true);
-              this.getLocalA1111Settings();
+              this.getComfyUiSettings();
               return 'A1111 API is accessible.';
             } else {
               console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
@@ -56,7 +56,7 @@ class comfyApiClient {
     /**
      * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
      */
-    async getLocalA1111Settings() {
+    async getComfyUiSettings() {
 
         const connection = game.settings.get('stable-images', 'connected');
 

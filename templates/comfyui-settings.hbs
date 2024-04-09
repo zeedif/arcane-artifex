@@ -1,0 +1,110 @@
+<form autocomplete="on">
+    <div class="sheet-body flexrow">
+        <section>
+            <div class="auto_url">
+                <h2>SERVER IP</h2>
+                <div class="form-group">
+                    <label>stable diffusion server IP</label>
+                    <div class="form-fields">
+                        <input name="auto_url" type="text"
+                            value="{{auto_url}}" />
+
+                    </div>
+                    <p class="notes">IP adress of your local instance of Stable
+                        diffusion</p>
+
+                </div>
+            </div>
+            <div class="numImages">
+            <h2>NUMBER OF IMAGES</h2>
+            <div class="form-group">
+            <label>Number of images per generation</label>
+            <div class="form-fields">
+                <input type="range" name="numImages" value="{{numImages}}" min="1" max="4" step="1" />
+                <span class="range-value">{{numImages}}</span>
+            </div>
+            <p class="notes">Specify the number of images to generate per request</p>
+            </div>
+            <div class="models">
+                <h2>MODELS</h2>
+                <h4>active model : {{activeModel}}</h4>
+                <select id="change-model">
+                    <option>change model here</option>
+                    {{#each models as |model index|}}
+                    <option class="model" value="{{model.title}}">
+                        {{model.model_name}}
+                    </option>
+                    {{/each}}
+                </select>
+                <p class="note">This may take some time, please wait for changes to appear</p>
+            </div>
+            <div class="samplers">
+                <h2>SAMPLING METHOD</h2>
+                <h4>active sampler : {{a1111Sampler}}</h4>
+                <select id="change-sampler">
+                    <option>change sampler here</option>
+                    {{#each samplers as |sampler|}}
+                    <option class = "sampler" value="{{sampler.name}}">
+                        {{sampler.name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="upscalers">
+                <h2>UPSCALERS</h2>
+                <h4>active upscalar : {{a1111Upscaler}}</h4>
+                <select id="change-upscaler">
+                    <option>change upscaler here</option>
+                    {{#each upscalers as |upscaler|}}
+                    <option class = "upscaler" value="{{upscaler.name}}">
+                        {{upscaler.name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="loras">
+                <h2 class="stable-loras">LORAS</h2>
+
+                <div class="form-group">
+                    <label>lora Prompt</label>
+                    <div class="form-fields">
+                        <textarea name="loraPrompt">{{loraPrompt}}</textarea>
+                    </div>
+                    <p class="notes">this text will be inserted after your
+                        prompt to
+                        trigger your loras
+                    </p>
+                </div>
+                <div class="stable-lora-choice">
+                    {{#each loras as |lora|}}
+                    <span class="lora-choice">{{lora.alias}}</span>
+                    {{/each}}
+                </div>
+                {{log loras}}
+                {{#each activeLoras as |lora id|}}
+                {{log lora id}}
+                <div class="form-group active-lora">
+                    <label>{{lora.alias}}</label>
+                    <input type="range" class="stable-lora-value"
+                        data-lora-alias="{{lora.alias}}"
+                        name="activeLoras[{{id}}].value"
+                        data-dtype="Number"
+                        value="{{lora.value}}" min="0" max="1"
+                        step="0.05">
+                    <span class="range-value">{{lora.value}}</span>
+
+                </div>
+                {{/each}}
+            </div>
+        </section>
+    </div>
+
+    <div class="sheet-footer">
+        <button type="submit">
+            <i class="far fa-save"></i>
+            {{ localize "Submit"}}
+
+        </button>
+    </div>
+
+</form>

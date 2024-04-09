@@ -3,6 +3,7 @@ import localA1111Settings from "./localA1111Settings.js";
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
 import SourceSettings from "./SourceSettings.js";
+import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
@@ -117,6 +118,15 @@ export default function registerSettings() {
       type: AiHordeSettings,
       restricted: true,
     });
+
+    game.settings.registerMenu('stable-images', 'comfyui-settings', {
+      name: 'ComfyUI Settings',
+      label: 'ComfyUI Settings',
+      icon: 'fas fa-cog',
+      type: comfyUiSettings,
+      restricted: true,
+    });
+
 
     // Register non-configurable settings
     game.settings.register("stable-images", "connected", {
