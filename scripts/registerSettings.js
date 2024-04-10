@@ -2,7 +2,6 @@ import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
 import sdAPIClient from "./sdAPIClient.js";
 import AiHordeSettings from "./aiHordeSettings.js";
-import SourceSettings from "./SourceSettings.js";
 import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
@@ -95,15 +94,7 @@ const defaultSettings = {
 
 export default function registerSettings() {
     // Register menus
-    game.settings.registerMenu("stable-images", "source-menu", {
-      name: "Image Generation Source",
-      label: "Image Generation Source",
-      icon: "fas fa-cog",
-      type: SourceSettings,
-      restricted: true
-    });
-
-    game.settings.registerMenu("stable-images", "stable-image-menu", {
+      game.settings.registerMenu("stable-images", "stable-image-menu", {
       name: "Local A1111 Images Settings",
       label: "Local A1111 Images Settings",
       icon: "fas fa-images",
@@ -143,14 +134,6 @@ export default function registerSettings() {
       config: false, // Not visible in the UI
       type: Boolean,
       default: false
-    });
-
-    game.settings.register("stable-images", "source", {
-      name: "Source",
-      scope: "world",
-      type: String,
-      default: "stableHorde",
-      config: false,
     });
 
     game.settings.register("stable-images", "auto_url", {
@@ -246,6 +229,23 @@ export default function registerSettings() {
 
     // Register main configuration page options
 
+    game.settings.register("stable-images", "source", {
+      name: "Source",
+      hint: "Select the source for image generation",
+      scope: "world",
+      config: true,
+      type: String,
+      choices: {
+        stableHorde: "Stable Horde",
+        automatic1111: "Stable Diffusion Web UI (AUTOMATIC1111)",
+        comfyUi: "ComfyUI"
+      },
+      default: "stableHorde",
+      onChange: async value => {
+        await sdAPIClient.getLocalA1111Settings();
+      }
+    });
+    
     game.settings.register("stable-images", "stableStoragePath", {
       name: "Storage Path",
       hint: "Set the path for storing generated images",

@@ -23,13 +23,18 @@ export default class comfyUiSettings extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             classes: ["stable-images", "stable-setting-sheet"],
-            template: "modules/stable-images/templates/stable-settings.hbs",
+            template: "modules/stable-images/templates/comfyui-settings.hbs",
             width: 800,
             height: "auto",
             title: "settings for stable diffusion image generation",
             rezisable: true
         });
     }
+
+
+
+
+
 
     /**
      * Retrieves the data for the comfyUiSettings form.
@@ -39,28 +44,10 @@ export default class comfyUiSettings extends FormApplication {
         // Get the stable-settings from game settings
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-        context.comfyUiSampler = game.settings.get("stable-images", "comfyUiSampler");
-        context.comfyUiUpscaler = game.settings.get("stable-images", "comfyUiUpscaler");
-        context.numImages = game.settings.get("stable-images", "numImages");
-        console.log("Context before adding data:", context);
-    
+        context.comfyUiSamplingMethod = game.settings.get("stable-images", "comfyUiSamplingMethod");
+        context.comfyUiScheduler = game.settings.get("stable-images", "comfyUiScheduler");
+        console.error("Context before adding data:", context);
 
-
-        // Assign loras, activeModel, and models from sdAPIClient
-        context.loras = sdAPIClient.loras;
-        context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
-        context.models = sdAPIClient.models;
-        context.styles = sdAPIClient.styles;
-        context.upscalers = sdAPIClient.upscalers;
-        
-
-        if (!context.activeLoras) { context.activeLoras = [] }
-    
-        console.log("sdAPIClient.loras:", sdAPIClient.loras);
-        console.log("sdAPIClient.models:", sdAPIClient.models);
-        console.log("sdAPIClient.styles:", sdAPIClient.styles);
-        console.log("sdAPIClient.upscalers:", sdAPIClient.upscalers);
-        console.log("Context after adding data:", context);
     
         // Store the context
         this.context = context;
