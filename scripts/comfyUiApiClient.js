@@ -1,4 +1,4 @@
-class ComfyUiApiClient {
+class comfyUiApiClient {
     async checkStatus() {
         // Retrieve the selected source from the game settings
         const selectedSource = game.settings.get('stable-images', 'source');
@@ -29,7 +29,5 @@ class ComfyUiApiClient {
         }
     }
 }
-export const comfyUiApiClient = new ComfyUiApiClient();
+const comfyUiApiClient = new comfyUiApiClient();
 export default comfyUiApiClient;
-
-
