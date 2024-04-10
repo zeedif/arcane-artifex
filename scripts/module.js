@@ -5,6 +5,7 @@ import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import AiHordeSettings from './aiHordeSettings.js';
+import comfyApiClient from "./comfyUiApiClient.js";
 
 /**
  * Hook that runs when the game is initialized.
@@ -37,6 +38,9 @@ Hooks.once('ready', async function () {
     if (game.user.isGM) {
         sdAPIClient.checkStatus();
         aiHordeApiClient.checkStatus();
+        console.error('Made it to hooks');
+        comfyApiClient.checkStatus();
+        console.error('Made it to after function call');
     }
 });
 
