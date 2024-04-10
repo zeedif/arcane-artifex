@@ -1,31 +1,9 @@
-import chatListenner from "./ChatListenner.js";
+import chatListener from "./ChatListener.js";
 
-/**
- * Represents the SdAPIClient class.
- * This class handles the communication with the stable diffusion API.
- */
-class localA1111APIClient {
-    /**
-     * Constructs a new instance of the SdAPIClient class.
-     * Initializes the class properties.
-     */
+class LocalA1111APIClient {
     constructor() {
-        /**
-         * Represents the settings for the stable diffusion API.
-         * @type {Object}
-         */
         this.settings = {};
-
-        /**
-         * Represents the default request body for API requests.
-         * @type {Object}
-         */
         this.defaultRequestBody = {};
-
-        /**
-         * Represents the list of loras retrieved from the API.
-         * @type {Array}
-         */
         this.models = [];
         this.loras = [];
         this.styles = [];
@@ -33,97 +11,81 @@ class localA1111APIClient {
         this.upscalers = [];
     }
 
-    /**
-     * Initializes the connection with the stable diffusion API.
-     * Retrieves the server IP from the game settings and sends a HEAD request to check the server accessibility.
-     */
     async checkStatus() {
-        // Retrieve the selected source from the game settings
         const selectedSource = game.settings.get('stable-images', 'source');
-    
-        // Only proceed if the stableHorde option is selected
-        if (selectedSource === 'automatic1111') { 
-          const a1111url = game.settings.get('stable-images', 'auto_url');
-          const statusUrl = a1111url;
-          
-          try {
-            const response =await fetch(statusUrl, { method: 'HEAD' });
-            console.log("response:", response);
-            if (response.ok) {
-              console.log('A1111 server is accessible at:', a1111url);
-              ui.notifications.info('A1111 server is accessible.');
-              await game.settings.set("stable-images", "connected", true);
-              this.getLocalA1111Settings();
-              return 'A1111 API is accessible.';
-            } else {
-              console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
-              ui.notifications.error(`A1111 server is not accessible: response code: ${response.status}`);
-              await game.settings.set("stable-images", "connected", false);
-              throw new Error(`A1111 API returned an error: ${response.status}`);
+
+        if (selectedSource === 'automatic1111') {
+            const a1111url = game.settings.get('stable-images', 'auto_url');
+            const statusUrl = a1111url;
+
+            try {
+                const response = await fetch(statusUrl, { method: 'HEAD' });
+                console.log("response:", response);
+                if (response.ok) {
+                    console.log('A1111 server is accessible at:', a1111url);
+                    ui.notifications.info('A1111 server is accessible.');
+                    await game.settings.set("stable-images", "connected", true);
+                    this.getLocalA1111Settings();
+                    return 'A1111 API is accessible.';
+                } else {
+                    console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
+                    ui.notifications.error(`A1111 server is not accessible: response code: ${response.status}`);
+                    await game.settings.set("stable-images", "connected", false);
+                    throw new Error(`A1111 API returned an error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error occurred while trying to access A1111 server at URL:', a1111url, '; error =', error);
+                ui.notifications.error(`Error occurred while trying to access A1111 server; error = ${error}`);
+                await game.settings.set("stable-images", "connected", false);
             }
-          } catch (error) {
-              console.error('Error occurred while trying to access A1111 server at URL:', a1111url, '; error =', error);
-              ui.notifications.error(`Error occurred while trying to access A1111 server; error = ${error}`);
-              await game.settings.set("stable-images", "connected", false);
-          }
         } else {
-          console.warn("Local A1111 is not selected. Skipping Local A1111 status check.");
-          // Optionally, you could return a message or handle the skipped check appropriately
-          return 'Local A1111 is not selected. Skipping Local A1111 status check.';
+            console.warn("Local A1111 is not selected. Skipping Local A1111 status check.");
+            return 'Local A1111 is not selected. Skipping Local A1111 status check.';
         }
-      }
+    }
 
-
-    /**
-     * Retrieves the stable diffusion settings from the game settings and initializes the class properties.
-     */
     async getLocalA1111Settings() {
-
         const connection = game.settings.get('stable-images', 'connected');
 
         if (!connection) {
-          console.warn("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
-          return;
+            console.warn("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
+            return;
         }
-      
+
         await this.localA1111getLoras();
         await this.localA1111getModels();
         await this.localA1111getStyles();
         await this.localA1111getSdOptions();
         await this.localA1111getSamplers();
         await this.localA1111getUpscalers();
-      
+
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
-      
+
         this.defaultRequestBody = {
-          prompt: game.settings.get("stable-images", "promptPrefix"),
-          seed: -1,
-          height: game.settings.get("stable-images", "sdheight"),
-          width: game.settings.get("stable-images", "sdwidth"),
-          negative_prompt: game.settings.get("stable-images", "negativePrompt"),
-          n_iter: game.settings.get("stable-images", "numImages"),
-          restore_faces: game.settings.get("stable-images", "restoreFaces"),
-          steps: game.settings.get("stable-images", "samplerSteps"),
-          sampler_name: game.settings.get("stable-images", "a1111Sampler"),
-          enable_hr: game.settings.get("stable-images", "enableHr"),
-          hr_upscaler: game.settings.get("stable-images", "a1111Upscaler"),
-          hr_scale: game.settings.get("stable-images", "hrScale"),
-          denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
-          hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
-          cfg_scale: game.settings.get("stable-images", "cfgScale")
+            prompt: game.settings.get("stable-images", "promptPrefix"),
+            seed: -1,
+            height: game.settings.get("stable-images", "sdheight"),
+            width: game.settings.get("stable-images", "sdwidth"),
+            negative_prompt: game.settings.get("stable-images", "negativePrompt"),
+            n_iter: game.settings.get("stable-images", "numImages"),
+            restore_faces: game.settings.get("stable-images", "restoreFaces"),
+            steps: game.settings.get("stable-images", "samplerSteps"),
+            sampler_name: game.settings.get("stable-images", "a1111Sampler"),
+            enable_hr: game.settings.get("stable-images", "enableHr"),
+            hr_upscaler: game.settings.get("stable-images", "a1111Upscaler"),
+            hr_scale: game.settings.get("stable-images", "hrScale"),
+            denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
+            hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
+            cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
         console.log("Default Request Body:", this.defaultRequestBody);
-      }
+    }
 
-    /**
-     * Retrieves the list of loras from the stable diffusion API.
-     */
     async localA1111getLoras() {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let lorasUrl = stIP + '/sdapi/v1/loras';
         try {
-            // Send a GET request to the server
             const response = await fetch(lorasUrl, { method: 'GET' });
             if (response.ok) {
                 this.loras = await response.json();
@@ -134,11 +96,11 @@ class localA1111APIClient {
             console.error('Error while attempting to access the stable diffusion loras:', error);
         }
     }
+
     async localA1111getStyles() {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let styleUrl = stIP + '/sdapi/v1/prompt-styles';
         try {
-            // Send a GET request to the server
             const response = await fetch(styleUrl, { method: 'GET' });
             if (response.ok) {
                 this.styles = await response.json();
@@ -150,14 +112,10 @@ class localA1111APIClient {
         }
     }
 
-    /**
-     * Retrieves the list of models from the stable diffusion API.
-     */
     async localA1111getModels() {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let modelsUrl = stIP + '/sdapi/v1/sd-models';
         try {
-            // Send a GET request to the server
             const response = await fetch(modelsUrl, { method: 'GET' });
             if (response.ok) {
                 this.models = await response.json();
@@ -169,14 +127,10 @@ class localA1111APIClient {
         }
     }
 
-    /**
-     * Retrieves the stable diffusion options from the stable diffusion API.
-     */
     async localA1111getSdOptions() {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
-            // Send a GET request to the server
             const response = await fetch(optionsUrl, { method: 'GET' });
             if (response.ok) {
                 this.sdOptions = await response.json();
@@ -187,6 +141,7 @@ class localA1111APIClient {
             console.error("Error while attempting to access the stable diffusion options:", error);
         }
     }
+
     async localA1111getSamplers() {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let samplersUrl = stIP + '/sdapi/v1/samplers';
@@ -203,7 +158,7 @@ class localA1111APIClient {
             ui.notifications.error(`Error while trying to access the samplers from stable diffusion; error = ${error}`);
         }
     }
-    
+
     async localA1111getUpscalers() {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let upscalersUrl = stIP + '/sdapi/v1/upscalers';
@@ -220,11 +175,10 @@ class localA1111APIClient {
             ui.notifications.error(`Error while trying to access the upscalers from stable diffusion; error = ${error}`);
         }
     }
-    
+
     localA1111postSkip() {
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/skip';
         try {
-            // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -244,10 +198,10 @@ class localA1111APIClient {
             ui.notifications.warn('Error while sending request to stable diffusion');
         }
     }
+
     localA1111postInterrupt() {
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/interrupt';
         try {
-            // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -267,20 +221,11 @@ class localA1111APIClient {
             ui.notifications.warn('Error while sending request to stable diffusion');
         }
     }
-    /**
-     * Generates the full prompt by combining the prompt_prefix, user prompt, and lora prompt from the settings.
-     * @param {string} userPrompt - The user input prompt
-     * @returns {string} - The full prompt
-     */
+
     localA1111getFullPrompt(userPrompt) {
         return this.settings['prompt_prefix'] + ', ' + userPrompt + ', ' + this.settings.loraPrompt;
     }
 
-    /**
-     * Converts a text prompt to an image using the stable diffusion API.
-     * @param {string} prompt - The text prompt
-     * @param {Message} message - The chat message object
-     */
     async localA1111textToImg(prompt, message) {
         if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
@@ -288,10 +233,9 @@ class localA1111APIClient {
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
-         await game.settings.set("stable-images", "working", true);
+        await game.settings.set("stable-images", "working", true);
         console.log('requestBody', requestBody);
         try {
-            // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -306,8 +250,7 @@ class localA1111APIClient {
                     return response.json();
                 })
                 .then(data => {
-                    // Create the image based on the response data
-                    chatListenner.createImage(data, prompt, message);
+                    chatListener.createImage(data, prompt, message);
                     game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
@@ -318,26 +261,16 @@ class localA1111APIClient {
         }
     }
 
-    /**
-     * Changes the model used by the stable diffusion API.
-     * @param {string} title - The title of the model to change to
-     * @returns {Promise}
-     */
     async localA1111ChangeModel(title) {
         return await this.postOption({
             sd_model_checkpoint: title,
         });
     }
-    /**
-     * Sends a POST request to the stable diffusion API to update an option.
-     * @param {Object} option - The option to update
-     * @returns {Promise}
-     */
+
     async localA1111PostOption(option) {
         let stIP = await game.settings.get("stable-images", "auto_url");
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
-            // Send a POST request to the server
             fetch(optionsUrl, {
                 method: 'POST',
                 headers: {
@@ -352,7 +285,6 @@ class localA1111APIClient {
                     return response.json();
                 })
                 .then(async () => {
-                    // Update the sdOptions after successful update
                     await this.getSdOptions();
                     if (ui.activeWindow.title == "settings for stable diffusion image generation") {
                         ui.activeWindow.render(true);
@@ -366,12 +298,6 @@ class localA1111APIClient {
         }
     }
 
-    /**
-     * Converts an image to another image using the stable diffusion API.
-     * @param {string} prompt - The text prompt
-     * @param {Message} message - The chat message object
-     * @param {string} source - The source image data
-     */
     async localA1111ImgToImg(prompt, message, source) {
         if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
@@ -383,7 +309,6 @@ class localA1111APIClient {
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/img2img/';
         await game.settings.set("stable-images", "working", true);
         try {
-            // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -398,8 +323,7 @@ class localA1111APIClient {
                     return response.json();
                 })
                 .then(data => {
-                    // Create the image based on the response data
-                    chatListenner.createImage(data, prompt, message);
+                    chatListener.createImage(data, prompt, message);
                     game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
@@ -410,21 +334,17 @@ class localA1111APIClient {
         }
     }
 
-    /**
-     * Initializes a progress request to track the progress of an image generation.
-     * @param {Message} message - The chat message object
-     */
     async localA1111InitProgressRequest(message, attempt = 0, currentState = "undefined") {
-        const maxAttempts = 100; // Maximum number of attempts to check progress
+        const maxAttempts = 100;
         if (attempt >= maxAttempts) {
             console.warn("stable-images: Max progress check attempts reached, stopping further checks.");
-            return; // Exit if the maximum number of attempts has been reached
+            return;
         }
-    
+
         if (currentState === "undefined" && attempt === 0) {
             currentState = "idle";
         }
-    
+
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/progress';
         fetch(apiUrl)
             .then(response => {
@@ -434,8 +354,8 @@ class localA1111APIClient {
                 return response.json();
             })
             .then(async data => {
-                chatListenner.displayProgress(message, data);
-    
+                chatListener.displayProgress(message, data);
+
                 if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
                     if (currentState === "idle") {
                         console.log("stable-images: State transition to 'waiting'");
@@ -450,7 +370,7 @@ class localA1111APIClient {
                     console.log("stable-images: In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
                     setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
                 }
-    
+
                 if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
                     currentState = "done";
                     console.log("stable-images: State transition to 'done'");
@@ -460,10 +380,7 @@ class localA1111APIClient {
                 console.error('Error fetching progress:', error);
             });
     }
-    
-    
-    
-    
 }
-export const localA1111APIClient = new HordeAPIClient();
+
+export const localA1111APIClient = new LocalA1111APIClient();
 export default localA1111APIClient;
