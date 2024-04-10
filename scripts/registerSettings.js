@@ -242,6 +242,7 @@ export default function registerSettings() {
       },
       default: "stableHorde",
       onChange: async value => {
+        console.error("Source changed to: ", value);
         await sdAPIClient.getLocalA1111Settings();
       }
     });

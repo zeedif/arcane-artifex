@@ -4,6 +4,7 @@ import sdAPIClient from "./sdAPIClient.js";
  * Represents the localA1111Settings class.
  * This class extends the FormApplication class and handles the settings for stable diffusion image generation.
  */
+
 export default class localA1111Settings extends FormApplication {
 
 
