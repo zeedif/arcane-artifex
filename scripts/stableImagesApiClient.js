@@ -1,11 +1,10 @@
 import chatListenner from "./ChatListenner.js";
-import localA1111ApiClient from "./localA1111ApiClient.js";
+import localA1111APIClient from "./localA1111ApiClient.js";
 import HordeAPIClient from "./aiHordeApiClient.js";
-import localA1111ApiClient from "./localA1111ApiClient.js";
 import ComfyUIAPIClient from "./comfyUiApiClient.js";
 
 const apiClients = {
-    automatic1111: localA1111ApiClient,
+    automatic1111: localA1111APIClient,
     comfyui: ComfyUIAPIClient,
     horde: aiHordeApiClient
   };

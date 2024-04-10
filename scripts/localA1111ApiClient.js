@@ -4,7 +4,7 @@ import chatListenner from "./ChatListenner.js";
  * Represents the SdAPIClient class.
  * This class handles the communication with the stable diffusion API.
  */
-class localA1111ApiClient {
+class localA1111APIClient {
     /**
      * Constructs a new instance of the SdAPIClient class.
      * Initializes the class properties.
@@ -465,5 +465,5 @@ class localA1111ApiClient {
     
     
 }
-export const localA1111ApiClient = new HordeAPIClient();
-export default localA1111ApiClient;
+export const localA1111APIClient = new HordeAPIClient();
+export default localA1111APIClient;
