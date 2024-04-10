@@ -169,6 +169,14 @@ export default function registerSettings() {
       config: false,
     });
 
+    game.settings.register("stable-images", "comfyui_url", {
+      name: "comfyui_url",
+      scope: "world",
+      type: String,
+      default: "http://127.0.0.1:8188",
+      config: false,
+    });
+
     game.settings.register("stable-images", "sdwidth", {
       name: "Image Width",
       scope: "world",
@@ -198,6 +206,22 @@ export default function registerSettings() {
       scope: "world",
       type: String,
       default: "4x_foolhardy_Remacri",
+      config: false,
+    });
+
+    game.settings.register("stable-images", "comfyUiSamplingMethod", {
+      name: "comfyUiSamplingMethod",
+      scope: "world",
+      type: String,
+      default: "euler",
+      config: false,
+    });
+
+    game.settings.register("stable-images", "comfyUiScheduler", {
+      name: "comfyUiScheduler",
+      scope: "world",
+      type: String,
+      default: "sgm_uniform",
       config: false,
     });
 
