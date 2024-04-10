@@ -4,7 +4,7 @@ import sdAPIClient from "./sdAPIClient.js";
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
-import AiHordeSettings from './aiHordeSettings.js';
+import HordeSettings from './aiHordeSettings.js';
 import comfyUiApiClient from "./comfyUiApiClient.js";
 
 /**

@@ -1,7 +1,7 @@
 import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
 import sdAPIClient from "./sdAPIClient.js";
-import AiHordeSettings from "./aiHordeSettings.js";
+import HordeSettings from "./aiHordeSettings.js";
 import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
@@ -106,7 +106,7 @@ export default function registerSettings() {
       name: 'AI Horde Settings',
       label: 'AI Horde Settings',
       icon: 'fas fa-cog',
-      type: AiHordeSettings,
+      type: HordeSettings,
       restricted: true,
     });
 

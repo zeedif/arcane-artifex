@@ -1,6 +1,6 @@
 import { defaultSettings } from './registerSettings.js';
 
-export default class AiHordeSettings extends FormApplication {
+export default class HordeSettings extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: 'aihorde-settings',

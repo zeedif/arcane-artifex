@@ -1,4 +1,4 @@
-class AiHordeApiClient {
+class HordeAPIClient {
     async checkStatus() {
       // Retrieve the selected source from the game settings
       const selectedSource = game.settings.get('stable-images', 'source');
@@ -31,5 +31,5 @@ class AiHordeApiClient {
     }
   }
   
-  export const aiHordeApiClient = new AiHordeApiClient();
+  export const aiHordeApiClient = new HordeAPIClient();
   export default aiHordeApiClient;

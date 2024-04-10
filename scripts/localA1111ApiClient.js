@@ -465,5 +465,5 @@ class localA1111ApiClient {
     
     
 }
-export const localA1111ApiClient = new AiHordeApiClient();
+export const localA1111ApiClient = new HordeAPIClient();
 export default localA1111ApiClient;
