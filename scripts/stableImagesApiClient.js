@@ -1,4 +1,4 @@
-import chatListenner from "./ChatListenner.js";
+import chatListener from "./ChatListener.js";
 import localA1111APIClient from "./localA1111ApiClient.js";
 import HordeAPIClient from "./aiHordeApiClient.js";
 import ComfyUIAPIClient from "./comfyUiApiClient.js";
@@ -291,7 +291,7 @@ class stableImagesApiClient {
                 })
                 .then(data => {
                     // Create the image based on the response data
-                    chatListenner.createImage(data, prompt, message);
+                    chatListener.createImage(data, prompt, message);
                     game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
@@ -383,7 +383,7 @@ class stableImagesApiClient {
                 })
                 .then(data => {
                     // Create the image based on the response data
-                    chatListenner.createImage(data, prompt, message);
+                    chatListener.createImage(data, prompt, message);
                     game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
@@ -418,7 +418,7 @@ class stableImagesApiClient {
                 return response.json();
             })
             .then(async data => {
-                chatListenner.displayProgress(message, data);
+                chatListener.displayProgress(message, data);
     
                 if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
                     if (currentState === "idle") {
