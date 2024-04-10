@@ -5,7 +5,7 @@ import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import AiHordeSettings from './aiHordeSettings.js';
-import comfyApiClient from "./comfyUiApiClient.js";
+import comfyUiApiClient from "./comfyUiApiClient.js";
 
 /**
  * Hook that runs when the game is initialized.
@@ -70,7 +70,7 @@ Hooks.on('renderChatMessage', async function (message, html, data) {
  * @param {Object} sheet - The actor sheet.
  */
 async function generateActorChatCommand(sheet) {
-    if (sdAPIClient.working) {
+    if (game.settings.get("stable-images", "working")) {
         return ui.notifications.warn('Please wait until the previous job is finished.');
     }
     if (game.user.isGM && game.settings.get('stable-images', 'connected')) {

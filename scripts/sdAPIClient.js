@@ -23,12 +23,6 @@ class SdAPIClient {
         this.defaultRequestBody = {};
 
         /**
-         * Represents the working status of the API client.
-         * @type {boolean}
-         */
-        this.working = false;
-
-        /**
          * Represents the list of loras retrieved from the API.
          * @type {Array}
          */
@@ -288,13 +282,13 @@ class SdAPIClient {
      * @param {Message} message - The chat message object
      */
     async textToImg(prompt, message) {
-        if (this.working) {
+        if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
-        this.working = true;
+         await game.settings.set("stable-images", "working", true);
         console.log('requestBody', requestBody);
         try {
             // Send a POST request to the stable diffusion API
@@ -314,7 +308,7 @@ class SdAPIClient {
                 .then(data => {
                     // Create the image based on the response data
                     chatListenner.createImage(data, prompt, message);
-                    this.working = false;
+                    game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -379,7 +373,7 @@ class SdAPIClient {
      * @param {string} source - The source image data
      */
     async imgToImg(prompt, message, source) {
-        if (this.working) {
+        if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
         }
         let requestBody = deepClone(this.defaultRequestBody);
@@ -387,7 +381,7 @@ class SdAPIClient {
         requestBody.init_images = [source];
         requestBody.denoising_strength = this.settings.denoising_strength;
         let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/img2img/';
-        this.working = true;
+        await game.settings.set("stable-images", "working", true);
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -406,7 +400,7 @@ class SdAPIClient {
                 .then(data => {
                     // Create the image based on the response data
                     chatListenner.createImage(data, prompt, message);
-                    this.working = false;
+                    game.settings.set("stable-images", "working", false);
                 })
                 .catch(error => {
                     console.error('Error:', error);
