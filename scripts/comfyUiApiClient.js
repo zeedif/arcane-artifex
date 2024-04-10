@@ -23,9 +23,9 @@ class ComfyUiApiClient {
               ui.notifications.error(`Error occurred while trying to access ComfyUI server; error = ${error}`);
           }
         } else {
-          console.log("Stable Horde is not selected. Skipping ComfyUI status check.");
+          console.log("ComfyUI is not selected. Skipping ComfyUI status check.");
 
-          return 'Stable Horde is not selected. Skipping ComfyUI status check.';
+          return 'ComfyUI is not selected. Skipping ComfyUI status check.';
         }
     }
 }

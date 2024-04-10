@@ -38,9 +38,7 @@ Hooks.once('ready', async function () {
     if (game.user.isGM) {
         sdAPIClient.checkStatus();
         aiHordeApiClient.checkStatus();
-        console.error('Made it to hooks');
-        comfyApiClient.checkStatus();
-        console.error('Made it to after function call');
+        comfyUiApiClient.checkStatus();
     }
 });
 
