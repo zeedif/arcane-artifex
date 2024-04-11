@@ -1,4 +1,4 @@
-import sdAPIClient from "./sdAPIClient.js";
+import comfyUiApiClient from "./comfyUiApiClient.js";
 
 export default class ComfyUiSettings extends FormApplication {
     constructor(...args) {
@@ -20,10 +20,18 @@ export default class ComfyUiSettings extends FormApplication {
     getData() {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-        context.comfyUiSamplingMethod = game.settings.get("stable-images", "comfyUiSamplingMethod");
-        context.comfyUiScheduler = game.settings.get("stable-images", "comfyUiScheduler");
-        console.error("Context before adding data:", context);
-
+        context.comfyUISamplingMethod = game.settings.get("stable-images", "comfyUiSamplingMethod");
+        context.comfyUIScheduler = game.settings.get("stable-images", "comfyUiScheduler");
+        
+        // Add the data retrieved from the ComfyUI API
+        context.comfyUIModels = comfyUiApiClient.comfyUIModels;
+        context.comfyUISamplers = comfyUiApiClient.comfyUISamplers;
+        context.comfyUISchedulers = comfyUiApiClient.comfyUISchedulers;
+        context.comfyUIUpscalers = comfyUiApiClient.comfyUIUpscalers;
+        context.comfyUILoras = comfyUiApiClient.comfyUILoras;
+        
+        console.log("Context after adding data:", context);
+    
         this.context = context;
         return context;
     }
@@ -77,7 +85,7 @@ export default class ComfyUiSettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
-        sdAPIClient.changeModel(modelTitle).then(this.render(true));
+       // sdAPIClient.changeModel(modelTitle).then(this.render(true));
     }
 
     async changeSampler(ev) {

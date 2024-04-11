@@ -4,12 +4,13 @@ import { defaultSettings } from './registerSettings.js';
 class SdAPIClient {
     constructor() {
         this.settings = {};
-        this.defaultRequestBody = {};
-        this.models = [];
-        this.loras = [];
-        this.styles = [];
-        this.samplers = [];
-        this.upscalers = [];
+        this.localA111DefaultRequestBody = {};
+        this.localSDSettings = [];
+        this.localA1111Models = [];
+        this.localA1111Loras = [];
+        this.localA1111Styles = [];
+        this.localA1111Samplers = [];
+        this.localA1111Upscalers = [];
     }
 
     async checkStatus() {
@@ -63,7 +64,7 @@ class SdAPIClient {
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
 
-        this.defaultRequestBody = {
+        this.localA111DefaultRequestBody = {
             prompt: game.settings.get("stable-images", "promptPrefix"),
             seed: -1,
             height: game.settings.get("stable-images", "sdheight"),
@@ -80,7 +81,7 @@ class SdAPIClient {
             hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
             cfg_scale: game.settings.get("stable-images", "cfgScale")
         };
-        console.log("Default Request Body:", this.defaultRequestBody);
+        console.log("Default Request Body:", this.localA111DefaultRequestBody);
     }
 
     async getLoras() {
@@ -89,7 +90,7 @@ class SdAPIClient {
         try {
             const response = await fetch(lorasUrl, { method: 'GET' });
             if (response.ok) {
-                this.loras = await response.json();
+                this.localA1111Loras = await response.json();
             } else {
                 // Handle error
             }
@@ -104,7 +105,7 @@ class SdAPIClient {
         try {
             const response = await fetch(styleUrl, { method: 'GET' });
             if (response.ok) {
-                this.styles = await response.json();
+                this.localA1111Styles = await response.json();
             } else {
                 // Handle error
             }
@@ -119,7 +120,7 @@ class SdAPIClient {
         try {
             const response = await fetch(modelsUrl, { method: 'GET' });
             if (response.ok) {
-                this.models = await response.json();
+                this.localA1111Models = await response.json();
             } else {
                 // Handle error
             }
@@ -134,7 +135,7 @@ class SdAPIClient {
         try {
             const response = await fetch(optionsUrl, { method: 'GET' });
             if (response.ok) {
-                this.sdOptions = await response.json();
+                this.localA1111SDOptions = await response.json();
             } else {
                 // Handle error
             }
@@ -149,7 +150,7 @@ class SdAPIClient {
         try {
             const response = await fetch(samplersUrl, { method: 'GET' });
             if (response.ok) {
-                this.samplers = await response.json();
+                this.localA1111Samplers = await response.json();
             } else {
                 console.error(`Error while trying to access the samplers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
                 ui.notifications.error(`Error while trying to access the samplers from stable diffusion; error = Status Code ${response.status} - ${response.statusText}`);
@@ -166,7 +167,7 @@ class SdAPIClient {
         try {
             const response = await fetch(upscalersUrl, { method: 'GET' });
             if (response.ok) {
-                this.upscalers = await response.json();
+                this.localA1111Upscalers = await response.json();
             } else {
                 console.error(`Error while trying to access the upscalers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
                 ui.notifications.error(`Error while trying to access the upscalers from stable diffusion; error = Status Code ${response.status} - ${response.statusText}`);
@@ -231,7 +232,7 @@ class SdAPIClient {
         if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
         }
-        let requestBody = deepClone(this.defaultRequestBody);
+        let requestBody = deepClone(this.localA111DefaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         let apiUrl = `${game.settings.get("stable-images", "auto_url")}/sdapi/v1/txt2img/`;
         await game.settings.set("stable-images", "working", true);
@@ -303,7 +304,7 @@ class SdAPIClient {
         if (game.settings.get("stable-images", "working")) {
             return ui.notifications.warn("please wait until previous job is finished");
         }
-        let requestBody = deepClone(this.defaultRequestBody);
+        let requestBody = deepClone(this.localA111DefaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
         requestBody.denoising_strength = this.settings.denoising_strength;
