@@ -60,12 +60,12 @@ class ComfyUIAPIClient {
         console.error("Object Info:", this.objectInfo);
         this.comfyUIModels = this.objectInfo.CheckpointLoaderSimple.input.required.ckpt_name[0];
         this.comfyUISamplers = this.objectInfo.KSampler.input.required.sampler_name[0];
-        this.comfuUISchedulers = this.objectInfo.KSampler.input.required.scheduler[0];
+        this.comfyUISchedulers = this.objectInfo.KSampler.input.required.scheduler[0];
         this.comfyUILoras = this.objectInfo.LoraLoader.input.required.lora_name[0];
         this.comfyUIUpscalers = this.objectInfo.UpscaleModelLoader.input.required.model_name[0];
         console.error("Models:", this.comfyUIModels );
         console.error("Samplers:", this.comfyUISamplers);
-        console.error("Schedulers:", this.comfuUISchedulers);
+        console.error("Schedulers:", this.comfyUISchedulers);
         console.error("Loras:", this.comfyUILoras);
         console.error("Upscalers:", this.comfyUIUpscalers);
 
