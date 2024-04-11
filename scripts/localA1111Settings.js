@@ -22,13 +22,15 @@ export default class LocalA1111Settings extends FormApplication {
         context.source = game.settings.get("stable-images", "source");
         context.a1111Sampler = game.settings.get("stable-images", "a1111Sampler");
         context.a1111Upscaler = game.settings.get("stable-images", "a1111Upscaler");
+        context.activeModel = game.settings.get("stable-images", "a1111Model");
         context.numImages = game.settings.get("stable-images", "numImages");
 
-        context.loras = sdAPIClient.loras;
-        context.activeModel = sdAPIClient.sdOptions.sd_model_checkpoint;
-        context.models = sdAPIClient.models;
-        context.styles = sdAPIClient.styles;
-        context.upscalers = sdAPIClient.upscalers;
+        context.loras = sdAPIClient.localA1111Loras;
+        context.models = sdAPIClient.localA1111Models;
+        context.styles = sdAPIClient.localA1111Styles;
+        context.upscalers = sdAPIClient.localA1111Upscalers;
+
+        console.error(context);
 
         if (!context.activeLoras) {
             context.activeLoras = [];
@@ -87,6 +89,7 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
+        await game.settings.set("stable-images", "a1111Model", modelTitle);
         sdAPIClient.changeModel(modelTitle).then(this.render(true));
     }
 

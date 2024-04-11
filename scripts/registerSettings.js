@@ -145,6 +145,14 @@ export default function registerSettings() {
     default: 512
   });
 
+  game.settings.register("stable-images", "a1111Model", {
+    name: "a1111Model",
+    scope: "world",
+    type: String,
+    default: "",
+    config: false,
+  });
+
   game.settings.register("stable-images", "a1111Sampler", {
     name: "a1111Sampler",
     scope: "world",

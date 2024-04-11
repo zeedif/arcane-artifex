@@ -59,6 +59,7 @@ class LocalA1111APIClient {
         await this.localA1111getSamplers();
         await this.localA1111getUpscalers();
 
+
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
 
@@ -134,6 +135,7 @@ class LocalA1111APIClient {
             const response = await fetch(optionsUrl, { method: 'GET' });
             if (response.ok) {
                 this.sdOptions = await response.json();
+                await game.settings.set("stable-images", "a1111Model", this.sdOptions.sd_model_checkpoint);
             } else {
                 // Handle error
             }

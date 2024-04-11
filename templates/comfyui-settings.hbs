@@ -1,29 +1,27 @@
 <form autocomplete="on">
-    <div class="sheet-body flexrow">
-        <section>
-            <div class="source_url">
-                <h2>SERVER IP</h2>
-                <div class="form-group">
-                    <label>Local ComfyUI server IP</label>
-                    <div class="form-fields">
-                        <input name="comfyui_url" type="text"
-                            value="{{comfyui_url}}" />
+            <div class="sheet-body flexrow">
+                <section>
+                    <div class="source_url">
+                        <h2>SERVER IP</h2>
+                        <div class="form-group">
+                            <label>Local ComfyUI server IP</label>
+                            <div class="form-fields">
+                                <input name="comfyui_url" type="text" value="{{comfyui_url}}" />
+                            </div>
+                        </div>
                     </div>
-                    <p class="notes">IP address of your local instance of ComfyUI</p>
-                </div>
-            </div>
-            <div class="models">
-                <h2>MODELS</h2>
-                <h4>active model : {{comfyUIModel}}</h4>
-                <select id="change-model">
-                    <option>change model here</option>
-                    {{#each comfyUIModels as |model|}}
-                    <option class="model" value="{{model}}">
-                        {{model}}
-                    </option>
-                    {{/each}}
-                </select>
-                <p class="note">This may take some time, please wait for changes to appear</p>
+                    <h2 style="text-align: center;">These each represent a placeholder in the ComfyUI .json file.</h2>
+                    <div class="models">
+                        <h2>MODELS</h2>
+                        <h4>active model : {{comfyUIModel}}</h4>
+                        <select id="change-model">
+                            <option>change model here</option>
+                            {{#each comfyUIModels as |model|}}
+                            <option class="model" value="{{model}}">{{model}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </section>
             </div>
             <div class="samplers">
                 <h2>SAMPLING METHOD</h2>
