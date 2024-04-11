@@ -1,6 +1,6 @@
-import comfyUiApiClient from "./comfyUiApiClient.js";
+import comfyUIAPIClient from "./comfyUiApiClient.js";
 
-export default class ComfyUiSettings extends FormApplication {
+export default class ComfyUISettings extends FormApplication {
     constructor(...args) {
         super();
         this.loadingModel = false;
@@ -20,15 +20,15 @@ export default class ComfyUiSettings extends FormApplication {
     getData() {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-        context.comfyUISamplingMethod = game.settings.get("stable-images", "comfyUiSamplingMethod");
-        context.comfyUIScheduler = game.settings.get("stable-images", "comfyUiScheduler");
+        context.comfyUISamplingMethod = game.settings.get("stable-images", "comfyUISamplingMethod");
+        context.comfyUIScheduler = game.settings.get("stable-images", "comfyUIScheduler");
         
         // Add the data retrieved from the ComfyUI API
-        context.comfyUIModels = comfyUiApiClient.comfyUIModels;
-        context.comfyUISamplers = comfyUiApiClient.comfyUISamplers;
-        context.comfyUISchedulers = comfyUiApiClient.comfyUISchedulers;
-        context.comfyUIUpscalers = comfyUiApiClient.comfyUIUpscalers;
-        context.comfyUILoras = comfyUiApiClient.comfyUILoras;
+        context.comfyUIModels = comfyUIAPIClient.comfyUIModels;
+        context.comfyUISamplers = comfyUIAPIClient.comfyUISamplers;
+        context.comfyUISchedulers = comfyUIAPIClient.comfyUISchedulers;
+        context.comfyUIUpscalers = comfyUIAPIClient.comfyUIUpscalers;
+        context.comfyUILoras = comfyUIAPIClient.comfyUILoras;
         
         console.log("Context after adding data:", context);
     
@@ -39,28 +39,29 @@ export default class ComfyUiSettings extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         this.changeLoraPrompt();
-
+    
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
         html[0].querySelector('select#change-sampler').addEventListener('change', this.changeSampler.bind(this));
+        html[0].querySelector('select#change-scheduler').addEventListener('change', this.changeScheduler.bind(this));
         html[0].querySelector('select#change-upscaler').addEventListener('change', this.changeUpscaler.bind(this));
-
+    
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
-            let activeMap = this.context.activeLoras?.map(l => l.alias);
+            let activeMap = this.context.activeLoras?.map(l => l);
             if (activeMap?.indexOf(span.innerText) > -1) {
                 span.classList.add('active');
             }
             span.addEventListener('click', this.toggleLora.bind(this));
         }
-
+    
         for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
             range.addEventListener('change', this.changeLoraPrompt.bind(this));
         }
-
+    
         html.find('input[name="numImages"]').on("input", async (event) => {
             await game.settings.set("stable-images", "numImages", parseInt(event.target.value));
             this.render(true);
         });
-
+    
         html.find('select[name="source"]').on("change", async (event) => {
             await game.settings.set("stable-images", "source", event.target.value);
             this.render();
@@ -92,7 +93,15 @@ export default class ComfyUiSettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let samplerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUiSampler", samplerName);
+        await game.settings.set("stable-images", "comfyUISampler", samplerName);
+        this.render(true);
+    }
+
+    async changeScheduler(ev) {
+        ev.preventDefault();
+        let sel = ev.currentTarget;
+        let samplerName = sel.options[sel.selectedIndex].value;
+        await game.settings.set("stable-images", "comfyUISampler", schedulerName);
         this.render(true);
     }
 
@@ -100,7 +109,7 @@ export default class ComfyUiSettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let upscalerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUiUpscaler", upscalerName);
+        await game.settings.set("stable-images", "comfyUIUpscaler", upscalerName);
         this.render(true);
     }
 

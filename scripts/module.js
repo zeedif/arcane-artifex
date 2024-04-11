@@ -5,7 +5,7 @@ import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import HordeSettings from './aiHordeSettings.js';
-import comfyUiApiClient from "./comfyUiApiClient.js";
+import comfyUIApiClient from "./comfyUiApiClient.js";
 
 Hooks.on('init', async function () {
     CONFIG.debug.hooks = true;
@@ -27,7 +27,7 @@ Hooks.once('ready', async function () {
     if (game.user.isGM) {
         sdAPIClient.checkStatus();
         aiHordeApiClient.checkStatus();
-        comfyUiApiClient.checkStatus();
+        comfyUIApiClient.checkStatus();
     }
 });
 

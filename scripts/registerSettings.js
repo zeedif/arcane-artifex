@@ -2,7 +2,7 @@ import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
 import sdAPIClient from "./sdAPIClient.js";
 import HordeSettings from "./aiHordeSettings.js";
-import comfyUiSettings from "./comfyUiSettings.js";
+import comfyUISettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
@@ -109,7 +109,7 @@ export default function registerSettings() {
     name: 'ComfyUI Settings',
     label: 'ComfyUI Settings',
     icon: 'fas fa-cog',
-    type: comfyUiSettings,
+    type: comfyUISettings,
     restricted: true,
   });
 
@@ -186,16 +186,16 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyUiSamplingMethod", {
-    name: "comfyUiSamplingMethod",
+  game.settings.register("stable-images", "comfyUISamplingMethod", {
+    name: "comfyUISamplingMethod",
     scope: "world",
     type: String,
     default: "euler",
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyUiScheduler", {
-    name: "comfyUiScheduler",
+  game.settings.register("stable-images", "comfyUIScheduler", {
+    name: "comfyUIScheduler",
     scope: "world",
     type: String,
     default: "sgm_uniform",
@@ -229,7 +229,7 @@ export default function registerSettings() {
     choices: {
       stableHorde: "Stable Horde",
       automatic1111: "Stable Diffusion Web UI (AUTOMATIC1111)",
-      comfyUi: "ComfyUI"
+      comfyUI: "ComfyUI"
     },
     default: "stableHorde",
     onChange: async value => {

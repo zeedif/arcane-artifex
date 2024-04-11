@@ -11,7 +11,7 @@ class ComfyUIAPIClient {
   async checkStatus() {
     const selectedSource = game.settings.get('stable-images', 'source');
   
-    if (selectedSource === 'comfyUi') {
+    if (selectedSource === 'comfyUI') {
       const comfyUrl = game.settings.get('stable-images', 'comfyui_url');
       const statusUrl = `${comfyUrl}/system_stats`;
   
@@ -108,5 +108,5 @@ class ComfyUIAPIClient {
 
 
 
-export const comfyUiApiClient = new ComfyUIAPIClient();
-export default comfyUiApiClient;
+export const comfyUIApiClient = new ComfyUIAPIClient();
+export default comfyUIApiClient;
