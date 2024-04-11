@@ -40,41 +40,16 @@ const resolutionOptions = {
 };
 
 const defaultSettings = {
-  // Horde settings
-  horde_url: 'https://stablehorde.net',
-  horde: false,
-  horde_nsfw: false,
-  horde_karras: true,
-  horde_sanitize: true,
+
   horde_model: '',
   horde_models: [],
 
-  // Refine mode
-  refine_mode: false,
-  expand: false,
-  interactive_mode: false,
-  multimodal_captioning: false,
-  snap: false,
+
 
   prompts: promptTemplates,
 
-  // NovelAI settings
-  novel_upscale_ratio_min: 1.0,
-  novel_upscale_ratio_max: 4.0,
-  novel_upscale_ratio_step: 0.1,
-  novel_upscale_ratio: 1.0,
-  novel_anlas_guard: false,
-
-  // OpenAI settings
-  openai_style: 'vivid',
-  openai_quality: 'standard',
-
   style: 'Default',
   styles: defaultStyles,
-
-  // ComyUI settings
-  comfy_url: 'http://127.0.0.1:8188',
-  comfy_workflow: 'Default_Comfy_Workflow.json',
 
   // stable-images old settings TO BE DEPRECATED
   batchCount: 4,
@@ -186,8 +161,24 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyUISamplingMethod", {
-    name: "comfyUISamplingMethod",
+  game.settings.register("stable-images", "comfyUIModel", {
+    name: "comfyUIModel",
+    scope: "world",
+    type: String,
+    default: "juggernautXL_v9Rdphoto2Lightning.safetensors",
+    config: false,
+  });
+
+  game.settings.register("stable-images", "comfyUIUpscaler", {
+    name: "comfyUIUpscaler",
+    scope: "world",
+    type: String,
+    default: "4x_foolhardy_Remacri",
+    config: false,
+  });    
+
+  game.settings.register("stable-images", "comfyUISampler", {
+    name: "comfyUISampler",
     scope: "world",
     type: String,
     default: "euler",

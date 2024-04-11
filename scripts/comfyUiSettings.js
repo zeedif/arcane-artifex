@@ -20,8 +20,11 @@ export default class ComfyUISettings extends FormApplication {
     getData() {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-        context.comfyUISamplingMethod = game.settings.get("stable-images", "comfyUISamplingMethod");
+
+        context.comfyUIModel = game.settings.get("stable-images", "comfyUIModel");
+        context.comfyUISampler = game.settings.get("stable-images", "comfyUISampler");
         context.comfyUIScheduler = game.settings.get("stable-images", "comfyUIScheduler");
+        context.comfyUIUpscaler = game.settings.get("stable-images", "comfyUIUpscaler");
         
         // Add the data retrieved from the ComfyUI API
         context.comfyUIModels = comfyUIAPIClient.comfyUIModels;
@@ -86,7 +89,8 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
-       // sdAPIClient.changeModel(modelTitle).then(this.render(true));
+        await game.settings.set("stable-images", "comfyUIModel", modelTitle);
+        this.render(true);
     }
 
     async changeSampler(ev) {
@@ -100,8 +104,8 @@ export default class ComfyUISettings extends FormApplication {
     async changeScheduler(ev) {
         ev.preventDefault();
         let sel = ev.currentTarget;
-        let samplerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUISampler", schedulerName);
+        let schedulerName = sel.options[sel.selectedIndex].value;
+        await game.settings.set("stable-images", "comfyUIScheduler", schedulerName);
         this.render(true);
     }
 
