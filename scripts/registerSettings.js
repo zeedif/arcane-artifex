@@ -156,7 +156,7 @@ export default function registerSettings() {
 
   // Register settings for localA1111Models
   game.settings.register("stable-images", "localA1111Models", {
-    name: "Local A1111 Models",
+    name: "localA1111Models",
     scope: "world",
     type: Array,
     default: [],

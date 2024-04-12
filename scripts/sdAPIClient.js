@@ -61,6 +61,9 @@ class SdAPIClient {
         await this.getSamplers();
         await this.getUpscalers();
 
+
+
+        
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
 
@@ -120,8 +123,8 @@ class SdAPIClient {
         try {
             const response = await fetch(modelsUrl, { method: 'GET' });
             if (response.ok) {
-                this.localA1111Models = await response.json();
-                console.error("Local A1111 Models2:", this.localA1111Models);
+                game.settings.set("stable-images", "localA1111Models", await response.json());
+               //this.localA1111Models = await response.json();
             } else {
                 // Handle error
             }
