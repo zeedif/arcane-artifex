@@ -199,6 +199,13 @@ export default function registerSettings() {
     config: false,
   });
 
+  game.settings.register("stable-images", "localA1111SDOptions", {
+    name: "localA1111SDOptions",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
 
   game.settings.register("stable-images", "localA1111Model", {
     name: "localA1111Model",
@@ -329,10 +336,10 @@ export default function registerSettings() {
       automatic1111: "Stable Diffusion Web UI (AUTOMATIC1111)",
       comfyUI: "ComfyUI"
     },
-    default: "stableHorde",
+    default: "ComfyUI",
+    requiresReload: true,
     onChange: async value => {
-      console.error("Source changed to: ", value);
-      await sdAPIClient.getLocalA1111Settings();
+      console.log("Source changed to: ", value);
     }
   });
 

@@ -5,12 +5,6 @@ class SdAPIClient {
     constructor() {
         this.settings = {};
         this.localA111DefaultRequestBody = {};
-        this.localSDSettings = [];
-        this.localA1111Models = [];
-        this.localA1111Loras = [];
-        this.localA1111Styles = [];
-        this.localA1111Samplers = [];
-        this.localA1111Upscalers = [];
     }
 
     async checkStatus() {
@@ -53,17 +47,8 @@ class SdAPIClient {
             console.warn("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
             return;
         }
+        await this.getA1111EndpointSettings();
 
-        await this.getLoras();
-        await this.getModels();
-        await this.getStyles();
-        await this.getSdOptions();
-        await this.getSamplers();
-        await this.getUpscalers();
-
-
-
-        
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
 
@@ -86,94 +71,41 @@ class SdAPIClient {
         };
         console.log("Default Request Body:", this.localA111DefaultRequestBody);
     }
-
-    async getLoras() {
-        let stIP = await game.settings.get("stable-images", "localA1111URL");
-        let lorasUrl = `${stIP}/sdapi/v1/loras`;
+    async getA1111EndpointSettings() {
+        const stIP = await game.settings.get("stable-images", "localA1111URL");
         try {
-            const response = await fetch(lorasUrl, { method: 'GET' });
-            if (response.ok) {
-                game.settings.set("stable-images", "localA1111Loras", await response.json());
-            } else {
-                // Handle error
+            const lorasResponse = await fetch(`${stIP}/sdapi/v1/loras`, { method: 'GET' });
+            if (lorasResponse.ok) {
+                game.settings.set("stable-images", "localA1111Loras", await lorasResponse.json());
             }
-        } catch (error) {
-            console.error('Error while attempting to access the stable diffusion loras:', error);
-        }
-    }
 
-    async getStyles() {
-        let stIP = await game.settings.get("stable-images", "localA1111URL");
-        let styleUrl = `${stIP}/sdapi/v1/prompt-styles`;
-        try {
-            const response = await fetch(styleUrl, { method: 'GET' });
-            if (response.ok) {
-                game.settings.set("stable-images", "localA1111Styles", await response.json());
-            } else {
-                // Handle error
+            const stylesResponse = await fetch(`${stIP}/sdapi/v1/prompt-styles`, { method: 'GET' });
+            if (stylesResponse.ok) {
+                game.settings.set("stable-images", "localA1111Styles", await stylesResponse.json());
             }
-        } catch (error) {
-            console.error('Error while attempting to access the stable diffusion styles:', error);
-        }
-    }
 
-    async getModels() {
-        let stIP = await game.settings.get("stable-images", "localA1111URL");
-        let modelsUrl = `${stIP}/sdapi/v1/sd-models`;
-        try {
-            const response = await fetch(modelsUrl, { method: 'GET' });
-            if (response.ok) {
-                game.settings.set("stable-images", "localA1111Models", await response.json());
-            } else {
-                // Handle error
+            const modelsResponse = await fetch(`${stIP}/sdapi/v1/sd-models`, { method: 'GET' });
+            if (modelsResponse.ok) {
+                game.settings.set("stable-images", "localA1111Models", await modelsResponse.json());
             }
-        } catch (error) {
-            console.error("Error while attempting to access the stable diffusion models:", error);
-        }
-    }
 
-    async getSdOptions() {
-        let stIP = await game.settings.get("stable-images", "localA1111URL");
-        let optionsUrl = `${stIP}/sdapi/v1/options`;
-        try {
-            const response = await fetch(optionsUrl, { method: 'GET' });
-            if (response.ok) {
-                this.localA1111SDOptions = await response.json();
-            } else {
-                // Handle error
+            const samplersResponse = await fetch(`${stIP}/sdapi/v1/samplers`, { method: 'GET' });
+            if (samplersResponse.ok) {
+                game.settings.set("stable-images", "localA1111Samplers", await samplersResponse.json());
             }
-        } catch (error) {
-            console.error("Error while attempting to access the stable diffusion options:", error);
-        }
-    }
 
-    async getSamplers() {
-        let stIP = await game.settings.get("stable-images", "localA1111URL");
-        let samplersUrl = `${stIP}/sdapi/v1/samplers`;
-        try {
-            const response = await fetch(samplersUrl, { method: 'GET' });
-            if (response.ok) {
-                game.settings.set("stable-images", "localA1111Samplers", await response.json());
-            } else {
-                console.error(`Error while trying to access the samplers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
+            const upscalersResponse = await fetch(`${stIP}/sdapi/v1/upscalers`, { method: 'GET' });
+            if (upscalersResponse.ok) {
+                game.settings.set("stable-images", "localA1111Upscalers", await upscalersResponse.json());
             }
-        } catch (error) {
-            console.error("Error while trying to access the samplers from stable diffusion:", error);
-        }
-    }
 
-    async getUpscalers() {
-        let stIP = await game.settings.get("stable-images", "localA1111URL");
-        let upscalersUrl = `${stIP}/sdapi/v1/upscalers`;
-        try {
-            const response = await fetch(upscalersUrl, { method: 'GET' });
-            if (response.ok) {
-                game.settings.set("stable-images", "localA1111Upscalers", await response.json());
-            } else {
-                console.error(`Error while trying to access the upscalers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
+            const optionsResponse = await fetch(`${stIP}/sdapi/v1/options`, { method: 'GET' });
+            if (optionsResponse.ok) {
+                game.settings.set("stable-images", "localA1111SDOptions", await optionsResponse.json());
             }
+
         } catch (error) {
-            console.error("Error while trying to access the upscalers from stable diffusion:", error);
+            console.error("Error while attempting to access A1111 API endpoints:", error);
         }
     }
 
@@ -286,7 +218,7 @@ class SdAPIClient {
                     return response.json();
                 })
                 .then(async () => {
-                    await this.getSdOptions();
+                    await this.getA1111EndpointSettings();
                     if (ui.activeWindow.title == "settings for stable diffusion image generation") {
                         ui.activeWindow.render(true);
                     }
