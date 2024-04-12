@@ -63,37 +63,32 @@
             <div class="loras">
                 <h2 class="stable-loras">LORAS</h2>
 
-                <div class="form-group">
-                    <label>lora Prompt</label>
-                    <div class="form-fields">
-                        <textarea name="loraPrompt">{{loraPrompt}}</textarea>
-                    </div>
-                    <p class="notes">this text will be inserted after your
-                        prompt to
-                        trigger your loras
-                    </p>
-                </div>
-                <div class="stable-lora-choice">
-                    {{#each loras as |lora|}}
-                    <span class="lora-choice">{{lora.alias}}</span>
-                    {{/each}}
-                </div>
-                {{log loras}}
-                {{#each activeLoras as |lora id|}}
-                {{log lora id}}
-                <div class="form-group active-lora">
-                    <label>{{lora.alias}}</label>
-                    <input type="range" class="stable-lora-value"
-                        data-lora-alias="{{lora.alias}}"
-                        name="activeLoras[{{id}}].value"
-                        data-dtype="Number"
-                        value="{{lora.value}}" min="0" max="1"
-                        step="0.05">
-                    <span class="range-value">{{lora.value}}</span>
-
-                </div>
-                {{/each}}
+        <div class="form-group">
+            <label>lora Prompt</label>
+            <div class="form-fields">
+                <textarea name="loraPrompt">{{loraPrompt}}</textarea>
             </div>
+            <p class="notes">This text will be inserted after your prompt to trigger your loras</p>
+        </div>
+        <div class="stable-lora-choice">
+            {{#each comfyUILoras as |lora|}}
+            <span class="lora-choice {{#if lora.active}}active{{/if}}">{{lora.lora}}</span>
+            {{/each}}
+        </div>
+        {{log comfyUILoras}}
+        {{#each comfyUILoras as |lora|}}
+            <div class="form-group active-lora {{#unless lora.active}}hidden{{/unless}}">
+                <label>{{lora.lora}}</label>
+                <input type="range" class="stable-lora-value"
+                    data-lora-alias="{{lora.lora}}"
+                    name="comfyUILoras[{{@index}}].strength"
+                    data-dtype="Number"
+                    value="{{lora.strength}}" min="0" max="1"
+                    step="0.05">
+                <span class="range-value">{{lora.strength}}</span>
+            </div>
+        {{/each}}
+
         </section>
     </div>
 

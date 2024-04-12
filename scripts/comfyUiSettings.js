@@ -3,7 +3,6 @@ import comfyUIAPIClient from "./comfyUiApiClient.js";
 export default class ComfyUISettings extends FormApplication {
     constructor(...args) {
         super();
-        this.loadingModel = false;
     }
 
     static get defaultOptions() {
@@ -25,14 +24,12 @@ export default class ComfyUISettings extends FormApplication {
         context.comfyUISampler = game.settings.get("stable-images", "comfyUISampler");
         context.comfyUIScheduler = game.settings.get("stable-images", "comfyUIScheduler");
         context.comfyUIUpscaler = game.settings.get("stable-images", "comfyUIUpscaler");
-        
-        // Add the data retrieved from the ComfyUI API
-        context.comfyUIModels = comfyUIAPIClient.comfyUIModels;
-        context.comfyUISamplers = comfyUIAPIClient.comfyUISamplers;
-        context.comfyUISchedulers = comfyUIAPIClient.comfyUISchedulers;
-        context.comfyUIUpscalers = comfyUIAPIClient.comfyUIUpscalers;
-        context.comfyUILoras = comfyUIAPIClient.comfyUILoras;
-        
+        context.comfyUIModels = game.settings.get("stable-images", "comfyUIModels");
+        context.comfyUISamplers = game.settings.get("stable-images", "comfyUISamplers");
+        context.comfyUISchedulers = game.settings.get("stable-images", "comfyUISchedulers");
+        context.comfyUIUpscalers = game.settings.get("stable-images", "comfyUIUpscalers");
+        context.comfyUILoras = game.settings.get("stable-images", "comfyUILoras");
+          
         console.log("Context after adding data:", context);
     
         this.context = context;
@@ -48,18 +45,22 @@ export default class ComfyUISettings extends FormApplication {
         html[0].querySelector('select#change-scheduler').addEventListener('change', this.changeScheduler.bind(this));
         html[0].querySelector('select#change-upscaler').addEventListener('change', this.changeUpscaler.bind(this));
     
-        for (let span of html[0].querySelectorAll('span.lora-choice')) {
-            let activeMap = this.context.activeLoras?.map(l => l);
-            if (activeMap?.indexOf(span.innerText) > -1) {
-                span.classList.add('active');
-            }
-            span.addEventListener('click', this.toggleLora.bind(this));
+    // Adjust event listener setup for 'span.lora-choice'
+    for (let span of html[0].querySelectorAll('span.lora-choice')) {
+        let loraName = span.innerText.trim();
+        // Check if the lora is active by finding it in the array and checking its 'active' property
+        let lora = this.context.comfyUILoras.find(l => l.lora === loraName);
+        if (lora && lora.active) {
+            span.classList.add('active');
         }
-    
-        for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
-            range.addEventListener('change', this.changeLoraPrompt.bind(this));
-        }
-    
+        span.addEventListener('click', (event) => this.toggleLora(event, lora));
+    }
+
+    // Attach event listeners to range inputs for Lora strength adjustments
+    for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
+        range.addEventListener('change', (event) => this.changeLoraStrength(event, range.dataset.loraAlias));
+    }
+
         html.find('input[name="numImages"]').on("input", async (event) => {
             await game.settings.set("stable-images", "numImages", parseInt(event.target.value));
             this.render(true);
@@ -118,59 +119,76 @@ export default class ComfyUISettings extends FormApplication {
     }
 
     async toggleLora(ev) {
-        let loraAlias = ev.currentTarget.innerText.trim();
-        
-        // Check if the array is initialized, if not, initialize it
-        if (!this.context.comfyUIActiveLoras) {
-            this.context.comfyUIActiveLoras = [];
+        let loraName = ev.currentTarget.innerText.trim();
+        let loras = game.settings.get('stable-images', 'comfyUILoras');
+        let lora = loras.find(l => l.lora === loraName);
+    
+        if (!lora) {
+            console.error("Lora not found:", loraName);
+            return;
         }
     
-        // Check if the loraAlias is in the active list
-        const isActive = this.context.comfyUIActiveLoras.includes(loraAlias);
+        // Toggle the 'active' state of the Lora
+        lora.active = !lora.active;
     
-        if (isActive) {
-            // If active, remove from the list
-            this.context.comfyUIActiveLoras = this.context.comfyUIActiveLoras.filter(alias => alias !== loraAlias);
-            ev.currentTarget.classList.remove("active");
-        } else {
-            // If not active, add to the list
-            this.context.comfyUIActiveLoras.push(loraAlias);
-            ev.currentTarget.classList.add("active");
+        // If toggling lora to active, set a default strength if not already set
+        if (lora.active && lora.strength === undefined) {
+            lora.strength = 0.5; // Default strength value
         }
     
-        // Only trigger the render if it's necessary for updating the UI
-        // If other functionalities rely on the `render` method and have stopped working, 
-        // ensure that `render` method is well-defined and does not have side effects 
-        // that might disrupt other functionalities.
-        if (this.render) {
-            this.render(true);
-        }
+        // Update the game setting with the modified loras array
+        // Make a shallow copy of the array to ensure the setting system detects the change
+        await game.settings.set('stable-images', 'comfyUILoras', [...loras]);
+    
+        // Call a render method to update the UI immediately
+        this.render(true);
     }
     
- 
     
+
+    async changeLoraStrength(event, loraAlias) {
+        let value = parseFloat(event.target.value);
+        let loras = game.settings.get('stable-images', 'comfyUILoras');
+        let lora = loras.find(l => l.lora === loraAlias);
+        if (lora) {
+            lora.strength = value; // Update the strength value
+            // Update settings as needed
+            await game.settings.set('stable-images', 'comfyUILoras', [...loras]);
+        }
+        this.render(true);
+    }
     
 
     async changeLoraPrompt() {
-        let html = this.form;
-        let lorPrompt = "";
-
-        for (let loraEl of html.getElementsByClassName('active-lora')) {
-            let range = loraEl.querySelector('input');
-            let targetLora = this.context.activeLoras.find(l => l.name == range.dataset.loraAlias);
-            if (targetLora) {
-                targetLora.value = range.value;
+        let loras = game.settings.get('stable-images', 'comfyUILoras');  // Retrieve the array of Loras from the settings.
+        let loraPrompt = "";
+    
+        // Iterate over all loras and construct the prompt string for active loras.
+        loras.forEach(lora => {
+            if (lora.active) {  // Check if the Lora is active.
+                let newString = `<lora:${lora.lora}:${lora.strength}>`;  // Construct the string using the lora's alias and its current strength.
+                loraPrompt += newString;  // Append the new string to the prompt.
             }
-            let newString = `<lora:${range.dataset.loraAlias}:${range.value}>`
-            lorPrompt += newString;
+        });
+    
+        // Update the textarea for loraPrompt
+        if (this.form) {
+            this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;  // Update the textarea with the new lora prompt.
         }
-
-        html.querySelector('textarea[name="loraPrompt"]').value = lorPrompt;
-        this.context.loraPrompt = lorPrompt;
+    
+        // Save the updated loras back to the settings, ensuring changes are recognized by Foundry's settings management
+        await game.settings.set('stable-images', 'comfyUILoras', loras);
+    
+        // Optionally update the local context if it is used elsewhere
+        this.context.loraPrompt = loraPrompt;
+        
     }
-
+    
+    
     _updateObject(event, formData) {
+        // Assuming `expandObject` correctly expands formData into an object
         const data = { ...this.context, ...expandObject(formData) };
         game.settings.set('stable-images', 'stable-settings', data);
     }
+    
 }

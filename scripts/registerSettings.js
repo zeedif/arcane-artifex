@@ -200,6 +200,50 @@ export default function registerSettings() {
     default: "sgm_uniform",
     config: false,
   });
+  game.settings.register('stable-images', 'comfyUIModels', {
+    name: 'ComfyUI Models',
+    hint: 'List of available models for ComfyUI.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+  game.settings.register('stable-images', 'comfyUILoras', {
+    name: 'ComfyUI Loras',
+    hint: 'List of available Loras for ComfyUI.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+  game.settings.register('stable-images', 'comfyUISchedulers', {
+    name: 'comfyUISchedulers',
+    hint: 'List of available styles for ComfyUI.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+  game.settings.register('stable-images', 'comfyUISamplers', {
+    name: 'ComfyUI Samplers',
+    hint: 'List of available samplers for ComfyUI.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+  game.settings.register('stable-images', 'comfyUIUpscalers', {
+    name: 'ComfyUI Upscalers',
+    hint: 'List of available upscalers for ComfyUI.',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
 
   game.settings.register("stable-images", "numImages", {
     name: "numImages",

@@ -60,32 +60,31 @@
                 </select>
             </div>
             <div class="loras">
-                <h2 class="stable-loras">LORAS</h2>
-                <div class="form-group">
-                    <label>lora Prompt</label>
+                <h2 class="stable-loras">LORA STACK</h2>
                     <div class="form-fields">
                         <textarea name="loraPrompt">{{loraPrompt}}</textarea>
                     </div>
-                    <p class="notes">This text will be inserted after your prompt to trigger your loras</p>
+                    <p class="notes">This is the equivalent A1111 text command that will be used to create your LoRA stack.</p>
                 </div>
                 <div class="stable-lora-choice">
                     {{#each comfyUILoras as |lora|}}
-                    <span class="lora-choice {{#if (includes comfyUIActiveLoras lora)}}active{{/if}}">{{lora}}</span>
+                    <span class="lora-choice {{#if lora.active}}active{{/if}}">{{lora.lora}}</span>
                     {{/each}}
                 </div>
-                {{#each comfyUIActiveLoras as |activeLora id|}}
-                <div class="form-group active-lora">
-                    <label>{{activeLora}}</label>
+                {{#each comfyUILoras as |lora id|}}
+                <div class="form-group active-lora {{#unless lora.active}}hidden{{/unless}}">
+                    <label>{{lora.lora}}</label>
                     <input type="range" class="stable-lora-value"
-                        data-lora-alias="{{activeLora}}"
-                        name="comfyUIActiveLoras[{{id}}].value"
+                        data-lora-alias="{{lora.lora}}"
+                        name="comfyUILoras[{{id}}].strength"
                         data-dtype="Number"
-                        value="{{lookup loraValues activeLora}}" min="0" max="1"
+                        value="{{lora.strength}}" min="0" max="1"
                         step="0.05">
-                    <span class="range-value">{{lookup loraValues activeLora}}</span>
+                    <span class="range-value">{{lora.strength}}</span>
                 </div>
                 {{/each}}
             </div>
+
 
         </section>
     </div>

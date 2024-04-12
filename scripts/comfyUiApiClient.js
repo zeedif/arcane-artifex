@@ -2,11 +2,6 @@ class ComfyUIAPIClient {
   constructor() {
     this.settings = {};
     this.comfyUIDefaultRequestBody = {};
-    this.comfyUIModels = [];
-    this.comfyUILoras = [];
-    this.comfyUIStyles = [];
-    this.comfyUISamplers = [];
-    this.comfyUIUpscalers = [];
 }
   async checkStatus() {
     const selectedSource = game.settings.get('stable-images', 'source');
@@ -57,17 +52,16 @@ class ComfyUIAPIClient {
       const response = await fetch(objectInfoURL, { method: 'GET' });
       if (response.ok) {
         this.objectInfo = await response.json();
-        console.error("Object Info:", this.objectInfo);
-        this.comfyUIModels = this.objectInfo.CheckpointLoaderSimple.input.required.ckpt_name[0];
-        this.comfyUISamplers = this.objectInfo.KSampler.input.required.sampler_name[0];
-        this.comfyUISchedulers = this.objectInfo.KSampler.input.required.scheduler[0];
-        this.comfyUILoras = this.objectInfo.LoraLoader.input.required.lora_name[0];
-        this.comfyUIUpscalers = this.objectInfo.UpscaleModelLoader.input.required.model_name[0];
-        console.error("Models:", this.comfyUIModels );
-        console.error("Samplers:", this.comfyUISamplers);
-        console.error("Schedulers:", this.comfyUISchedulers);
-        console.error("Loras:", this.comfyUILoras);
-        console.error("Upscalers:", this.comfyUIUpscalers);
+        await game.settings.set("stable-images", "comfyUIModels", this.objectInfo.CheckpointLoaderSimple.input.required.ckpt_name[0]);
+        console.error("Models:", game.settings.get("stable-images", "comfyUIModels"));
+        await game.settings.set("stable-images", "comfyUISamplers", this.objectInfo.KSampler.input.required.sampler_name[0]);
+        console.error("Samplers:", game.settings.get("stable-images", "comfyUISamplers"));
+        await game.settings.set("stable-images", "comfyUISchedulers", this.objectInfo.KSampler.input.required.scheduler[0]);
+        console.error("Schedulers:", game.settings.get("stable-images", "comfyUISchedulers"));
+        this.initializeOrUpdateLoras();
+        console.error("Loras:", game.settings.get("stable-images", "comfyUILoras"));
+        await game.settings.set("stable-images", "comfyUIUpscalers", this.objectInfo.UpscaleModelLoader.input.required.model_name[0]);
+        console.error("Upscalers:", game.settings.get("stable-images", "comfyUIUpscalers"));
 
       } else {
         console.error('Error while attempting to access the ComfyUI object info:', response.status);
@@ -99,6 +93,27 @@ class ComfyUIAPIClient {
     console.log("Default Request Body:", this.defaultRequestBody);
   }
 
+  async initializeOrUpdateLoras() {
+    // Assuming this.objectInfo.LoraLoader.input.required.lora_name[0] is an array of Lora names
+    let loraNames = this.objectInfo.LoraLoader.input.required.lora_name[0];
+    
+    // Create objects from Lora names if they are not already in settings
+    let existingLoras = game.settings.get("stable-images", "comfyUILoras");
+    let updatedLoras = loraNames.map(name => {
+        let foundLora = existingLoras.find(l => l.lora === name);
+        if (foundLora) {
+            return foundLora; // Use existing Lora if it's already there
+        } else {
+            return { lora: name, active: false, strength: 0.5 }; // Create a new Lora object
+        }
+    });
+
+    // Filter out any Loras that no longer exist in the source
+    updatedLoras = updatedLoras.filter(lora => loraNames.includes(lora.lora));
+
+    // Update the setting
+    await game.settings.set("stable-images", "comfyUILoras", updatedLoras);
+}
 
 
 
