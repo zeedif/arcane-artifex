@@ -118,23 +118,38 @@ export default class ComfyUISettings extends FormApplication {
     }
 
     async toggleLora(ev) {
-        let loraAlias = ev.currentTarget.innerText;
-        let lora = this.context.loras.find(l => l.alias === loraAlias);
-        lora.value = 0;
-        let toActive = true;
-        this.context.activeLoras.forEach((active, index) => {
-            if (active.alias === lora.alias) {
-                this.context.activeLoras.splice(index, 1);
-                toActive = false;
-            }
-        });
-        if (toActive) {
-            this.context.activeLoras.push(lora);
+        let loraAlias = ev.currentTarget.innerText.trim();
+        
+        // Check if the array is initialized, if not, initialize it
+        if (!this.context.comfyUIActiveLoras) {
+            this.context.comfyUIActiveLoras = [];
         }
-        if (!this.context.activeLoras) { this.context.activeLoras = [] }
-        await game.settings.set('stable-images', 'stable-settings', this.context);
-        this.render(true);
+    
+        // Check if the loraAlias is in the active list
+        const isActive = this.context.comfyUIActiveLoras.includes(loraAlias);
+    
+        if (isActive) {
+            // If active, remove from the list
+            this.context.comfyUIActiveLoras = this.context.comfyUIActiveLoras.filter(alias => alias !== loraAlias);
+            ev.currentTarget.classList.remove("active");
+        } else {
+            // If not active, add to the list
+            this.context.comfyUIActiveLoras.push(loraAlias);
+            ev.currentTarget.classList.add("active");
+        }
+    
+        // Only trigger the render if it's necessary for updating the UI
+        // If other functionalities rely on the `render` method and have stopped working, 
+        // ensure that `render` method is well-defined and does not have side effects 
+        // that might disrupt other functionalities.
+        if (this.render) {
+            this.render(true);
+        }
     }
+    
+ 
+    
+    
 
     async changeLoraPrompt() {
         let html = this.form;
