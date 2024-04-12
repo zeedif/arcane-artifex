@@ -29,6 +29,7 @@ export default class LocalA1111Settings extends FormApplication {
         context.models = sdAPIClient.localA1111Models;
         context.styles = sdAPIClient.localA1111Styles;
         context.upscalers = sdAPIClient.localA1111Upscalers;
+        context.samplers = sdAPIClient.localA1111Samplers;
 
         console.error(context);
 
@@ -130,6 +131,7 @@ export default class LocalA1111Settings extends FormApplication {
             this.context.activeLoras = [];
         }
 
+
         await game.settings.set('stable-images', 'stable-settings', this.context);
         this.render(true);
     }
@@ -155,7 +157,9 @@ export default class LocalA1111Settings extends FormApplication {
     }
 
     _updateObject(event, formData) {
-        const data = { ...this.context, ...expandObject(formData) };
+        const data = {  };
+        
+
         game.settings.set('stable-images', 'stable-settings', data);
     }
 }
