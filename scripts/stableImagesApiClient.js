@@ -27,7 +27,7 @@ class stableImagesApiClient {
     
         // Only proceed if the stableHorde option is selected
         if (selectedSource === 'automatic1111') { 
-          const a1111url = game.settings.get('stable-images', 'auto_url');
+          const a1111url = game.settings.get('stable-images', 'localA1111URL');
           const statusUrl = a1111url;
           
           try {
@@ -89,9 +89,9 @@ class stableImagesApiClient {
           n_iter: game.settings.get("stable-images", "numImages"),
           restore_faces: game.settings.get("stable-images", "restoreFaces"),
           steps: game.settings.get("stable-images", "samplerSteps"),
-          sampler_name: game.settings.get("stable-images", "a1111Sampler"),
+          sampler_name: game.settings.get("stable-images", "localA1111Sampler"),
           enable_hr: game.settings.get("stable-images", "enableHr"),
-          hr_upscaler: game.settings.get("stable-images", "a1111Upscaler"),
+          hr_upscaler: game.settings.get("stable-images", "localA1111Upscaler"),
           hr_scale: game.settings.get("stable-images", "hrScale"),
           denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
           hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
@@ -104,7 +104,7 @@ class stableImagesApiClient {
      * Retrieves the list of loras from the stable diffusion API.
      */
     async getLoras() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let lorasUrl = stIP + '/sdapi/v1/loras';
         try {
             // Send a GET request to the server
@@ -119,7 +119,7 @@ class stableImagesApiClient {
         }
     }
     async getStyles() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let styleUrl = stIP + '/sdapi/v1/prompt-styles';
         try {
             // Send a GET request to the server
@@ -138,7 +138,7 @@ class stableImagesApiClient {
      * Retrieves the list of models from the stable diffusion API.
      */
     async getModels() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let modelsUrl = stIP + '/sdapi/v1/sd-models';
         try {
             // Send a GET request to the server
@@ -157,7 +157,7 @@ class stableImagesApiClient {
      * Retrieves the stable diffusion options from the stable diffusion API.
      */
     async getSdOptions() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
             // Send a GET request to the server
@@ -172,7 +172,7 @@ class stableImagesApiClient {
         }
     }
     async getSamplers() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let samplersUrl = stIP + '/sdapi/v1/samplers';
         try {
             const response = await fetch(samplersUrl, { method: 'GET' });
@@ -189,7 +189,7 @@ class stableImagesApiClient {
     }
     
     async getUpscalers() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let upscalersUrl = stIP + '/sdapi/v1/upscalers';
         try {
             const response = await fetch(upscalersUrl, { method: 'GET' });
@@ -206,7 +206,7 @@ class stableImagesApiClient {
     }
     
     postSkip() {
-        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/skip';
+        let apiUrl = game.settings.get("stable-images", "localA1111URL") + '/sdapi/v1/skip';
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -229,7 +229,7 @@ class stableImagesApiClient {
         }
     }
     postInterrupt() {
-        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/interrupt';
+        let apiUrl = game.settings.get("stable-images", "localA1111URL") + '/sdapi/v1/interrupt';
         try {
             // Send a POST request to the stable diffusion API
             fetch(apiUrl, {
@@ -271,7 +271,7 @@ class stableImagesApiClient {
         }
         let requestBody = deepClone(this.defaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
-        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/txt2img/';
+        let apiUrl = game.settings.get("stable-images", "localA1111URL") + '/sdapi/v1/txt2img/';
          await game.settings.set("stable-images", "working", true);
         console.log('requestBody', requestBody);
         try {
@@ -318,7 +318,7 @@ class stableImagesApiClient {
      * @returns {Promise}
      */
     async postOption(option) {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let optionsUrl = stIP + '/sdapi/v1/options';
         try {
             // Send a POST request to the server
@@ -364,7 +364,7 @@ class stableImagesApiClient {
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
         requestBody.denoising_strength = this.settings.denoising_strength;
-        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/img2img/';
+        let apiUrl = game.settings.get("stable-images", "localA1111URL") + '/sdapi/v1/img2img/';
         await game.settings.set("stable-images", "working", true);
         try {
             // Send a POST request to the stable diffusion API
@@ -409,7 +409,7 @@ class stableImagesApiClient {
             currentState = "idle";
         }
     
-        let apiUrl = game.settings.get("stable-images", "auto_url") + '/sdapi/v1/progress';
+        let apiUrl = game.settings.get("stable-images", "localA1111URL") + '/sdapi/v1/progress';
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {

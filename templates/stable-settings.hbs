@@ -1,13 +1,13 @@
 <form autocomplete="on">
     <div class="sheet-body flexrow">
         <section>
-            <div class="auto_url">
+            <div class="localA1111URL">
                 <h2>SERVER IP</h2>
                 <div class="form-group">
                     <label>stable diffusion server IP</label>
                     <div class="form-fields">
-                        <input name="auto_url" type="text"
-                            value="{{auto_url}}" />
+                        <input name="localA1111URL" type="text"
+                            value="{{localA1111URL}}" />
                     </div>
                     <p class="notes">IP adress of your local instance of Stable
                         diffusion</p>
@@ -38,7 +38,7 @@
             </div>
             <div class="samplers">
                 <h2>SAMPLING METHOD</h2>
-                <h4>active sampler : {{a1111Sampler}}</h4>
+                <h4>active sampler : {{localA1111Sampler}}</h4>
                 <select id="change-sampler">
                     <option>change sampler here</option>
                     {{#each samplers as |sampler|}}
@@ -50,7 +50,7 @@
             </div>
             <div class="upscalers">
                 <h2>UPSCALERS</h2>
-                <h4>active upscalar : {{a1111Upscaler}}</h4>
+                <h4>active upscalar : {{localA1111Upscaler}}</h4>
                 <select id="change-upscaler">
                     <option>change upscaler here</option>
                     {{#each upscalers as |upscaler|}}

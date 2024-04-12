@@ -17,7 +17,7 @@ class SdAPIClient {
         const selectedSource = game.settings.get('stable-images', 'source');
 
         if (selectedSource === 'automatic1111') {
-            const a1111url = game.settings.get('stable-images', 'auto_url');
+            const a1111url = game.settings.get('stable-images', 'localA1111URL');
             const statusUrl = a1111url;
 
             try {
@@ -73,9 +73,9 @@ class SdAPIClient {
             n_iter: game.settings.get("stable-images", "numImages"),
             restore_faces: game.settings.get("stable-images", "restoreFaces"),
             steps: game.settings.get("stable-images", "samplerSteps"),
-            sampler_name: game.settings.get("stable-images", "a1111Sampler"),
+            sampler_name: game.settings.get("stable-images", "localA1111Sampler"),
             enable_hr: game.settings.get("stable-images", "enableHr"),
-            hr_upscaler: game.settings.get("stable-images", "a1111Upscaler"),
+            hr_upscaler: game.settings.get("stable-images", "localA1111Upscaler"),
             hr_scale: game.settings.get("stable-images", "hrScale"),
             denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
             hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
@@ -85,7 +85,7 @@ class SdAPIClient {
     }
 
     async getLoras() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let lorasUrl = `${stIP}/sdapi/v1/loras`;
         try {
             const response = await fetch(lorasUrl, { method: 'GET' });
@@ -100,7 +100,7 @@ class SdAPIClient {
     }
 
     async getStyles() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let styleUrl = `${stIP}/sdapi/v1/prompt-styles`;
         try {
             const response = await fetch(styleUrl, { method: 'GET' });
@@ -115,7 +115,7 @@ class SdAPIClient {
     }
 
     async getModels() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let modelsUrl = `${stIP}/sdapi/v1/sd-models`;
         try {
             const response = await fetch(modelsUrl, { method: 'GET' });
@@ -131,7 +131,7 @@ class SdAPIClient {
     }
 
     async getSdOptions() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let optionsUrl = `${stIP}/sdapi/v1/options`;
         try {
             const response = await fetch(optionsUrl, { method: 'GET' });
@@ -146,7 +146,7 @@ class SdAPIClient {
     }
 
     async getSamplers() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let samplersUrl = `${stIP}/sdapi/v1/samplers`;
         try {
             const response = await fetch(samplersUrl, { method: 'GET' });
@@ -163,7 +163,7 @@ class SdAPIClient {
     }
 
     async getUpscalers() {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let upscalersUrl = `${stIP}/sdapi/v1/upscalers`;
         try {
             const response = await fetch(upscalersUrl, { method: 'GET' });
@@ -180,7 +180,7 @@ class SdAPIClient {
     }
 
     postSkip() {
-        let apiUrl = `${game.settings.get("stable-images", "auto_url")}/sdapi/v1/skip`;
+        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/skip`;
         try {
             fetch(apiUrl, {
                 method: 'POST',
@@ -203,7 +203,7 @@ class SdAPIClient {
     }
 
     postInterrupt() {
-        let apiUrl = `${game.settings.get("stable-images", "auto_url")}/sdapi/v1/interrupt`;
+        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/interrupt`;
         try {
             fetch(apiUrl, {
                 method: 'POST',
@@ -235,7 +235,7 @@ class SdAPIClient {
         }
         let requestBody = deepClone(this.localA111DefaultRequestBody);
         requestBody.prompt = this.getFullPrompt(prompt);
-        let apiUrl = `${game.settings.get("stable-images", "auto_url")}/sdapi/v1/txt2img/`;
+        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/txt2img/`;
         await game.settings.set("stable-images", "working", true);
         console.log('requestBody', requestBody);
         try {
@@ -271,7 +271,7 @@ class SdAPIClient {
     }
 
     async postOption(option) {
-        let stIP = await game.settings.get("stable-images", "auto_url");
+        let stIP = await game.settings.get("stable-images", "localA1111URL");
         let optionsUrl = `${stIP}/sdapi/v1/options`;
         try {
             fetch(optionsUrl, {
@@ -309,7 +309,7 @@ class SdAPIClient {
         requestBody.prompt = this.getFullPrompt(prompt);
         requestBody.init_images = [source];
         requestBody.denoising_strength = this.settings.denoising_strength;
-        let apiUrl = `${game.settings.get("stable-images", "auto_url")}/sdapi/v1/img2img/`;
+        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/img2img/`;
         await game.settings.set("stable-images", "working", true);
         try {
             fetch(apiUrl, {
@@ -348,7 +348,7 @@ class SdAPIClient {
             currentState = "idle";
         }
 
-        let apiUrl = `${game.settings.get("stable-images", "auto_url")}/sdapi/v1/progress`;
+        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/progress`;
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {

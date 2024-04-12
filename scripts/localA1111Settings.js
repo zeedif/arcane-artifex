@@ -20,9 +20,9 @@ export default class LocalA1111Settings extends FormApplication {
     getData() {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
-        context.a1111Sampler = game.settings.get("stable-images", "a1111Sampler");
-        context.a1111Upscaler = game.settings.get("stable-images", "a1111Upscaler");
-        context.activeModel = game.settings.get("stable-images", "a1111Model");
+        context.localA1111Sampler = game.settings.get("stable-images", "localA1111Sampler");
+        context.localA1111Upscaler = game.settings.get("stable-images", "localA1111Upscaler");
+        context.activeModel = game.settings.get("stable-images", "localA1111Model");
         context.numImages = game.settings.get("stable-images", "numImages");
 
         context.loras = sdAPIClient.localA1111Loras;
@@ -89,7 +89,7 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "a1111Model", modelTitle);
+        await game.settings.set("stable-images", "localA1111Model", modelTitle);
         sdAPIClient.changeModel(modelTitle).then(this.render(true));
     }
 
@@ -97,7 +97,7 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let samplerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "a1111Sampler", samplerName);
+        await game.settings.set("stable-images", "localA1111Sampler", samplerName);
         this.render(true);
     }
 
@@ -105,7 +105,7 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let upscalerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "a1111Upscaler", upscalerName);
+        await game.settings.set("stable-images", "localA1111Upscaler", upscalerName);
         this.render(true);
     }
 

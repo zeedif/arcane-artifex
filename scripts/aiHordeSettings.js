@@ -33,7 +33,7 @@ export default class HordeSettings extends FormApplication {
 
     async loadHordeModels() {
         try {
-            const hordeUrl = game.settings.get('stable-images', 'horde_url');
+            const hordeUrl = game.settings.get('stable-images', 'stableHordeURL');
             const response = await fetch(`${hordeUrl}/api/v2/status/models`, {
                 method: 'GET',
                 headers: {

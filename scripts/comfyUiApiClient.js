@@ -8,7 +8,7 @@ class ComfyUIAPIClient {
     const selectedSource = game.settings.get('stable-images', 'source');
 
     if (selectedSource === 'comfyUI') {
-      const comfyUrl = game.settings.get('stable-images', 'comfyui_url');
+      const comfyUrl = game.settings.get('stable-images', 'comfyUIURL');
       const statusUrl = `${comfyUrl}/system_stats`;
 
       try {
@@ -45,7 +45,7 @@ class ComfyUIAPIClient {
       return;
     }
 
-    let stIP = await game.settings.get("stable-images", "comfyui_url");
+    let stIP = await game.settings.get("stable-images", "comfyUIURL");
     let objectInfoURL = `${stIP}/object_info`;
 
     try {
@@ -77,9 +77,9 @@ class ComfyUIAPIClient {
       n_iter: game.settings.get("stable-images", "numImages"),
       restore_faces: game.settings.get("stable-images", "restoreFaces"),
       steps: game.settings.get("stable-images", "samplerSteps"),
-      sampler_name: game.settings.get("stable-images", "a1111Sampler"),
+      sampler_name: game.settings.get("stable-images", "localA1111Sampler"),
       enable_hr: game.settings.get("stable-images", "enableHr"),
-      hr_upscaler: game.settings.get("stable-images", "a1111Upscaler"),
+      hr_upscaler: game.settings.get("stable-images", "localA1111Upscaler"),
       hr_scale: game.settings.get("stable-images", "hrScale"),
       denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
       hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),

@@ -105,24 +105,24 @@ export default function registerSettings() {
     default: false
   });
 
-  game.settings.register("stable-images", "auto_url", {
-    name: "auto_url",
+  game.settings.register("stable-images", "localA1111URL", {
+    name: "localA1111URL",
     scope: "world",
     type: String,
     default: "http://localhost:7860",
     config: false,
   });
 
-  game.settings.register("stable-images", "horde_url", {
-    name: "auto_url",
+  game.settings.register("stable-images", "stableHordeURL", {
+    name: "stableHordeURL",
     scope: "world",
     type: String,
     default: "https://stablehorde.net",
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyui_url", {
-    name: "comfyui_url",
+  game.settings.register("stable-images", "comfyUIURL", {
+    name: "comfyUIURL",
     scope: "world",
     type: String,
     default: "http://127.0.0.1:8188",
@@ -200,24 +200,24 @@ export default function registerSettings() {
   });
 
 
-  game.settings.register("stable-images", "a1111Model", {
-    name: "a1111Model",
+  game.settings.register("stable-images", "localA1111Model", {
+    name: "localA1111Model",
     scope: "world",
     type: String,
     default: "",
     config: false,
   });
 
-  game.settings.register("stable-images", "a1111Sampler", {
-    name: "a1111Sampler",
+  game.settings.register("stable-images", "localA1111Sampler", {
+    name: "localA1111Sampler",
     scope: "world",
     type: String,
     default: "Euler SGMUniform",
     config: false,
   });
 
-  game.settings.register("stable-images", "a1111Upscaler", {
-    name: "a1111Upscaler",
+  game.settings.register("stable-images", "localA1111Upscaler", {
+    name: "localA1111Upscaler",
     scope: "world",
     type: String,
     default: "4x_foolhardy_Remacri",

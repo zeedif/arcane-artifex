@@ -3,7 +3,7 @@ class HordeAPIClient {
     const selectedSource = game.settings.get('stable-images', 'source');
   
     if (selectedSource === 'stableHorde') {
-      const aiHordeUrl = game.settings.get('stable-images', 'horde_url');
+      const aiHordeUrl = game.settings.get('stable-images', 'stableHordeURL');
       const statusUrl = `${aiHordeUrl}/api/v2/status/heartbeat`;
         
       try {
