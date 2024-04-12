@@ -93,7 +93,7 @@ class SdAPIClient {
         try {
             const response = await fetch(lorasUrl, { method: 'GET' });
             if (response.ok) {
-                this.localA1111Loras = await response.json();
+                game.settings.set("stable-images", "localA1111Loras", await response.json());
             } else {
                 // Handle error
             }
@@ -108,7 +108,7 @@ class SdAPIClient {
         try {
             const response = await fetch(styleUrl, { method: 'GET' });
             if (response.ok) {
-                this.localA1111Styles = await response.json();
+                game.settings.set("stable-images", "localA1111Styles", await response.json());
             } else {
                 // Handle error
             }
@@ -124,7 +124,6 @@ class SdAPIClient {
             const response = await fetch(modelsUrl, { method: 'GET' });
             if (response.ok) {
                 game.settings.set("stable-images", "localA1111Models", await response.json());
-               //this.localA1111Models = await response.json();
             } else {
                 // Handle error
             }
@@ -154,14 +153,12 @@ class SdAPIClient {
         try {
             const response = await fetch(samplersUrl, { method: 'GET' });
             if (response.ok) {
-                this.localA1111Samplers = await response.json();
+                game.settings.set("stable-images", "localA1111Samplers", await response.json());
             } else {
                 console.error(`Error while trying to access the samplers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
-                ui.notifications.error(`Error while trying to access the samplers from stable diffusion; error = Status Code ${response.status} - ${response.statusText}`);
             }
         } catch (error) {
             console.error("Error while trying to access the samplers from stable diffusion:", error);
-            ui.notifications.error(`Error while trying to access the samplers from stable diffusion; error = ${error}`);
         }
     }
 
@@ -171,14 +168,12 @@ class SdAPIClient {
         try {
             const response = await fetch(upscalersUrl, { method: 'GET' });
             if (response.ok) {
-                this.localA1111Upscalers = await response.json();
+                game.settings.set("stable-images", "localA1111Upscalers", await response.json());
             } else {
                 console.error(`Error while trying to access the upscalers from stable diffusion: Status Code ${response.status} - ${response.statusText}`);
-                ui.notifications.error(`Error while trying to access the upscalers from stable diffusion; error = Status Code ${response.status} - ${response.statusText}`);
             }
         } catch (error) {
             console.error("Error while trying to access the upscalers from stable diffusion:", error);
-            ui.notifications.error(`Error while trying to access the upscalers from stable diffusion; error = ${error}`);
         }
     }
 

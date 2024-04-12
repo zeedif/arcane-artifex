@@ -165,7 +165,7 @@ export default function registerSettings() {
 
   // Register settings for localA1111Loras
   game.settings.register("stable-images", "localA1111Loras", {
-    name: "Local A1111 Loras",
+    name: "localA1111Loras",
     scope: "world",
     type: Array,
     default: [],
@@ -183,7 +183,7 @@ export default function registerSettings() {
 
   // Register settings for localA1111Samplers
   game.settings.register("stable-images", "localA1111Samplers", {
-    name: "Local A1111 Samplers",
+    name: "localA1111Styles",
     scope: "world",
     type: Array,
     default: [],
@@ -192,7 +192,7 @@ export default function registerSettings() {
 
   // Register settings for localA1111Upscalers
   game.settings.register("stable-images", "localA1111Upscalers", {
-    name: "Local A1111 Upscalers",
+    name: "localA1111Upscalers",
     scope: "world",
     type: Array,
     default: [],

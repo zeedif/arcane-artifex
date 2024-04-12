@@ -28,12 +28,11 @@ export default class LocalA1111Settings extends FormApplication {
 
 
 
-        context.loras = sdAPIClient.localA1111Loras;
+        context.loras = game.settings.get("stable-images", "localA1111Loras");
         context.models = game.settings.get("stable-images", "localA1111Models");
-        console.error(context.models);
-        context.styles = sdAPIClient.localA1111Styles;
-        context.upscalers = sdAPIClient.localA1111Upscalers;
-        context.samplers = sdAPIClient.localA1111Samplers;
+        context.styles = game.settings.get("stable-images", "localA1111Styles");
+        context.upscalers = game.settings.get("stable-images", "localA1111Upscalers");
+        context.samplers = game.settings.get("stable-images", "localA1111Samplers");
 
         console.error(context);
 
