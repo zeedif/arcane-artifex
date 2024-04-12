@@ -121,6 +121,7 @@ class SdAPIClient {
             const response = await fetch(modelsUrl, { method: 'GET' });
             if (response.ok) {
                 this.localA1111Models = await response.json();
+                console.error("Local A1111 Models2:", this.localA1111Models);
             } else {
                 // Handle error
             }

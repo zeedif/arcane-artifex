@@ -2,17 +2,18 @@ class ComfyUIAPIClient {
   constructor() {
     this.settings = {};
     this.comfyUIDefaultRequestBody = {};
-}
+  }
+
   async checkStatus() {
     const selectedSource = game.settings.get('stable-images', 'source');
-  
+
     if (selectedSource === 'comfyUI') {
       const comfyUrl = game.settings.get('stable-images', 'comfyui_url');
       const statusUrl = `${comfyUrl}/system_stats`;
-  
+
       try {
         const response = await fetch(statusUrl);
-  
+
         if (response.ok) {
           console.log('ComfyUI server is accessible at:', comfyUrl);
           ui.notifications.info('ComfyUI server is accessible.');
@@ -36,43 +37,37 @@ class ComfyUIAPIClient {
     }
   }
 
-
-
-
   async getComfyUISettings() {
     const connection = game.settings.get('stable-images', 'connected');
-  
+
     if (!connection) {
       console.warn("Local ComfyUI connection not established. Skipping API calls.");
       return;
     }
+
     let stIP = await game.settings.get("stable-images", "comfyui_url");
     let objectInfoURL = `${stIP}/object_info`;
+
     try {
       const response = await fetch(objectInfoURL, { method: 'GET' });
+
       if (response.ok) {
         this.objectInfo = await response.json();
         await game.settings.set("stable-images", "comfyUIModels", this.objectInfo.CheckpointLoaderSimple.input.required.ckpt_name[0]);
-        console.error("Models:", game.settings.get("stable-images", "comfyUIModels"));
         await game.settings.set("stable-images", "comfyUISamplers", this.objectInfo.KSampler.input.required.sampler_name[0]);
-        console.error("Samplers:", game.settings.get("stable-images", "comfyUISamplers"));
         await game.settings.set("stable-images", "comfyUISchedulers", this.objectInfo.KSampler.input.required.scheduler[0]);
-        console.error("Schedulers:", game.settings.get("stable-images", "comfyUISchedulers"));
         this.initializeOrUpdateLoras();
-        console.error("Loras:", game.settings.get("stable-images", "comfyUILoras"));
         await game.settings.set("stable-images", "comfyUIUpscalers", this.objectInfo.UpscaleModelLoader.input.required.model_name[0]);
-        console.error("Upscalers:", game.settings.get("stable-images", "comfyUIUpscalers"));
-
       } else {
         console.error('Error while attempting to access the ComfyUI object info:', response.status);
       }
     } catch (error) {
       console.error('Error while attempting to access the ComfyUI object info:', error);
     }
-  
+
     this.settings = game.settings.get("stable-images", "stable-settings");
     console.log("Settings:", this.settings);
-  
+
     this.defaultRequestBody = {
       prompt: game.settings.get("stable-images", "promptPrefix"),
       seed: -1,
@@ -94,34 +89,22 @@ class ComfyUIAPIClient {
   }
 
   async initializeOrUpdateLoras() {
-    // Assuming this.objectInfo.LoraLoader.input.required.lora_name[0] is an array of Lora names
     let loraNames = this.objectInfo.LoraLoader.input.required.lora_name[0];
-    
-    // Create objects from Lora names if they are not already in settings
     let existingLoras = game.settings.get("stable-images", "comfyUILoras");
     let updatedLoras = loraNames.map(name => {
-        let foundLora = existingLoras.find(l => l.lora === name);
-        if (foundLora) {
-            return foundLora; // Use existing Lora if it's already there
-        } else {
-            return { lora: name, active: false, strength: 0.5 }; // Create a new Lora object
-        }
+      let foundLora = existingLoras.find(l => l.lora === name);
+      if (foundLora) {
+        return foundLora;
+      } else {
+        return { lora: name, active: false, strength: 0.5 };
+      }
     });
 
-    // Filter out any Loras that no longer exist in the source
     updatedLoras = updatedLoras.filter(lora => loraNames.includes(lora.lora));
 
-    // Update the setting
     await game.settings.set("stable-images", "comfyUILoras", updatedLoras);
+  }
 }
-
-
-
-  
-}
-
-
-
 
 export const comfyUIApiClient = new ComfyUIAPIClient();
 export default comfyUIApiClient;

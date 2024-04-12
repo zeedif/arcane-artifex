@@ -145,6 +145,61 @@ export default function registerSettings() {
     default: 512
   });
 
+  // Register settings for localSDSettings
+  game.settings.register("stable-images", "localSDSettings", {
+    name: "Local SD Settings",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
+
+  // Register settings for localA1111Models
+  game.settings.register("stable-images", "localA1111Models", {
+    name: "Local A1111 Models",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
+
+  // Register settings for localA1111Loras
+  game.settings.register("stable-images", "localA1111Loras", {
+    name: "Local A1111 Loras",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
+
+  // Register settings for localA1111Styles
+  game.settings.register("stable-images", "localA1111Styles", {
+    name: "Local A1111 Styles",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
+
+  // Register settings for localA1111Samplers
+  game.settings.register("stable-images", "localA1111Samplers", {
+    name: "Local A1111 Samplers",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
+
+  // Register settings for localA1111Upscalers
+  game.settings.register("stable-images", "localA1111Upscalers", {
+    name: "Local A1111 Upscalers",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false,
+  });
+
+
   game.settings.register("stable-images", "a1111Model", {
     name: "a1111Model",
     scope: "world",
