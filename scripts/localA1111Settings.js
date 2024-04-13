@@ -115,49 +115,35 @@ export default class LocalA1111Settings extends FormApplication {
 
     async toggleLora(ev) {
         let loraAlias = ev.currentTarget.innerText;
-        let lora = this.context.loras.find(l => l.alias === loraAlias);
-        lora.value = 0;
-        let toActive = true;
+        let loras = game.settings.get('stable-images', 'localA1111Loras');
+        let lora = loras.find(l => l.alias === loraAlias);
+        if (lora) {
+          lora.active = !lora.active;
+          if (lora.active && lora.strength === undefined) {
+            lora.strength = 0.5;
+          }
+          await game.settings.set('stable-images', 'localA1111Loras', [...loras]);
+          this.render(true);
+        }
+      }
+      
 
-        this.context.activeLoras.forEach((active, index) => {
-            if (active.alias === lora.alias) {
-                this.context.activeLoras.splice(index, 1);
-                toActive = false;
-            }
+      async changeLoraPrompt() {
+        let loras = game.settings.get('stable-images', 'localA1111Loras');
+        let loraPrompt = "";
+        loras.forEach(lora => {
+          if (lora.active) {
+            let newString = `<lora:${lora.alias}:${lora.strength}>`;
+            loraPrompt += newString;
+          }
         });
-
-        if (toActive) {
-            this.context.activeLoras.push(lora);
+        if (this.form) {
+          this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
         }
-
-        if (!this.context.activeLoras) {
-            this.context.activeLoras = [];
-        }
-
-
-        await game.settings.set('stable-images', 'stable-settings', this.context);
-        this.render(true);
-    }
-
-    async changeLoraPrompt() {
-        let html = this.form;
-        let lorPrompt = "";
-
-        for (let loraEl of html.getElementsByClassName('active-lora')) {
-            let range = loraEl.querySelector('input');
-            let targetLora = this.context.activeLoras.find(l => l.name == range.dataset.loraAlias);
-
-            if (targetLora) {
-                targetLora.value = range.value;
-            }
-
-            let newString = `<lora:${range.dataset.loraAlias}:${range.value}>`;
-            lorPrompt += newString;
-        }
-
-        html.querySelector('textarea[name="loraPrompt"]').value = lorPrompt;
-        this.context.loraPrompt = lorPrompt;
-    }
+        await game.settings.set('stable-images', 'localA1111Loras', loras);
+        this.context.loraPrompt = loraPrompt;
+      }
+      
 
     _updateObject(event, formData) {
         const data = {  };

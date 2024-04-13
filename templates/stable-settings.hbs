@@ -61,36 +61,43 @@
                 </select>
             </div>
             <div class="loras">
-                <h2 class="stable-loras">LORAS</h2>
+            <h2 class="stable-loras">LORAS</h2>
 
-        <div class="form-group">
-            <label>lora Prompt</label>
-            <div class="form-fields">
+            <div class="form-group">
+                <label>Lora Prompt</label>
+                <div class="form-fields">
                 <textarea name="loraPrompt">{{loraPrompt}}</textarea>
+                </div>
+                <p class="notes">This text will be inserted after your prompt to trigger your loras</p>
             </div>
-            <p class="notes">This text will be inserted after your prompt to trigger your loras</p>
-        </div>
-        <div class="stable-lora-choice">
-            {{#each comfyUILoras as |lora|}}
-            <span class="lora-choice {{#if lora.active}}active{{/if}}">{{lora.lora}}</span>
-            {{/each}}
-        </div>
-        {{log comfyUILoras}}
-        {{#each comfyUILoras as |lora|}}
-            <div class="form-group active-lora {{#unless lora.active}}hidden{{/unless}}">
-                <label>{{lora.lora}}</label>
-                <input type="range" class="stable-lora-value"
-                    data-lora-alias="{{lora.lora}}"
-                    name="comfyUILoras[{{@index}}].strength"
-                    data-dtype="Number"
-                    value="{{lora.strength}}" min="0" max="1"
-                    step="0.05">
-                <span class="range-value">{{lora.strength}}</span>
-            </div>
-        {{/each}}
 
-        </section>
-    </div>
+            <div class="form-group">
+                <label>Loras</label>
+                <div class="form-fields">
+                {{#each loras as |lora|}}
+                    <span class="lora-choice {{#if lora.active}}active{{/if}}">{{lora.alias}}</span>
+                {{/each}}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Active Loras</label>
+                <div class="form-fields">
+                {{#each loras as |lora|}}
+                    {{#if lora.active}}
+                    <div class="form-group active-lora">
+                        <label>{{lora.alias}}</label>
+                        <div class="form-fields">
+                        <input type="range" name="lora-strength" data-lora-alias="{{lora.alias}}" class="stable-lora-value" value="{{lora.strength}}" min="0" max="2" step="0.05">
+                        <span class="range-value">{{lora.strength}}</span>
+                        </div>
+                    </div>
+                    {{/if}}
+                {{/each}}
+                </div>
+            </div>
+            </div>
+
 
     <div class="sheet-footer">
         <button type="submit">
