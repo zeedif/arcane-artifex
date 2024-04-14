@@ -20,6 +20,9 @@ export default class LocalA1111Settings extends FormApplication {
     getData() {
         let context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
+        context.localA1111URL = game.settings.get("stable-images", "localA1111URL");
+
+
         context.localA1111Sampler = game.settings.get("stable-images", "localA1111Sampler");
         context.localA1111Upscaler = game.settings.get("stable-images", "localA1111Upscaler");
         context.activeModel = game.settings.get("stable-images", "localA1111Model");

@@ -19,6 +19,8 @@ export default class ComfyUISettings extends FormApplication {
     getData() {
         const context = game.settings.get('stable-images', 'stable-settings');
         context.source = game.settings.get("stable-images", "source");
+        context.comfyUIURL = game.settings.get("stable-images", "comfyUIURL");
+
 
         context.comfyUIModel = game.settings.get("stable-images", "comfyUIModel");
         context.comfyUISampler = game.settings.get("stable-images", "comfyUISampler");

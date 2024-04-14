@@ -125,7 +125,7 @@ export default function registerSettings() {
     name: "comfyUIURL",
     scope: "world",
     type: String,
-    default: "http://127.0.0.1:8188",
+    default: "http://localhost:8188",
     config: false,
   });
 

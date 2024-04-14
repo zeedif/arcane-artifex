@@ -1,7 +1,2 @@
 .history/
 node_modules
-
-templates/aihorde-settings - Copy.hbs
-templates/aihorde-settings.txt
-templates/test-settings.hbs
-scripts/testSettingsSettings.js
