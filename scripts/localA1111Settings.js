@@ -47,28 +47,29 @@ export default class LocalA1111Settings extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         this.changeLoraPrompt();
-
+    
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
         html[0].querySelector('select#change-sampler').addEventListener('change', this.changeSampler.bind(this));
         html[0].querySelector('select#change-upscaler').addEventListener('change', this.changeUpscaler.bind(this));
-
+    
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
-            let activeMap = this.context.activeLoras?.map(l => l.alias);
-            if (activeMap?.indexOf(span.innerText) > -1) {
+            let loraAlias = span.innerText.trim();
+            let lora = this.context.loras.find(l => l.alias === loraAlias);
+            if (lora && lora.active) {
                 span.classList.add('active');
             }
-            span.addEventListener('click', this.toggleLora.bind(this));
+            span.addEventListener('click', (event) => this.toggleLora(event, lora));
         }
-
+    
         for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
-            range.addEventListener('change', this.changeLoraPrompt.bind(this));
+            range.addEventListener('change', (event) => this.changeLoraStrength(event, range.dataset.loraAlias));
         }
-
+    
         html.find('input[name="numImages"]').on("input", async (event) => {
             await game.settings.set("stable-images", "numImages", parseInt(event.target.value));
             this.render(true);
         });
-
+    
         html.find('select[name="source"]').on("change", async (event) => {
             await game.settings.set("stable-images", "source", event.target.value);
             this.render();
@@ -113,19 +114,31 @@ export default class LocalA1111Settings extends FormApplication {
         this.render(true);
     }
 
-    async toggleLora(ev) {
-        let loraAlias = ev.currentTarget.innerText;
+    async toggleLora(ev, lora) {
+        let loraAlias = ev.currentTarget.innerText.trim();
+        let loras = game.settings.get('stable-images', 'localA1111Loras');
+        if (!lora) {
+            console.error("Lora not found:", loraAlias);
+            return;
+        }
+        lora.active = !lora.active;
+        if (lora.active && lora.strength === undefined) {
+            lora.strength = 0.5;
+        }
+        await game.settings.set('stable-images', 'localA1111Loras', [...loras]);
+        this.render(true);
+    }
+    
+    async changeLoraStrength(event, loraAlias) {
+        let value = parseFloat(event.target.value);
         let loras = game.settings.get('stable-images', 'localA1111Loras');
         let lora = loras.find(l => l.alias === loraAlias);
         if (lora) {
-          lora.active = !lora.active;
-          if (lora.active && lora.strength === undefined) {
-            lora.strength = 0.5;
-          }
-          await game.settings.set('stable-images', 'localA1111Loras', [...loras]);
-          this.render(true);
+            lora.strength = value;
+            await game.settings.set('stable-images', 'localA1111Loras', [...loras]);
         }
-      }
+        this.render(true);
+    }
       
 
       async changeLoraPrompt() {
