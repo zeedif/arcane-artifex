@@ -25,6 +25,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
 
 Hooks.once('ready', async function () {
     if (game.user.isGM) {
+        await game.settings.set("stable-images", "working", false);
         sdAPIClient.checkStatus();
         aiHordeApiClient.checkStatus();
         comfyUIApiClient.checkStatus();
