@@ -1,5 +1,17 @@
 <form autocomplete="on">
   <div class="sheet-body flexrow">
+    <div class="url-group">
+      <h2>AI HORDE URL</h2>
+      <div class="form-group">
+        <label>URL</label>
+        <div class="form-fields">
+          <input type="text" name="stableHordeURL" value="{{stableHordeURL}}">
+          <p class="notes">The URL of the AI Horde server</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="toggles">
       <h2>AI HORDE TOGGLES</h2>
       <div class="form-group">
         <label>Allow NSFW?</label>
@@ -22,34 +34,31 @@
           <p class="notes">(not all samplers supported)</p>
         </div>
       </div>
-      <div class="models">
-        <h2>MODELS</h2>
-        <select name="horde_model">
-          {{#select horde_model}}
-            {{#each horde_models}}
-              <option value="{{this.value}}">{{this.text}}</option>
-            {{/each}}
-          {{/select}}
-        </select>
-      </div>
-      <div class="samplers">
-        <h2>SAMPLERS</h2>
-        <select id="sampler-select" name="horde_sampler">
-          {{#select horde_sampler}}
-            {{#each samplers}}
-              <option value="{{this.name}}">{{this.name}}</option>
-            {{/each}}
-          {{/select}}
-        </select>
-      </div>
-      <div class="form-group">
-        <label>AI Horde URL</label>
-        <div class="form-fields">
-          <input type="text" name="stableHordeURL" value="{{stableHordeURL}}">
-          <p class="notes">The URL of the AI Horde server</p>
-        </div>
-      </div>
+    </div>
+
+    <div class="models">
+      <h2>MODELS</h2>
+      <select name="horde_model">
+        {{#select horde_model}}
+          {{#each horde_models}}
+            <option value="{{this.value}}">{{this.text}}</option>
+          {{/each}}
+        {{/select}}
+      </select>
+    </div>
+
+    <div class="samplers">
+      <h2>SAMPLERS</h2>
+      <select id="sampler-select" name="horde_sampler">
+        {{#select horde_sampler}}
+          {{#each samplers}}
+            <option value="{{this.name}}">{{this.name}}</option>
+          {{/each}}
+        {{/select}}
+      </select>
+    </div>
   </div>
+  
   <div class="sheet-footer">
     <button type="submit">
       <i class="far fa-save"></i> {{ localize "Submit"}}
