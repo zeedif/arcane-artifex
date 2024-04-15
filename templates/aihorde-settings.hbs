@@ -1,65 +1,64 @@
 <form autocomplete="on">
   <div class="sheet-body flexrow">
-    <div class="url-group">
-      <h2>AI HORDE URL</h2>
-      <div class="form-group">
-        <div class="form-fields">
-          <input type="text" name="stableHordeURL" value="{{stableHordeURL}}">
+    <section>
+      <div class="url-group">
+        <h2>AI HORDE URL</h2>
+        <div class="form-group">
+          <label>AI Horde URL</label>
+          <div class="form-fields">
+            <input type="text" name="hordeURL" value="{{horde_url}}">
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div class="toggles">
-      <h2>AI HORDE TOGGLES</h2>
-      <div class="form-group">
-        <label>Allow NSFW?</label>
-        <div class="form-fields">
-          <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}>
-          <p class="notes">Allow NSFW images from Horde</p>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Sanitize prompts?</label>
-        <div class="form-fields">
-          <input type="checkbox" name="horde_sanitize" data-dtype="Boolean" {{#if horde_sanitize}}checked{{/if}}>
-          <p class="notes">(recommended)</p>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Karras</label>
-        <div class="form-fields">
-          <input type="checkbox" name="horde_karras" data-dtype="Boolean" {{#if horde_karras}}checked{{/if}}>
-          <p class="notes">(not all samplers supported)</p>
-        </div>
-      </div>
-    </div>
 
-    <div class="models">
-      <h2>MODELS</h2>
-      <select name="horde_model">
-        {{#select horde_model}}
+      <div class="api">
+        <h2>AI HORDE API KEY</h2>
+        <div class="form-group">
+          <label>API Key</label>
+          <div class="form-fields">
+            <input type="password" name="horde_api_key" value="{{horde_api_key}}">
+          </div>
+        </div>
+      </div>
+
+      <div class="nsfw">
+        <h2>AI HORDE NSFW</h2>
+        <div class="form-group">
+          <label>Allow NSFW?</label>
+          <div class="form-fields">
+            <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}> 
+            <p class="notes">Allow NSFW images from Horde</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="models">
+        <h2>MODELS</h2> 
+        <h4>active model: {{horde_model}}</h4> 
+        <select id="model-select" name="horde_model">
+          <option>change model here</option>
           {{#each horde_models}}
-            <option value="{{this.value}}">{{this.text}}</option>
+            <option value="{{this.value}}" {{#if (eq this.value ../horde_model)}}selected{{/if}}>{{this.text}}</option>
           {{/each}}
-        {{/select}}
-      </select>
-    </div>
-
-    <div class="samplers">
-      <h2>SAMPLERS</h2>
-      <select id="sampler-select" name="horde_sampler">
-        {{#select horde_sampler}}
-          {{#each samplers}}
-            <option value="{{this.name}}">{{this.name}}</option>
-          {{/each}}
-        {{/select}}
-      </select>
-    </div>
+        </select>
+      </div>
+    </section>
   </div>
-  
+
+  <div class="samplers">
+    <h2>SAMPLERS</h2> 
+    <h4>active sampler: {{horde_sampler}}</h4> 
+    <select id="sampler-select" name="horde_sampler">
+      <option>change sampler here</option>
+      {{#each samplers}}
+        <option value="{{this.name}}" {{#if (eq this.name ../horde_sampler)}}selected{{/if}}>{{this.name}}</option>
+      {{/each}}
+    </select>
+  </div>
+
   <div class="sheet-footer">
-    <button type="submit">
-      <i class="far fa-save"></i> {{ localize "Submit"}}
+    <button type="submit"> 
+      <i class="far fa-save"></i> {{ localize "Submit"}} 
     </button>
   </div>
 </form>

@@ -14,76 +14,26 @@ export default class HordeSettings extends FormApplication {
     }
 
     async getData() {
-        const savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-        console.error("savedSettings:", savedSettings);
 
-        const { horde_models, horde_model } = await this.loadHordeModels();
-        const samplers = await this.loadHordeSamplers();
+        context.horde_models = game.settings.get("stable-images", "hordeModels");
+        context.horde_model = game.settings.get("stable-images", "hordeModel");
+        context.horde_sampler = game.settings.get("stable-images", "hordeSampler");
+        context.horde_samplers = game.settings.get("stable-images", "hordeSamplers");
+        context.horde_nsfw = game.settings.get("stable-images", "hordeNSFW");
+        context.horde_url = game.settings.get("stable-images", "hordeURL");
+        context.horde_api_key = game.settings.get("stable-images", "hordeAPIKey");
 
-        const context = mergeObject(defaultSettings, savedSettings);
-        context.horde_models = horde_models;
-        context.horde_model = horde_model;
-        context.horde_sampler = savedSettings.horde_sampler || 'k_euler';
-        context.samplers = await this.loadHordeSamplers();
+
+
         context.source = game.settings.get("stable-images", "source");
 
         this.context = context;
         return context;
     }
 
-    async loadHordeModels() {
-        try {
-            const hordeUrl = game.settings.get('stable-images', 'stableHordeURL');
-            const response = await fetch(`${hordeUrl}/api/v2/status/models`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
 
-            if (response.ok) {
-                const data = await response.json();
-                data.sort((a, b) => b.count - a.count);
 
-                const horde_models = data.map(x => ({
-                    value: x.name,
-                    text: `${x.name} (ETA: ${x.eta}s, Queue: ${x.queued}, Workers: ${x.count})`
-                }));
 
-                const savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-                let horde_model = savedSettings.horde_model;
-
-                if (!horde_model || !horde_models.some(model => model.value === horde_model)) {
-                    horde_model = horde_models[0].value;
-                }
-
-                return { horde_models, horde_model };
-            } else {
-                ui.notifications.error(`Error while retrieving Horde models: ${response.statusText}`);
-                return { horde_models: [], horde_model: '' };
-            }
-        } catch (error) {
-            ui.notifications.error(`Error while retrieving Horde models: ${error}`);
-            return { horde_models: [], horde_model: '' };
-        }
-    }
-
-    async loadHordeSamplers() {
-        return [
-            { name: 'k_lms' },
-            { name: 'k_heun' },
-            { name: 'k_euler' },
-            { name: 'k_dpm_2' },
-            { name: 'k_dpm_2_a' },
-            { name: 'DDIM' },
-            { name: 'PLMS' },
-            { name: 'k_dpm_fast' },
-            { name: 'k_dpm_adaptive' },
-            { name: 'k_dpmpp_2s_a' },
-            { name: 'k_dpmpp_2m' },
-            { name: 'dpmsolver' }
-        ];
-    }
 
     activateListeners(html) {
         super.activateListeners(html);

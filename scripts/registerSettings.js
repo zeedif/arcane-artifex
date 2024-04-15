@@ -113,8 +113,8 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "stableHordeURL", {
-    name: "stableHordeURL",
+  game.settings.register("stable-images", "hordeURL", {
+    name: "hordeURL",
     scope: "world",
     type: String,
     default: "https://stablehorde.net",
@@ -241,6 +241,75 @@ export default function registerSettings() {
       await a1111ApiClient.getLocalA1111Settings();
     }
   });
+
+  // Register settings for Horde models
+  game.settings.register("stable-images", "hordeModels", {
+    name: "Horde Models",
+    scope: "world",
+    config: false,
+    type: Array,
+    default: [],
+  });
+
+  // Register setting for the selected Horde model
+  game.settings.register("stable-images", "hordeModel", {
+    name: "Selected Horde Model",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "",
+  });
+
+  // Register setting for the selected Horde sampler
+  game.settings.register("stable-images", "hordeSampler", {
+    name: "Selected Horde Sampler",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "k_euler",
+  });
+
+  // Register settings for Horde samplers
+  game.settings.register("stable-images", "hordeSamplers", {
+    name: "Horde Samplers",
+    scope: "world",
+    config: false,
+    type: Array,
+    default: [
+      { name: 'k_lms' },
+      { name: 'k_heun' },
+      { name: 'k_euler' },
+      { name: 'k_dpm_2' },
+      { name: 'k_dpm_2_a' },
+      { name: 'DDIM' },
+      { name: 'PLMS' },
+      { name: 'k_dpm_fast' },
+      { name: 'k_dpm_adaptive' },
+      { name: 'k_dpmpp_2s_a' },
+      { name: 'k_dpmpp_2m' },
+      { name: 'dpmsolver' }
+    ],
+  });
+
+  game.settings.register("stable-images", "hordeNSFW", {
+    name: "hordeNSFW",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: async () => {
+      await a1111ApiClient.getHordeSettingss();
+    }
+  });
+
+  game.settings.register("stable-images", "hordeAPIKey", {
+    name: "hordeAPIKey",
+    scope: "world",
+    type: String,
+    default: "0000000000",
+    config: false,
+  });
+
 
   game.settings.register("stable-images", "comfyUIModel", {
     name: "comfyUIModel",
