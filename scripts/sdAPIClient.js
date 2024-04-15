@@ -1,5 +1,7 @@
 import chatListener from "./ChatListener.js";
-import { defaultSettings } from './registerSettings.js';
+import aiHordeApiClient from './aiHordeApiClient.js';
+import a1111ApiClient from './localA1111ApiClient.js';
+
 
 class SdAPIClient {
     constructor() {
@@ -161,38 +163,22 @@ class SdAPIClient {
 
     async textToImg(prompt, message) {
         if (game.settings.get("stable-images", "working")) {
-            return ui.notifications.warn("please wait until previous job is finished");
+          return ui.notifications.warn("Please wait until the previous job is finished");
         }
-        let requestBody = deepClone(this.localA111DefaultRequestBody);
-        requestBody.prompt = this.getFullPrompt(prompt);
-        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/txt2img/`;
-        await game.settings.set("stable-images", "working", true);
-        console.log('requestBody', requestBody);
-        try {
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify(requestBody)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Error: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    chatListener.createImage(data, prompt, message);
-                    game.settings.set("stable-images", "working", false);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        } catch (e) {
-            ui.notifications.warn('Error while sending request to stable diffusion');
+    
+        const selectedSource = game.settings.get("stable-images", "source");
+    
+        switch (selectedSource) {
+          case "stableHorde":
+            await aiHordeApiClient.generateImage(prompt, message);
+            break;
+          case "automatic1111":
+            await a1111ApiClient.textToImg(prompt, message);
+            break;
+          default:
+            ui.notifications.warn('Invalid source selected');
         }
-    }
+      }
 
     async changeModel(title) {
         return await this.postOption({

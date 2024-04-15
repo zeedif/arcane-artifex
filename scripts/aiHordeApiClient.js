@@ -26,6 +26,66 @@ class HordeAPIClient {
       return 'Stable Horde is not selected. Skipping AI Horde status check.';
     }
   }
+
+async generateImage(prompt, message, sourceImage = null) {
+  if (game.settings.get("stable-images", "working")) {
+    return ui.notifications.warn("Please wait until the previous job is finished");
+  }
+
+  const aiHordeUrl = game.settings.get('stable-images', 'stableHordeURL');
+  const apiUrl = `${aiHordeUrl}/api/v2/generate/async`;
+
+  const requestBody = {
+    prompt: prompt,
+    params: {
+      n: game.settings.get("stable-images", "numImages"),
+      width: game.settings.get("stable-images", "sdwidth"),
+      height: game.settings.get("stable-images", "sdheight"),
+      steps: game.settings.get("stable-images", "samplerSteps"),
+      sampler_name: game.settings.get("stable-images", "hordeAISampler"),
+      cfg_scale: game.settings.get("stable-images", "cfgScale"),
+      seed: -1,
+      source_image: sourceImage || null,
+      source_processing: sourceImage ? "img2img" : null,
+      denoising_strength: sourceImage ? game.settings.get("stable-images", "denoisingStrength") : null,
+    },
+    nsfw: game.settings.get("stable-images", "allowNSFW"),
+  };
+
+  await game.settings.set("stable-images", "working", true);
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': game.settings.get("stable-images", "hordeApiKey"),
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    await this.checkImageProgress(data.id, prompt, message);
+  } catch (error) {
+    console.error('Error:', error);
+    ui.notifications.error(`Error while sending request to Horde AI: ${error.message}`);
+  } finally {
+    await game.settings.set("stable-images", "working", false);
+  }
+}
+
+async testImageGeneration() {
+  const prompt = "A beautiful sunset over a serene beach";
+  await this.generateImage(prompt);
+}
+
+
+
+
 }
 
 export const aiHordeApiClient = new HordeAPIClient();
