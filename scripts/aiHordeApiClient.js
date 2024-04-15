@@ -36,53 +36,36 @@ class HordeAPIClient {
     }
 
     const { horde_models, horde_model } = await this.loadHordeModels();
-    game.settings.set('stable-images', "horde_models", horde_models);
-    game.settings.set('stable-images', "horde_model", horde_model);
-    const samplers = await this.loadHordeSamplers();
+    game.settings.set('stable-images', 'hordeModels', horde_models);
+    game.settings.set('stable-images', 'hordeModel', horde_model);
+    const samplers = await this.fetchSamplersFromSwagger();
+    game.settings.set('stable-images', 'hordeSamplers', samplers);
 
-
-    let stIP = await game.settings.get("stable-images", "hordeURL");
-
-    try {
-      const response = await fetch(objectInfoURL, { method: 'GET' });
-
-      if (response.ok) {
-        this.objectInfo = await response.json();
-        await game.settings.set("stable-images", "comfyUIModels", this.objectInfo.CheckpointLoaderSimple.input.required.ckpt_name[0]);
-        await game.settings.set("stable-images", "comfyUISamplers", this.objectInfo.KSampler.input.required.sampler_name[0]);
-        await game.settings.set("stable-images", "comfyUISchedulers", this.objectInfo.KSampler.input.required.scheduler[0]);
-        this.initializeOrUpdateLoras();
-        await game.settings.set("stable-images", "comfyUIUpscalers", this.objectInfo.UpscaleModelLoader.input.required.model_name[0]);
-      } else {
-        console.error('Error while attempting to access the ComfyUI object info:', response.status);
-      }
-    } catch (error) {
-      console.error('Error while attempting to access the ComfyUI object info:', error);
-    }
-
-    this.settings = game.settings.get("stable-images", "stable-settings");
-    console.log("Settings:", this.settings);
-
-    this.defaultRequestBody = {
-      prompt: game.settings.get("stable-images", "promptPrefix"),
-      seed: -1,
-      height: game.settings.get("stable-images", "sdheight"),
-      width: game.settings.get("stable-images", "sdwidth"),
-      negative_prompt: game.settings.get("stable-images", "negativePrompt"),
-      n_iter: game.settings.get("stable-images", "numImages"),
-      restore_faces: game.settings.get("stable-images", "restoreFaces"),
-      steps: game.settings.get("stable-images", "samplerSteps"),
-      sampler_name: game.settings.get("stable-images", "localA1111Sampler"),
-      enable_hr: game.settings.get("stable-images", "enableHr"),
-      hr_upscaler: game.settings.get("stable-images", "localA1111Upscaler"),
-      hr_scale: game.settings.get("stable-images", "hrScale"),
-      denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
-      hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
-      cfg_scale: game.settings.get("stable-images", "cfgScale")
-    };
-    console.log("Default Request Body:", this.defaultRequestBody);
   }
+  async fetchSamplersFromSwagger() {
+    const hordeUrl = game.settings.get('stable-images', 'hordeURL');
+    const url = `${hordeUrl}/api/swagger.json`;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
 
+        // Navigate directly to the enum for samplers based on the JSON structure you provided
+        const samplers = data.definitions.ModelPayloadRootStable.properties.sampler_name.enum;
+        console.error("Samplers:", samplers);
+        return samplers;
+    } catch (error) {
+        console.error('Failed to fetch or parse the Swagger JSON:', error);
+        return null;
+    }
+}
   async loadHordeModels() {
     try {
         const hordeUrl = game.settings.get('stable-images', 'hordeURL');

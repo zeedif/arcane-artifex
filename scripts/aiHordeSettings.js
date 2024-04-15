@@ -14,7 +14,7 @@ export default class HordeSettings extends FormApplication {
     }
 
     async getData() {
-
+        let context = {};
         context.horde_models = game.settings.get("stable-images", "hordeModels");
         context.horde_model = game.settings.get("stable-images", "hordeModel");
         context.horde_sampler = game.settings.get("stable-images", "hordeSampler");
@@ -22,31 +22,32 @@ export default class HordeSettings extends FormApplication {
         context.horde_nsfw = game.settings.get("stable-images", "hordeNSFW");
         context.horde_url = game.settings.get("stable-images", "hordeURL");
         context.horde_api_key = game.settings.get("stable-images", "hordeAPIKey");
-
-
-
         context.source = game.settings.get("stable-images", "source");
 
         this.context = context;
         return context;
     }
 
-
-
-
-
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="horde_nsfw"]').change(event => this.onToggleChange(event));
-
+        html.find('[name="horde_nsfw"]').change(event => this.onToggleNSFWChange(event));
+        html.find('[name="horde_api_key"]').change(event => this.onAPIKeyChange(event));
         html.find('select[name="source"]').on("change", async (event) => {
             await game.settings.set("stable-images", "source", event.target.value);
             this.render();
         });
     }
 
-    async onToggleChange(event) {
-        // Handle toggle change event
+    async onToggleNSFWChange(event) {
+        const isChecked = event.target.checked;
+        await game.settings.set("stable-images", "hordeNSFW", isChecked);
+        this.render(true);
+    }
+
+    async onAPIKeyChange(event) {
+        const newAPIKey = event.target.value;
+        await game.settings.set("stable-images", "hordeAPIKey", newAPIKey);
+        this.render(true);
     }
 
     async _updateObject(event, formData) {
@@ -57,3 +58,4 @@ export default class HordeSettings extends FormApplication {
         this.render(true);
     }
 }
+

@@ -236,10 +236,7 @@ export default function registerSettings() {
     scope: "world",
     type: Object,
     config: false,
-    default: {},
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: {}
   });
 
   // Register settings for Horde models
@@ -275,20 +272,7 @@ export default function registerSettings() {
     scope: "world",
     config: false,
     type: Array,
-    default: [
-      { name: 'k_lms' },
-      { name: 'k_heun' },
-      { name: 'k_euler' },
-      { name: 'k_dpm_2' },
-      { name: 'k_dpm_2_a' },
-      { name: 'DDIM' },
-      { name: 'PLMS' },
-      { name: 'k_dpm_fast' },
-      { name: 'k_dpm_adaptive' },
-      { name: 'k_dpmpp_2s_a' },
-      { name: 'k_dpmpp_2m' },
-      { name: 'dpmsolver' }
-    ],
+    default: [],
   });
 
   game.settings.register("stable-images", "hordeNSFW", {
@@ -298,7 +282,7 @@ export default function registerSettings() {
     type: Boolean,
     default: false,
     onChange: async () => {
-      await a1111ApiClient.getHordeSettingss();
+      await aiHordeApiClient.getHordeSettings();
     }
   });
 
@@ -398,10 +382,7 @@ export default function registerSettings() {
       max: 4,
       step: 1
     },
-    default: 1,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 1
   });
 
   // Register main configuration page options
@@ -419,6 +400,13 @@ export default function registerSettings() {
     default: "ComfyUI",
     requiresReload: true,
     onChange: async value => {
+      if (value === "automatic1111") {
+        await a1111ApiClient.getLocalA1111Settings();
+      } else if (value === "stableHorde") {
+        await aiHordeApiClient.getHordeSettings();
+      } else if (value === "comfyUI") {
+        await comfyUIApiClient.getComfyUISettings();
+      }
       console.log("Source changed to: ", value);
     }
   });
@@ -430,10 +418,7 @@ export default function registerSettings() {
     config: true,
     type: String,
     default: "",
-    filePicker: "folder",
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    filePicker: "folder"
   });
 
   game.settings.register("stable-images", "cfgScale", {
@@ -447,10 +432,7 @@ export default function registerSettings() {
       max: 30,
       step: 0.5
     },
-    default: 1.5,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 1.5
   });
 
   game.settings.register("stable-images", "samplerSteps", {
@@ -464,10 +446,7 @@ export default function registerSettings() {
       max: 150,
       step: 1
     },
-    default: 20,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 20
   });
 
   game.settings.register("stable-images", "promptPrefix", {
@@ -476,10 +455,7 @@ export default function registerSettings() {
     scope: "world",
     config: true,
     type: String,
-    default: 'best quality, absurdres, aesthetic,',
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 'best quality, absurdres, aesthetic,'
   });
 
   game.settings.register("stable-images", "negativePrompt", {
@@ -488,10 +464,7 @@ export default function registerSettings() {
     scope: "world",
     config: true,
     type: String,
-    default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry',
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
   });
 
   game.settings.register("stable-images", "resolutionOptions", {
@@ -518,10 +491,7 @@ export default function registerSettings() {
     scope: "world",
     config: true,
     type: Boolean,
-    default: true,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: true
   });
 
   game.settings.register("stable-images", "enableHr", {
@@ -529,10 +499,7 @@ export default function registerSettings() {
     scope: "world",
     config: true,
     type: Boolean,
-    default: true,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: true
   });
 
   game.settings.register("stable-images", "hrScale", {
@@ -547,10 +514,7 @@ export default function registerSettings() {
       step: 0.1
     },
     default: 2.0,
-    default: true,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: true
   });
 
   game.settings.register("stable-images", "denoisingStrength", {
@@ -564,10 +528,7 @@ export default function registerSettings() {
       max: 1.0,
       step: 0.01
     },
-    default: 0.7,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 0.7
   });
 
   game.settings.register("stable-images", "hrSecondPassSteps", {
@@ -581,10 +542,7 @@ export default function registerSettings() {
       max: 150,
       step: 1
     },
-    default: 0,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 0
   });
 
   game.settings.register("stable-images", "denoisingStrength", {
@@ -598,10 +556,7 @@ export default function registerSettings() {
       max: 1.0,
       step: 0.01
     },
-    default: 0.7,
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: 0.7
   });
 
   // Dynamically register settings based on defaultSettings
@@ -622,14 +577,7 @@ export default function registerSettings() {
     scope: 'world',
     config: false,
     type: Object,
-    default: {},
-    /**
-     * Handles the onChange event for the stable-settings.
-     * Calls the getLocalA1111Settings function from the sdAPIClient.
-     */
-    onChange: async () => {
-      await a1111ApiClient.getLocalA1111Settings();
-    }
+    default: {}
   });
 }
 
