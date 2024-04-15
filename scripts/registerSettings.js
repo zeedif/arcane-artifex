@@ -1,6 +1,6 @@
 import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
-import sdAPIClient from "./sdAPIClient.js";
+import a1111ApiClient from "./localA1111ApiClient.js";
 import HordeSettings from "./aiHordeSettings.js";
 import comfyUISettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
@@ -231,6 +231,17 @@ export default function registerSettings() {
     config: false,
   });
 
+  game.settings.register("stable-images", "localA111DefaultRequestBody", {
+    name: "localA111DefaultRequestBody",
+    scope: "world",
+    type: Object,
+    config: false,
+    default: {},
+    onChange: async () => {
+      await a1111ApiClient.getLocalA1111Settings();
+    }
+  });
+
   game.settings.register("stable-images", "comfyUIModel", {
     name: "comfyUIModel",
     scope: "world",
@@ -320,7 +331,7 @@ export default function registerSettings() {
     },
     default: 1,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -352,7 +363,7 @@ export default function registerSettings() {
     default: "",
     filePicker: "folder",
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -369,7 +380,7 @@ export default function registerSettings() {
     },
     default: 1.5,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -386,7 +397,7 @@ export default function registerSettings() {
     },
     default: 20,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -398,7 +409,7 @@ export default function registerSettings() {
     type: String,
     default: 'best quality, absurdres, aesthetic,',
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -410,7 +421,7 @@ export default function registerSettings() {
     type: String,
     default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry',
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -429,7 +440,7 @@ export default function registerSettings() {
       const selectedResolution = resolutionOptions[value];
       await game.settings.set("stable-images", "sdwidth", selectedResolution.width);
       await game.settings.set("stable-images", "sdheight", selectedResolution.height);
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -440,7 +451,7 @@ export default function registerSettings() {
     type: Boolean,
     default: true,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -451,7 +462,7 @@ export default function registerSettings() {
     type: Boolean,
     default: true,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -469,7 +480,7 @@ export default function registerSettings() {
     default: 2.0,
     default: true,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -486,7 +497,7 @@ export default function registerSettings() {
     },
     default: 0.7,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -503,7 +514,7 @@ export default function registerSettings() {
     },
     default: 0,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -520,7 +531,7 @@ export default function registerSettings() {
     },
     default: 0.7,
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 
@@ -548,7 +559,7 @@ export default function registerSettings() {
      * Calls the getLocalA1111Settings function from the sdAPIClient.
      */
     onChange: async () => {
-      await sdAPIClient.getLocalA1111Settings();
+      await a1111ApiClient.getLocalA1111Settings();
     }
   });
 }
