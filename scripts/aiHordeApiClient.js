@@ -1,3 +1,5 @@
+import chatListener from "./ChatListener.js";
+
 class HordeAPIClient {
   async checkStatus() {
     const selectedSource = game.settings.get('stable-images', 'source');
@@ -9,7 +11,7 @@ class HordeAPIClient {
       try {
         const response = await fetch(statusUrl);
         if (response.ok) {
-          console.log('AI Horde server is accessible at:', aiHordeUrl);
+          console.error('AI Horde server is accessible at:', aiHordeUrl);
           ui.notifications.info('AI Horde server is accessible.');
           return 'AI Horde API is accessible.';
         } else {
@@ -22,7 +24,7 @@ class HordeAPIClient {
         ui.notifications.error(`Error occurred while trying to access AI Horde server; error = ${error}`);
       }
     } else {
-      console.log("Stable Horde is not selected. Skipping AI Horde status check.");
+      console.error("Stable Horde is not selected. Skipping AI Horde status check.");
       return 'Stable Horde is not selected. Skipping AI Horde status check.';
     }
   }
@@ -35,11 +37,17 @@ class HordeAPIClient {
       return;
     }
 
-    const { horde_models, horde_model } = await this.loadHordeModels();
-    game.settings.set('stable-images', 'hordeModels', horde_models);
-    game.settings.set('stable-images', 'hordeModel', horde_model);
+    const { hordeModels, hordeModel } = await this.loadHordeModels();
+    await game.settings.set('stable-images', 'hordeModels', hordeModels);
+    await game.settings.set('stable-images', 'hordeModel', hordeModel);
     const samplers = await this.fetchSamplersFromSwagger();
-    game.settings.set('stable-images', 'hordeSamplers', samplers);
+    await game.settings.set('stable-images', 'hordeSamplers', samplers);
+    let currentSampler = game.settings.get('stable-images', 'hordeSampler');
+    if (!samplers.includes(currentSampler)) {
+      currentSampler = samplers[0]; // Default to the first sampler if current is not in the list
+      await game.settings.set('stable-images', 'hordeSampler', currentSampler);
+    }
+  
 
   }
   async fetchSamplersFromSwagger() {
@@ -80,88 +88,207 @@ class HordeAPIClient {
             const data = await response.json();
             data.sort((a, b) => b.count - a.count);
 
-            const horde_models = data.map(x => ({
+            const hordeModels = data.map(x => ({
                 value: x.name,
                 text: `${x.name} (ETA: ${x.eta}s, Queue: ${x.queued}, Workers: ${x.count})`
             }));
 
-            const savedSettings = game.settings.get('stable-images', 'stable-settings') || {};
-            let horde_model = savedSettings.horde_model;
+            let hordeModel = game.settings.get('stable-images', 'hordeModel');
 
-            if (!horde_model || !horde_models.some(model => model.value === horde_model)) {
-                horde_model = horde_models[0].value;
+            if (!hordeModel || !hordeModels.some(model => model.value === hordeModel)) {
+                hordeModel = hordeModels[0].value;
             }
 
-            return { horde_models, horde_model };
+            return { hordeModels, hordeModel };
         } else {
             ui.notifications.error(`Error while retrieving Horde models: ${response.statusText}`);
-            return { horde_models: [], horde_model: '' };
+            return { hordeModels: [], hordeModel: '' };
         }
     } catch (error) {
         ui.notifications.error(`Error while retrieving Horde models: ${error}`);
-        return { horde_models: [], horde_model: '' };
+        return { hordeModels: [], hordeModel: '' };
     }
 }
 
 
-async generateImage(prompt, message, sourceImage = null) {
-  if (game.settings.get("stable-images", "working")) {
-    return ui.notifications.warn("Please wait until the previous job is finished");
-  }
-
+async generateImage(prompt, message) {
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   const apiUrl = `${aiHordeUrl}/api/v2/generate/async`;
-
+ 
   const requestBody = {
     prompt: prompt,
+    nsfw: true,
+    censor_nsfw: false,
+    trusted_workers: false,
+    slow_workers: true,
+    shared: true,
+    replacement_filter: true,
+    worker_blacklist: false,
+    dry_run: false,
+    r2: true,
+    models: ["AlbedoBase XL (SDXL)"], 
+    workers: [], 
     params: {
-      n: game.settings.get("stable-images", "numImages"),
-      width: game.settings.get("stable-images", "sdwidth"),
-      height: game.settings.get("stable-images", "sdheight"),
-      steps: game.settings.get("stable-images", "samplerSteps"),
-      sampler_name: game.settings.get("stable-images", "hordeAISampler"),
-      cfg_scale: game.settings.get("stable-images", "cfgScale"),
-      seed: -1,
-      source_image: sourceImage || null,
-      source_processing: sourceImage ? "img2img" : null,
-      denoising_strength: sourceImage ? game.settings.get("stable-images", "denoisingStrength") : null,
-    },
-    nsfw: game.settings.get("stable-images", "allowNSFW"),
+      n: 1,
+      width: 1024,
+      height: 1024,
+      steps: 40,
+      denoising_strength: 1.0,
+      sampler_name: "k_euler",
+      cfg_scale: 2.5,
+      karras: false,
+      tiling: false,
+      hires_fix: false
+    }
   };
 
-  await game.settings.set("stable-images", "working", true);
+  game.settings.set('stable-images', 'hordeRequestBody', requestBody);
+  console.error("requestBody:", requestBody);
 
   try {
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': game.settings.get("stable-images", "hordeApiKey"),
+        'apikey': '0000000000'  // Hardcoded test API key
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
+      throw new Error(`HTTP error while generating image, status: ${response.status}`);
     }
 
     const data = await response.json();
-    await this.checkImageProgress(data.id, prompt, message);
-  } catch (error) {
-    console.error('Error:', error);
+    console.error("Image generation initiated:", data);
+
+    // Begin the polling process for image generation status
+    await this.initProgressRequest(data.id, prompt, message);
+  }
+  catch (error) {
+    console.error('Error in generating image:', error);
     ui.notifications.error(`Error while sending request to Horde AI: ${error.message}`);
-  } finally {
-    await game.settings.set("stable-images", "working", false);
   }
 }
 
-async testImageGeneration() {
-  const prompt = "A beautiful sunset over a serene beach";
-  await this.generateImage(prompt);
+
+async initProgressRequest(generationId, prompt, message, attempt = 0, currentState = "undefined") {
+  const maxAttempts = 100;
+  const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
+  let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
+
+  console.error(`Current state: ${currentState}, Attempt: ${attempt}`);
+
+  if (attempt >= maxAttempts) {
+    console.error("Max progress check attempts reached, stopping further checks.");
+    return;
+  }
+
+  try {
+    const statusResponse = await fetch(checkStatusUrl);
+    console.error(`Status check response for attempt ${attempt}:`, statusResponse);
+    
+    if (!statusResponse.ok) {
+      throw new Error('Request failed with status ' + statusResponse.status);
+    }
+    
+    const statusData = await statusResponse.json();
+    console.error("Polling image generation status:", statusData);
+
+    if (currentState === "undefined" && attempt === 0) {
+      currentState = "idle";
+      console.error(`State transition to 'idle', statusData:`, statusData);
+    }
+
+    if (!statusData.done && currentState !== "waiting") {
+      currentState = "waiting";
+      console.error(`State transition to 'waiting', statusData:`, statusData);
+    } else if (statusData.done && currentState !== "processing") {
+      currentState = "processing";
+      console.error(`State transition to 'processing', statusData:`, statusData);
+    }
+    
+    // Image is still being processed, increment attempt count and poll again
+    if (!statusData.done) {
+      setTimeout(() => {
+        this.initProgressRequest(generationId, prompt, message, attempt + 1, currentState);
+      }, 1500);
+    }
+
+    // Image generation is done, proceed to retrieve the image
+    if (statusData.done && currentState === "processing") {
+      console.error("Image generation complete, proceeding to retrieve the image.");
+      console.error('Calling retrieveGeneratedImage with message:', message);
+      await this.retrieveGeneratedImage(generationId, prompt, message);
+
+    }
+  } catch (error) {
+    console.error('Error fetching progress:', error);
+  }
 }
 
 
+async retrieveGeneratedImage(generationId, prompt, message) {
 
+  console.error('retrieveGeneratedImage called with message:', generationId, prompt,message);
+  const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
+  const retrieveUrl = `${aiHordeUrl}/api/v2/generate/status/${generationId}`;
+
+  try {
+    const retrieveResponse = await fetch(retrieveUrl);
+    if (!retrieveResponse.ok) {
+      throw new Error(`HTTP error! Status: ${retrieveResponse.status}`);
+    }
+    const retrieveData = await retrieveResponse.json();
+
+    if (!retrieveData.done || !retrieveData.generations || retrieveData.generations.length === 0) {
+      console.error('No image generation data found or image generation not complete.');
+      return;
+    }
+
+    const imageUrl = retrieveData.generations[0].img;
+    console.error('Direct URL of the generated image:', imageUrl); // Add this line
+    await this.fetchAndProcessImage(imageUrl, prompt, message);
+  } catch (error) {
+    console.error('Error during image retrieval and processing:', error);
+  }
+}
+
+async fetchAndProcessImage(imageUrl, prompt, message, attempts = 0) {
+  try {
+    const imageResponse = await fetch(imageUrl);
+    if (!imageResponse.ok) {
+      throw new Error(`Image fetch error! Status: ${imageResponse.status}`);
+    }
+    const imageBlob = await imageResponse.blob();
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageData = {
+        images: [{
+          id: foundry.utils.randomID(),
+          data: reader.result
+        }],
+        title: prompt,
+        send: false
+      };
+
+      console.error(`Image data, prompt, message from fetchAndProcessImage call:`, imageData, prompt, message);
+      chatListener.createImage(imageData, prompt, message);
+    };
+    reader.onerror = error => {
+      console.error('Error converting blob to base64:', error);
+    };
+    reader.readAsDataURL(imageBlob);
+  } catch (error) {
+    if (attempts < 3) { // Retry up to 3 times
+      console.error(`Attempt ${attempts + 1}: Retrying after error fetching image:`, error);
+      setTimeout(() => this.fetchAndProcessImage(imageUrl, prompt, message, attempts + 1), 2000); // Wait 2 seconds before retrying
+    } else {
+      console.error('Failed to fetch image after multiple attempts:', error);
+    }
+  }
+}
 
 }
 

@@ -231,12 +231,28 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "localA111DefaultRequestBody", {
-    name: "localA111DefaultRequestBody",
+  game.settings.register("stable-images", "localA1111RequestBody", {
+    name: "localA1111RequestBody",
     scope: "world",
     type: Object,
     config: false,
     default: {}
+  });
+
+  game.settings.register("stable-images", "rawPrompt", {
+    name: "rawPrompt",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "",
+  });
+
+  game.settings.register("stable-images", "fullPrompt", {
+    name: "fullPrompt",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "",
   });
 
   // Register settings for Horde models
@@ -294,6 +310,13 @@ export default function registerSettings() {
     config: false,
   });
 
+  game.settings.register("stable-images", "hordeRequestBody", {
+    name: "hordeRequestBody",
+    scope: "world",
+    type: Object,
+    config: false,
+    default: {}
+  });
 
   game.settings.register("stable-images", "comfyUIModel", {
     name: "comfyUIModel",
@@ -465,6 +488,15 @@ export default function registerSettings() {
     config: true,
     type: String,
     default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
+  });
+
+  game.settings.register("stable-images", "prompt", {
+    name: "prompt",
+    hint: "Set the full prompt",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ''
   });
 
   game.settings.register("stable-images", "resolutionOptions", {

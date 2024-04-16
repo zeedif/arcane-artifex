@@ -44,7 +44,7 @@ class A1111ApiClient {
         this.settings = game.settings.get("stable-images", "stable-settings");
         console.log("Settings:", this.settings);
 
-        await game.settings.set("stable-images", "localA111DefaultRequestBody",  {
+        await game.settings.set("stable-images", "localA1111RequestBody",  {
             prompt: game.settings.get("stable-images", "promptPrefix"),
             seed: -1,
             height: game.settings.get("stable-images", "sdheight"),
@@ -61,7 +61,7 @@ class A1111ApiClient {
             hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
             cfg_scale: game.settings.get("stable-images", "cfgScale")
         });
-        console.log("Default Request Body:", game.settings.get("stable-images", "localA111DefaultRequestBody"));
+        console.log("Default Request Body:", game.settings.get("stable-images", "localA1111RequestBody"));
     }
 
     async getA1111EndpointSettings() {
@@ -103,37 +103,48 @@ class A1111ApiClient {
     }
 
   async textToImg(prompt, message) {
-    let requestBody = deepClone(game.settings.get("stable-images", "localA111DefaultRequestBody"));
-    requestBody.prompt = this.getFullPrompt(prompt);
-    let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/txt2img/`;
-    await game.settings.set("stable-images", "working", true);
-    console.log('requestBody', requestBody);
+    console.error("DEBUG: LocalA1111ApiClient:textToImg:prompt", prompt);
+    console.error("DEBUG: LocalA1111ApiClient:textToImg:message", message);
 
-    try {
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        },
-        body: JSON.stringify(requestBody)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-          }
-          return response.json();
+    let requestBody = deepClone(game.settings.get("stable-images", "localA1111RequestBody"));
+      requestBody.prompt = this.getFullPrompt(prompt);
+      await game.settings.set("stable-images", "fullPrompt", requestBody.prompt)
+      let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/txt2img/`;
+      await game.settings.set("stable-images", "working", true);
+      console.error('LocalA1111ApiClient:txtToImg:requestBody', requestBody);
+    
+      try {
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body: JSON.stringify(requestBody)
         })
-        .then(data => {
-          chatListener.createImage(data, prompt, message);
-          game.settings.set("stable-images", "working", false);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    } catch (e) {
-      ui.notifications.warn('Error while sending request to stable diffusion');
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Error: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.error('Received data from A1111 API:', JSON.stringify(data, null, 2));
+            console.error("DEBUG: LocalA1111ApiClient:textToImg:prompt", prompt);
+            console.error("DEBUG: LocalA1111ApiClient:textToImg:message", message);
+            console.error("DEBUG: LocalA1111ApiClient:textToImg:data", data);
+            chatListener.createImage(data, prompt, message);
+            game.settings.set("stable-images", "working", false);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      } catch (e) {
+        ui.notifications.warn('Error while sending request to stable diffusion');
+        console.error('Catch error:', e);
+      }
     }
-  }
+    
+    
   getFullPrompt(userPrompt) {
     return `${this.settings['prompt_prefix']}, ${userPrompt}, ${this.settings.loraPrompt}`;
 }

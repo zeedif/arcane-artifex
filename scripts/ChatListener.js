@@ -133,18 +133,34 @@ class StableImagesChatListener {
     }
 
     async updateGMMessage(message, options) {
+        if (typeof message !== 'object' || message === null || typeof options !== 'object' || options === null) {
+            console.error('Invalid arguments passed to updateGMMessage:', { message, options });
+            return; // Stop execution if data is not as expected
+        }
+        
+
+        console.error('DEBUG:updateGMMMEssage:message', message);
+        console.error('DEBUG:updateGMMMEssage:options', options);
+
+
+
         let messageData = mergeObject(message, options);
         let content = await renderTemplate(this.template, messageData);
+
+        console.error("DEBUG:updateGMMMEssage:content", content);
+        
         message.update({
             id: message._id,
             content: content,
             whisper: ChatMessage.getWhisperRecipients("GM")
         }).then(msg => {
             if (options.send) {
+                console.error('DEBUG:updateGMMMEssage:msg', msg);
                 sdAPIClient.initProgressRequest(msg);
             }
         });
     }
+    
 
     async getPromptCommand(message) {
         if (!game.user.isGM || !game.settings.get('stable-images', 'connected')) {
@@ -152,7 +168,16 @@ class StableImagesChatListener {
         }
         if (message.content.startsWith(":sd: ")) {
             let prompt = message.content.substring(":sd: ".length);
+
+            console.error('DEBUG:getPromptCommand:message', message);
+            console.error('DEBUG:getPromptCommand:prompt', prompt);
+
+
             await this.updateGMMessage(message, { send: true, title: prompt });
+
+
+            await game.settings.set('stable-images', 'rawPrompt', prompt);
+
             sdAPIClient.textToImg(prompt, message);
         }
     }
@@ -187,19 +212,25 @@ class StableImagesChatListener {
     }
 
     async createImage(data, prompt, message) {
+        console.error('createImage called with:', {data, prompt, message}); // Additional debug log
+      
         let images = [];
         for (let imgData of data.images) {
-            images.push({
-                id: foundry.utils.randomID(),
-                data: imgData
-            });
+          console.error('Processing image data:', imgData); // Additional debug log
+          images.push({
+            id: imgData.id,
+            data: imgData.data
+          });
         }
+      
         this.updateGMMessage(message, {
-            images: images,
-            send: false,
-            title: prompt
+          images: images,
+          send: false,
+          title: prompt
         });
-    }
+      }
+    
+    
 }
 
 const chatListener = new StableImagesChatListener();

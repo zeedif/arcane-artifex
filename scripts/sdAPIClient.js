@@ -74,6 +74,9 @@ class SdAPIClient {
               return ui.notifications.warn("Please wait until the previous job is finished");
             }
         
+            console.error("I AM SO FUCKING SICK OF THIS", prompt);
+            console.error("ME TOO, BUDDY", message);
+
             const selectedSource = game.settings.get("stable-images", "source");
         
             switch (selectedSource) {
@@ -129,7 +132,7 @@ class SdAPIClient {
             if (game.settings.get("stable-images", "working")) {
                 return ui.notifications.warn("please wait until previous job is finished");
             }
-            let requestBody = deepClone(game.settings.get("stable-images", "localA111DefaultRequestBody"));
+            let requestBody = deepClone(game.settings.get("stable-images", "localA1111RequestBody"));
             requestBody.prompt = a1111ApiClient.getFullPrompt(prompt);
             requestBody.init_images = [source];
             requestBody.denoising_strength = this.settings.denoising_strength;

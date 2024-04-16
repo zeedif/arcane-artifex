@@ -1,44 +1,35 @@
 <div class="stable-message" data-actor-id="{{flags.stable-images.fromActor}}">
-    <h3 class="flexrow">{{title}}
-
-        {{prompt}}
+    <h3 class="flexrow">{{title}} {{prompt}}
         {{#if imgToImg}}
-        <img src="{{sourceSrc}}" class="stable-image source">
+            <img src="{{sourceSrc}}" class="stable-image source">
         {{/if}}
     </h3>
     {{#if send}}
-    <div class="stable-image-block">
-
-        <h4 class="flexrow stable-job">working : <i
-                class="fa-solid fa-spinner fa-spin"></i></h4>
-
-        <div class="stable-progress-container">
-            <div class="stable-progress-bar"></div>
-            <div class="stable-progress-state"></div>
+        <div class="stable-image-block">
+            <h4 class="flexrow stable-job">working : <i class="fa-solid fa-spinner fa-spin"></i></h4>
+            <div class="stable-progress-container">
+                <div class="stable-progress-bar"></div>
+                <div class="stable-progress-state"></div>
+            </div>
+            <img src class="stable-temp-image">
+            <div class="stable-buttons">
+                <a class="stable-image-skip">skip</a>
+                <a class="stable-image-interrupt">interrupt</a>
+            </div>
         </div>
-        <img src class="stable-temp-image">
-        <div class="stable-buttons">
-            <a class="stable-image-skip">skip</a>
-            <a class="stable-image-interrupt">interrupt</a>
-
-        </div>
-    </div>
     {{/if}}
     {{#each images as |image|}}
-    <div class="stable-image-block" data-image-id="{{image.id}}">
-        <img src="data:image/png;base64,{{image.data}}" alt="{{title}}">
-        <div class="stable-buttons">
-            <a class="stable-image-show-chat">send visible</a>
-            <a class="stable-image-create-journal">create
-                journal</a>
-            <a class="stable-image-img2img">create variation (img2img)</a>
-            <a class="stable-image-copySrc">copy src</a>
-            {{#if @root.flags.stable-images.fromActor}}
-            <a class="stable-image-actor-image">
-                affect to actor
-            </a>
-            {{/if}}
+        <div class="stable-image-block" data-image-id="{{image.id}}">
+            <img src="{{image.data}}" alt="{{title}}">
+            <div class="stable-buttons">
+                <a class="stable-image-show-chat">send visible</a>
+                <a class="stable-image-create-journal">create journal</a>
+                <a class="stable-image-img2img">create variation (img2img)</a>
+                <a class="stable-image-copySrc">copy src</a>
+                {{#if @root.flags.stable-images.fromActor}}
+                    <a class="stable-image-actor-image">affect to actor</a>
+                {{/if}}
+            </div>
         </div>
-    </div>
     {{/each}}
 </div>
