@@ -115,46 +115,48 @@ async generateImage(prompt, message) {
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   const apiUrl = `${aiHordeUrl}/api/v2/generate/async`;
  
-  const requestBody = {
-    prompt: prompt,
-    nsfw: true,
-    censor_nsfw: false,
-    trusted_workers: false,
-    slow_workers: true,
-    shared: true,
-    replacement_filter: true,
-    worker_blacklist: false,
-    dry_run: false,
-    r2: true,
-    models: ["AlbedoBase XL (SDXL)"], 
-    workers: [], 
-    params: {
-      n: 1,
-      width: 1024,
-      height: 1024,
-      steps: 40,
-      denoising_strength: 1.0,
-      sampler_name: "k_euler",
-      cfg_scale: 2.5,
-      karras: false,
-      tiling: false,
-      hires_fix: false
-    }
-  };
+const requestBody = {
+  prompt: prompt,
+  nsfw: game.settings.get("stable-images", "hordeNSFW"), 
+  censor_nsfw: false,
+  trusted_workers: false,
+  slow_workers: true,
+  shared: true,
+  replacement_filter: true,
+  worker_blacklist: false,
+  dry_run: false,
+  r2: true,
+  models: ["AlbedoBase XL (SDXL)"], 
+  workers: [], 
+  params: {
+    n: game.settings.get("stable-images", "numImages"),
+    width: game.settings.get("stable-images", "sdwidth"),
+    height: game.settings.get("stable-images", "sdheight"),
+    steps: game.settings.get("stable-images", "samplerSteps"),
+    denoising_strength: 1.0,
+    sampler_name: game.settings.get("stable-images", "hordeSampler"),
+    cfg_scale: game.settings.get("stable-images", "cfgScale"),
+    karras: false,
+    tiling: false,
+    hires_fix: game.settings.get("stable-images", "enableHr")
+  }
+};
+
 
   game.settings.set('stable-images', 'hordeRequestBody', requestBody);
   console.error("requestBody:", requestBody);
 
   try {
+    const apiKey = game.settings.get('stable-images', 'hordeAPIKey');
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': '0000000000'  // Hardcoded test API key
+        'apikey': apiKey
       },
       body: JSON.stringify(requestBody)
     });
-
+    
     if (!response.ok) {
       throw new Error(`HTTP error while generating image, status: ${response.status}`);
     }

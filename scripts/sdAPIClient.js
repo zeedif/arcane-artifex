@@ -73,9 +73,6 @@ class SdAPIClient {
             if (game.settings.get("stable-images", "working")) {
               return ui.notifications.warn("Please wait until the previous job is finished");
             }
-        
-            console.error("I AM SO FUCKING SICK OF THIS", prompt);
-            console.error("ME TOO, BUDDY", message);
 
             const selectedSource = game.settings.get("stable-images", "source");
         

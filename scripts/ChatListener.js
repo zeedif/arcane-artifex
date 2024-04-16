@@ -137,18 +137,10 @@ class StableImagesChatListener {
             console.error('Invalid arguments passed to updateGMMessage:', { message, options });
             return; // Stop execution if data is not as expected
         }
-        
-
-        console.error('DEBUG:updateGMMMEssage:message', message);
-        console.error('DEBUG:updateGMMMEssage:options', options);
-
-
 
         let messageData = mergeObject(message, options);
         let content = await renderTemplate(this.template, messageData);
 
-        console.error("DEBUG:updateGMMMEssage:content", content);
-        
         message.update({
             id: message._id,
             content: content,
@@ -216,7 +208,6 @@ class StableImagesChatListener {
       
         let images = [];
         for (let imgData of data.images) {
-          console.error('Processing image data:', imgData); // Additional debug log
           images.push({
             id: imgData.id,
             data: imgData.data
