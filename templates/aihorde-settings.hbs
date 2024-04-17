@@ -45,16 +45,17 @@
     </section>
   </div>
 
-  <div class="samplers">
+<div class="samplers">
     <h2>SAMPLERS</h2> 
     <h4>active sampler: {{horde_sampler}}</h4> 
     <select id="sampler-select" name="horde_sampler">
       <option>change sampler here</option>
-      {{#each samplers}}
-        <option value="{{this.name}}" {{#if (eq this.name ../horde_sampler)}}selected{{/if}}>{{this.name}}</option>
+      {{#each horde_samplers}}
+        <option value="{{this}}" {{#if (eq this ../horde_sampler)}}selected{{/if}}>{{this}}</option>
       {{/each}}
     </select>
   </div>
+  
 
   <div class="sheet-footer">
     <button type="submit"> 

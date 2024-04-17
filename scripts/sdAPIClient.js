@@ -78,7 +78,7 @@ class SdAPIClient {
         
             switch (selectedSource) {
               case "stableHorde":
-                await aiHordeApiClient.generateImage(prompt, message);
+                await aiHordeApiClient.textToImg(prompt, message);
                 break;
               case "automatic1111":
                 await a1111ApiClient.textToImg(prompt, message);

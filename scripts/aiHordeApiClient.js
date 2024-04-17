@@ -111,7 +111,7 @@ class HordeAPIClient {
 }
 
 
-async generateImage(prompt, message) {
+async textToImg(prompt, message) {
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   const apiUrl = `${aiHordeUrl}/api/v2/generate/async`;
  
@@ -126,7 +126,7 @@ const requestBody = {
   worker_blacklist: false,
   dry_run: false,
   r2: true,
-  models: ["AlbedoBase XL (SDXL)"], 
+  models: [game.settings.get("stable-images", "hordeModel")],
   workers: [], 
   params: {
     n: game.settings.get("stable-images", "numImages"),
@@ -136,7 +136,7 @@ const requestBody = {
     denoising_strength: 1.0,
     sampler_name: game.settings.get("stable-images", "hordeSampler"),
     cfg_scale: game.settings.get("stable-images", "cfgScale"),
-    karras: false,
+    karras: true,
     tiling: false,
     hires_fix: game.settings.get("stable-images", "enableHr")
   }

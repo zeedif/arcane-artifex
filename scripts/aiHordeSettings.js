@@ -25,10 +25,13 @@ export default class HordeSettings extends FormApplication {
         context.source = game.settings.get("stable-images", "source");
 
         this.context = context;
+
+        console.error("context", context);
+
         return context;
     }
 
-    activateListeners(html) {
+activateListeners(html) {
         super.activateListeners(html);
         html.find('[name="horde_nsfw"]').change(event => this.onToggleNSFWChange(event));
         html.find('[name="horde_api_key"]').change(event => this.onAPIKeyChange(event));
@@ -36,7 +39,16 @@ export default class HordeSettings extends FormApplication {
             await game.settings.set("stable-images", "source", event.target.value);
             this.render();
         });
+        html.find('select[name="horde_model"]').on("change", async (event) => {
+            await game.settings.set("stable-images", "hordeModel", event.target.value);
+            this.render();
+        });
+        html.find('select[name="horde_sampler"]').on("change", async (event) => {
+            await game.settings.set("stable-images", "hordeSampler", event.target.value);
+            this.render();
+        });
     }
+    
 
     async onToggleNSFWChange(event) {
         const isChecked = event.target.checked;
