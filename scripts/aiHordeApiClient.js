@@ -179,8 +179,6 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
 
-  console.error(`Current state: ${currentState}, Attempt: ${attempt}`);
-
   if (attempt >= maxAttempts) {
     console.error("Max progress check attempts reached, stopping further checks.");
     return;
@@ -188,26 +186,25 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
 
   try {
     const statusResponse = await fetch(checkStatusUrl);
-    console.error(`Status check response for attempt ${attempt}:`, statusResponse);
     
     if (!statusResponse.ok) {
       throw new Error('Request failed with status ' + statusResponse.status);
     }
     
     const statusData = await statusResponse.json();
-    console.error("Polling image generation status:", statusData);
+    console.warn("Polling image generation status:", statusData);
+
+    // Update the UI with the current status
+    chatListener.displayHordeProgress(message, statusData);
 
     if (currentState === "undefined" && attempt === 0) {
       currentState = "idle";
-      console.error(`State transition to 'idle', statusData:`, statusData);
     }
 
     if (!statusData.done && currentState !== "waiting") {
       currentState = "waiting";
-      console.error(`State transition to 'waiting', statusData:`, statusData);
     } else if (statusData.done && currentState !== "processing") {
       currentState = "processing";
-      console.error(`State transition to 'processing', statusData:`, statusData);
     }
     
     // Image is still being processed, increment attempt count and poll again

@@ -1,6 +1,6 @@
 import registerSettings from "./registerSettings.js";
 import chatListener from './ChatListener.js';
-import a1111ApiClient from './localA1111ApiClient.js';
+import localA1111APIClient from './localA1111APIClient.js';
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
@@ -26,7 +26,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
 Hooks.once('ready', async function () {
     if (game.user.isGM) {
         await game.settings.set("stable-images", "working", false);
-        a1111ApiClient.checkStatus();
+        localA1111APIClient.checkStatus();
         aiHordeApiClient.checkStatus();
         comfyUIApiClient.checkStatus();
     }

@@ -1,7 +1,6 @@
-// a1111ApiClient.js
 import chatListener from "./ChatListener.js";
 
-class A1111ApiClient {
+class LocalA1111APIClient {
     constructor() {
         this.settings = {};
     }
@@ -157,8 +156,58 @@ async checkStatus() {
     return `${this.settings['prompt_prefix']}, ${userPrompt}, ${this.settings.loraPrompt}`;
 }
 
+async initProgressRequest(message, attempt = 0, currentState = "undefined") {
+  console.error('###################called A1111 initProgressRequest######################');
+  const maxAttempts = 100;
+  if (attempt >= maxAttempts) {
+      console.warn("stable-images: Max progress check attempts reached, stopping further checks.");
+      return;
+  }
+
+  if (currentState === "undefined" && attempt === 0) {
+      currentState = "idle";
+  }
+
+  let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/progress`;
+  fetch(apiUrl)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Request failed with status ' + response.status);
+          }
+          return response.json();
+      })
+      .then(async data => {
+          chatListener.displayProgress(message, data);
+
+          if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
+              if (currentState === "idle") {
+                  console.log("stable-images: State transition to 'waiting'");
+              }
+              currentState = "waiting";
+              setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
+          } else if (currentState === "waiting" && data.progress > 0) {
+              currentState = "processing";
+              console.log("stable-images: State transition to 'processing'");
+              setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
+          } else if (currentState === "processing" && data.progress < 1.0) {
+              console.log("stable-images: In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
+              setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
+          }
+
+          if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
+              currentState = "done";
+              console.log("stable-images: State transition to 'done'");
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching progress:', error);
+      });
 }
 
-const a1111ApiClient = new A1111ApiClient();
 
-export default a1111ApiClient;
+
+}
+
+const localA1111APIClient = new LocalA1111APIClient();
+
+export default localA1111APIClient;

@@ -1,6 +1,6 @@
 import stableFileManager from "./StableFileManager.js";
 import localA1111Settings from "./localA1111Settings.js";
-import a1111ApiClient from "./localA1111ApiClient.js";
+import localA1111APIClient from "./localA1111APIClient.js";
 import HordeSettings from "./aiHordeSettings.js";
 import comfyUISettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
@@ -428,14 +428,14 @@ export default function registerSettings() {
     type: String,
     choices: {
       stableHorde: "Stable Horde",
-      automatic1111: "Stable Diffusion Web UI (AUTOMATIC1111)",
+      localA1111: "Stable Diffusion Web UI (AUTOMATIC1111)",
       comfyUI: "ComfyUI"
     },
     default: "ComfyUI",
     requiresReload: true,
     onChange: async value => {
-      if (value === "automatic1111") {
-        await a1111ApiClient.getLocalA1111Settings();
+      if (value === "localA1111") {
+        await localA1111APIClient.getLocalA1111Settings();
       } else if (value === "stableHorde") {
         await aiHordeApiClient.getHordeSettings();
       } else if (value === "comfyUI") {
@@ -525,7 +525,7 @@ export default function registerSettings() {
       const selectedResolution = resolutionOptions[value];
       await game.settings.set("stable-images", "sdwidth", selectedResolution.width);
       await game.settings.set("stable-images", "sdheight", selectedResolution.height);
-      await a1111ApiClient.getLocalA1111Settings();
+      await localA1111APIClient.getLocalA1111Settings();
     }
   });
 

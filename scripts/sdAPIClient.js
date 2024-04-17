@@ -1,6 +1,6 @@
 import chatListener from "./ChatListener.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
-import a1111ApiClient from './localA1111ApiClient.js';
+import localA1111APIClient from './localA1111APIClient.js';
 import LocalA1111Settings from './localA1111Settings.js';  // Import LocalA1111Settings
 
 class SdAPIClient {
@@ -11,8 +11,8 @@ class SdAPIClient {
     async checkStatus() {
         const selectedSource = game.settings.get('stable-images', 'source');
 
-        if (selectedSource === 'automatic1111') {
-            return await a1111ApiClient.checkStatus();
+        if (selectedSource === 'localA1111') {
+            return await localA1111APIClient.checkStatus();
         } else if (selectedSource === 'stableHorde') {
             return await aiHordeApiClient.checkStatus();
         } else {
@@ -80,8 +80,8 @@ class SdAPIClient {
               case "stableHorde":
                 await aiHordeApiClient.textToImg(prompt, message);
                 break;
-              case "automatic1111":
-                await a1111ApiClient.textToImg(prompt, message);
+              case "localA1111":
+                await localA1111APIClient.textToImg(prompt, message);
                 break;
               default:
                 ui.notifications.warn('Invalid source selected');
@@ -130,7 +130,7 @@ class SdAPIClient {
                 return ui.notifications.warn("please wait until previous job is finished");
             }
             let requestBody = deepClone(game.settings.get("stable-images", "localA1111RequestBody"));
-            requestBody.prompt = a1111ApiClient.getFullPrompt(prompt);
+            requestBody.prompt = localA1111APIClient.getFullPrompt(prompt);
             requestBody.init_images = [source];
             requestBody.denoising_strength = this.settings.denoising_strength;
         let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/img2img/`;
@@ -159,53 +159,6 @@ class SdAPIClient {
         } catch (e) {
             ui.notifications.warn('Error while sending request to stable diffusion');
         }
-    }
-
-    async initProgressRequest(message, attempt = 0, currentState = "undefined") {
-        const maxAttempts = 100;
-        if (attempt >= maxAttempts) {
-            console.warn("stable-images: Max progress check attempts reached, stopping further checks.");
-            return;
-        }
-
-        if (currentState === "undefined" && attempt === 0) {
-            currentState = "idle";
-        }
-
-        let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/progress`;
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Request failed with status ' + response.status);
-                }
-                return response.json();
-            })
-            .then(async data => {
-                chatListener.displayProgress(message, data);
-
-                if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
-                    if (currentState === "idle") {
-                        console.log("stable-images: State transition to 'waiting'");
-                    }
-                    currentState = "waiting";
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
-                } else if (currentState === "waiting" && data.progress > 0) {
-                    currentState = "processing";
-                    console.log("stable-images: State transition to 'processing'");
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
-                } else if (currentState === "processing" && data.progress < 1.0) {
-                    console.log("stable-images: In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
-                    setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
-                }
-
-                if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
-                    currentState = "done";
-                    console.log("stable-images: State transition to 'done'");
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching progress:', error);
-            });
     }
 }
 

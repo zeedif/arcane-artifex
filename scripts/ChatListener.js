@@ -1,4 +1,7 @@
 import stableFileManager from "./StableFileManager.js";
+import localA1111APIClient from './localA1111APIClient.js';
+console.error('localA1111APIClient', localA1111APIClient);
+import aiHordeApiClient from "./aiHordeApiClient.js";
 import sdAPIClient from "./sdAPIClient.js";
 
 class StableImagesChatListener {
@@ -132,26 +135,32 @@ class StableImagesChatListener {
         });
     }
 
-    async updateGMMessage(message, options) {
+async updateGMMessage(message, options) {
         if (typeof message !== 'object' || message === null || typeof options !== 'object' || options === null) {
             console.error('Invalid arguments passed to updateGMMessage:', { message, options });
             return; // Stop execution if data is not as expected
         }
-
+    
         let messageData = mergeObject(message, options);
         let content = await renderTemplate(this.template, messageData);
-
+    
         message.update({
             id: message._id,
             content: content,
             whisper: ChatMessage.getWhisperRecipients("GM")
         }).then(msg => {
             if (options.send) {
-                console.error('DEBUG:updateGMMMEssage:msg', msg);
-                sdAPIClient.initProgressRequest(msg);
+                console.error('DEBUG:updateGMMessage:msg', msg);
+                const selectedSource = game.settings.get('stable-images', 'source');
+                if (selectedSource === 'localA1111') {
+                    localA1111APIClient.initProgressRequest(msg);
+                } else if (selectedSource === 'stableHorde') {
+                    aiHordeApiClient.initProgressRequest(msg.id, msg.content, msg, 0, "undefined");
+                }
             }
         });
     }
+    
     
 
     async getPromptCommand(message) {
@@ -175,6 +184,8 @@ class StableImagesChatListener {
     }
 
     displayProgress(message, data) {
+
+        console.error('displaying A1111 progress', data);
         let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
         if (!messageElement) {
             setTimeout(() => this.displayProgress(message, data), 500);
@@ -202,6 +213,36 @@ class StableImagesChatListener {
             }
         }
     }
+
+    displayHordeProgress(message, data) {
+
+        console.error('displaying Horde progress', data);
+        let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
+        if (!messageElement) {
+            setTimeout(() => this.displayHordeProgress(message, data), 500);
+            return;
+        }
+        let progressBarElement = messageElement.querySelector('.stable-progress-bar');
+        let progressStateElement = messageElement.querySelector('.stable-progress-state');
+        let titleEl = messageElement.querySelector('h4.stable-job');
+        let img = messageElement.querySelector('img.stable-temp-image');
+    
+        // Calculate the percentage based on wait time and queue position
+        let percent = data.done ? 100 : Math.max(0, 100 - (data.queue_position * 10)); // Simplified calculation
+        if (progressBarElement) {
+            progressBarElement.style.width = `${percent}%`;
+        }
+        if (progressStateElement) {
+            progressStateElement.innerText = data.done ? "Complete" : `Queue Position: ${data.queue_position}, Wait Time: ${data.wait_time}s`;
+        }
+        if (titleEl) {
+            titleEl.innerText = data.done ? "Processing Complete" : "Processing...";
+        }
+        if (img) {
+            img.src = data.done ? "data:image/png;base64," + data.current_image : "/modules/stable-images/assets/stable-images-progress.webp";
+        }
+    }
+    
 
     async createImage(data, prompt, message) {
         console.error('createImage called with:', {data, prompt, message}); // Additional debug log
