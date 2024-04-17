@@ -1,6 +1,6 @@
 import registerSettings from "./registerSettings.js";
 import chatListener from './ChatListener.js';
-import sdAPIClient from "./sdAPIClient.js";
+import a1111ApiClient from './localA1111ApiClient.js';
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
@@ -26,7 +26,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
 Hooks.once('ready', async function () {
     if (game.user.isGM) {
         await game.settings.set("stable-images", "working", false);
-        sdAPIClient.checkStatus();
+        a1111ApiClient.checkStatus();
         aiHordeApiClient.checkStatus();
         comfyUIApiClient.checkStatus();
     }
@@ -83,7 +83,3 @@ function generatePromptFromActor(sheet) {
 
     new PromptApplication(prompt, sheet.actor.uuid).render(true);
 }
-
-Hooks.on('renderAiHordeSettings', (app, html) => {
-    html.find('#aihorde-test-connection').on('click', aiHordeApiClient.checkStatus());
-});

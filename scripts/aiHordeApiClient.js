@@ -218,17 +218,17 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     }
 
     // Image generation is done, proceed to retrieve the image
-    if (statusData.done && currentState === "processing") {
-      console.error("Image generation complete, proceeding to retrieve the image.");
-      console.error('Calling retrieveGeneratedImage with message:', message);
-      await this.retrieveGeneratedImage(generationId, prompt, message);
+        if (statusData.done && currentState === "processing") {
+          console.error("Image generation complete, proceeding to retrieve the image.");
+          console.error('Calling retrieveGeneratedImage with message:', message);
+          await this.retrieveGeneratedImage(generationId, prompt, message);
 
+        }
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+      }
     }
-  } catch (error) {
-    console.error('Error fetching progress:', error);
-  }
-}
-
+    
 
 async retrieveGeneratedImage(generationId, prompt, message) {
 
