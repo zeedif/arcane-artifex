@@ -11,7 +11,7 @@ class HordeAPIClient {
       try {
         const response = await fetch(statusUrl);
         if (response.ok) {
-          console.error('AI Horde server is accessible at:', aiHordeUrl);
+          console.warn('AI Horde server is accessible at:', aiHordeUrl);
           ui.notifications.info('AI Horde server is accessible.');
           return 'AI Horde API is accessible.';
         } else {
@@ -24,7 +24,7 @@ class HordeAPIClient {
         ui.notifications.error(`Error occurred while trying to access AI Horde server; error = ${error}`);
       }
     } else {
-      console.error("Stable Horde is not selected. Skipping AI Horde status check.");
+      console.warn("Stable Horde is not selected. Skipping AI Horde status check.");
       return 'Stable Horde is not selected. Skipping AI Horde status check.';
     }
   }

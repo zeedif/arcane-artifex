@@ -6,31 +6,39 @@ class A1111ApiClient {
         this.settings = {};
     }
 
-    async checkStatus() {
-        const a1111url = game.settings.get('stable-images', 'localA1111URL');
-        const statusUrl = a1111url;
-
-        try {
-            const response = await fetch(statusUrl, { method: 'HEAD' });
-            console.log("response:", response);
-            if (response.ok) {
-                console.log('A1111 server is accessible at:', a1111url);
-                ui.notifications.info('A1111 server is accessible.');
-                await game.settings.set("stable-images", "connected", true);
-                await this.getLocalA1111Settings();
-                return 'A1111 API is accessible.';
-            } else {
-                console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
-                ui.notifications.error(`A1111 server is not accessible: response code: ${response.status}`);
+async checkStatus() {
+        const selectedSource = game.settings.get('stable-images', 'source');
+    
+        if (selectedSource === 'localA1111') {
+            const a1111url = game.settings.get('stable-images', 'localA1111URL');
+            const statusUrl = a1111url;
+    
+            try {
+                const response = await fetch(statusUrl, { method: 'HEAD' });
+                console.log("response:", response);
+                if (response.ok) {
+                    console.log('A1111 server is accessible at:', a1111url);
+                    ui.notifications.info('A1111 server is accessible.');
+                    await game.settings.set("stable-images", "connected", true);
+                    await this.getLocalA1111Settings();
+                    return 'A1111 API is accessible.';
+                } else {
+                    console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
+                    ui.notifications.error(`A1111 server is not accessible: response code: ${response.status}`);
+                    await game.settings.set("stable-images", "connected", false);
+                    throw new Error(`A1111 API returned an error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error occurred while trying to access A1111 server at URL:', a1111url, '; error =', error);
+                ui.notifications.error(`Error occurred while trying to access A1111 server; error = ${error}`);
                 await game.settings.set("stable-images", "connected", false);
-                throw new Error(`A1111 API returned an error: ${response.status}`);
             }
-        } catch (error) {
-            console.error('Error occurred while trying to access A1111 server at URL:', a1111url, '; error =', error);
-            ui.notifications.error(`Error occurred while trying to access A1111 server; error = ${error}`);
-            await game.settings.set("stable-images", "connected", false);
+        } else {
+            console.warn("Local A1111 is not selected. Skipping A1111 status check.");
+            return 'Local A1111 is not selected. Skipping A1111 status check.';
         }
     }
+    
 
     async getLocalA1111Settings() {
         const connection = game.settings.get('stable-images', 'connected');
