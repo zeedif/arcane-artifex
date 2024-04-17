@@ -21,16 +21,22 @@
         </div>
       </div>
 
-      <div class="nsfw">
-        <h2>AI HORDE NSFW</h2>
-        <div class="form-group">
-          <label>Allow NSFW?</label>
-          <div class="form-fields">
+      <div class="toggles">
+        <h2>AI HORDE TOGGLES</h2>
+        <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <label>Allow NSFW?</label>
             <input type="checkbox" name="horde_nsfw" data-dtype="Boolean" {{#if horde_nsfw}}checked{{/if}}> 
             <p class="notes">Allow NSFW images from Horde</p>
           </div>
+          <div>
+            <label>Allow Karas?</label>
+            <input type="checkbox" name="horde_karras" data-dtype="Boolean" {{#if horde_karras}}checked{{/if}}> 
+            <p class="notes">Karras (not all samplers supported)</p>
+          </div>
         </div>
       </div>
+
 
       <div class="models">
         <h2>MODELS</h2> 

@@ -20,6 +20,7 @@ export default class HordeSettings extends FormApplication {
         context.horde_sampler = game.settings.get("stable-images", "hordeSampler");
         context.horde_samplers = game.settings.get("stable-images", "hordeSamplers");
         context.horde_nsfw = game.settings.get("stable-images", "hordeNSFW");
+        context.horde_karras = game.settings.get("stable-images", "hordeKarras");
         context.horde_url = game.settings.get("stable-images", "hordeURL");
         context.horde_api_key = game.settings.get("stable-images", "hordeAPIKey");
         context.source = game.settings.get("stable-images", "source");
@@ -34,6 +35,7 @@ export default class HordeSettings extends FormApplication {
 activateListeners(html) {
         super.activateListeners(html);
         html.find('[name="horde_nsfw"]').change(event => this.onToggleNSFWChange(event));
+        html.find('[name="horde_karras"]').change(event => this.onToggleKarrasChange(event));
         html.find('[name="horde_api_key"]').change(event => this.onAPIKeyChange(event));
         html.find('select[name="source"]').on("change", async (event) => {
             await game.settings.set("stable-images", "source", event.target.value);
@@ -53,6 +55,12 @@ activateListeners(html) {
     async onToggleNSFWChange(event) {
         const isChecked = event.target.checked;
         await game.settings.set("stable-images", "hordeNSFW", isChecked);
+        this.render(true);
+    }
+
+    async onToggleKarrasChange(event) {
+        const isChecked = event.target.checked;
+        await game.settings.set("stable-images", "hordeKarras", isChecked);
         this.render(true);
     }
 

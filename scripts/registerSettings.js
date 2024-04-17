@@ -302,6 +302,17 @@ export default function registerSettings() {
     }
   });
 
+  game.settings.register("stable-images", "hordeKarras", {
+    name: "hordeKarras",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: async () => {
+      await aiHordeApiClient.getHordeSettings();
+    }
+  });
+
   game.settings.register("stable-images", "hordeAPIKey", {
     name: "hordeAPIKey",
     scope: "world",

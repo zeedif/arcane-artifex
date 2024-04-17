@@ -136,7 +136,7 @@ const requestBody = {
     denoising_strength: 1.0,
     sampler_name: game.settings.get("stable-images", "hordeSampler"),
     cfg_scale: game.settings.get("stable-images", "cfgScale"),
-    karras: true,
+    karras: game.settings.get("stable-images", "hordeKarras"),
     tiling: false,
     hires_fix: game.settings.get("stable-images", "enableHr")
   }
