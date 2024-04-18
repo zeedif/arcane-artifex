@@ -177,9 +177,6 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
 
-//if attempt is 0, wait for 5 second before attempting to fetch the checkSatatusUrl
-
-
   if (attempt >= maxAttempts) {
     console.error("Max progress check attempts reached, stopping further checks.");
     return;
@@ -188,14 +185,12 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
   try {
     const statusResponse = await fetch(checkStatusUrl);
 
-    console.error("Checking statusResponse:", statusResponse);
     
     if (!statusResponse.ok) {
       throw new Error('Request failed with status ' + statusResponse.status);
     }
     
     const statusData = await statusResponse.json();
-    console.error("Polling image generation status:", statusData);
 
     // Update the UI with the current status
     chatListener.displayHordeProgress(message, statusData);
