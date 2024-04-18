@@ -1,4 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
+import openAiSettings from "./openAiSettings.js";
 import localA1111Settings from "./localA1111Settings.js";
 import localA1111APIClient from "./localA1111APIClient.js";
 import HordeSettings from "./aiHordeSettings.js";
@@ -38,6 +39,13 @@ const resolutionOptions = {
   "sd_res_1536x640": { width: 1536, height: 640, name: "1536x640 (24:10, SDXL)" },
   "sd_res_640x1536": { width: 640, height: 1536, name: "640x1536 (10:24, SDXL)" }
 };
+
+const openAiResolutionOptions = {
+  "dalle_res_1024x1024": { width: 1024, height: 1024, name: "1024x1024 (1:1)" },
+  "dalle_res_1792x1024": { width: 1792, height: 1024, name: "1792x1024 (Landscape)" },
+  "dalle_res_1024x1792": { width: 1024, height: 1792, name: "1024x1792 (Portriat)" }
+};
+
 
 const defaultSettings = {
 
@@ -85,6 +93,14 @@ export default function registerSettings() {
     label: 'ComfyUI Settings',
     icon: 'fas fa-cog',
     type: comfyUISettings,
+    restricted: true,
+  });
+
+  game.settings.registerMenu('stable-images', 'openai-settings', {
+    name: 'OpenAI Settings',
+    label: 'OpenAI Settings',
+    icon: 'fas fa-cog',
+    type: openAiSettings,
     restricted: true,
   });
 
@@ -405,6 +421,33 @@ export default function registerSettings() {
     default: []
   });
 
+  game.settings.register("stable-images", "openAiApiKey", {
+    name: "openAiApiKey",
+    scope: "world",
+    type: String,
+    default: "0000000000",
+    config: false,
+  });
+
+  game.settings.register("stable-images", "openAiResolutionOptions", {
+    name: "openAiResolutionOptions",
+    hint: "Select a predefined DALLE-3 resolution",
+    scope: "world",
+    config: false,
+    type: String,
+    choices: Object.keys(openAiResolutionOptions).reduce((choices, key) => {
+      choices[key] = openAiResolutionOptions[key].name;
+      return choices;
+    }, {}),
+    default: "dalle_res_1024x1024",
+    onChange: async value => {
+      const selectedResolution = openAiResolutionOptions[value];
+      await game.settings.set("stable-images", "sdwidth", selectedResolution.width);
+      await game.settings.set("stable-images", "sdheight", selectedResolution.height);
+    }
+  });
+
+
   game.settings.register("stable-images", "numImages", {
     name: "numImages",
     hint: "Number of images to produce per generation",
@@ -428,8 +471,9 @@ export default function registerSettings() {
     type: String,
     choices: {
       stableHorde: "Stable Horde",
-      localA1111: "Stable Diffusion Web UI (AUTOMATIC1111)",
-      comfyUI: "ComfyUI"
+      localA1111: "Local Web UI (AUTOMATIC1111)",
+      comfyUI: "ComfyUI",
+      openAI: "OpenAI"
     },
     default: "ComfyUI",
     requiresReload: true,
@@ -440,7 +484,10 @@ export default function registerSettings() {
         await aiHordeApiClient.getHordeSettings();
       } else if (value === "comfyUI") {
         await comfyUIApiClient.getComfyUISettings();
+      } else if (value === "openAI") {
+        await openAiApiClient.getOpenAISettings();
       }
+
       console.log("Source changed to: ", value);
     }
   });

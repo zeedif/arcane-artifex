@@ -1,0 +1,32 @@
+<form autocomplete="on">
+  <div class="sheet-body flexrow">
+    <section>
+      <div class="api">
+        <h2>OPENAI API KEY</h2>
+        <div class="form-group">
+          <label>API Key</label>
+          <div class="form-fields">
+            <input type="password" name="openai_api_key" value="{{openai_api_key}}">
+          </div>
+        </div>
+      </div>
+
+      <div class="resolution">
+        <h2>RESOLUTION</h2> 
+        <h4>active resolution: {{openai_resolution}}</h4> 
+        <select id="resolution-select" name="openai_resolution">
+          <option>change resolution here</option>
+          {{#each openai_resolutions}}
+            <option value="{{this.value}}" {{#if (eq this.value ../openai_resolution)}}selected{{/if}}>{{this.text}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </section>
+  </div>
+
+  <div class="sheet-footer">
+    <button type="submit"> 
+      <i class="far fa-save"></i> {{ localize "Submit"}} 
+    </button>
+  </div>
+</form>
