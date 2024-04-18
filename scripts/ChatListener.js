@@ -152,7 +152,6 @@ async updateGMMessage(message, options) {
             whisper: ChatMessage.getWhisperRecipients("GM")
         }).then(msg => {
             if (options.send) {
-                console.error('DEBUG:updateGMMessage:msg', msg);
                 const selectedSource = game.settings.get('stable-images', 'source');
                 if (selectedSource === 'localA1111') {
                     localA1111APIClient.initProgressRequest(msg);
@@ -183,12 +182,6 @@ async updateGMMessage(message, options) {
 
     displayProgress(message, data) {
 
-
-        console.error('displaying progress:data', data);
-        console.error('displaying progress:message', message);
-
-
-
         let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
         if (!messageElement) {
             setTimeout(() => this.displayProgress(message, data), 500);
@@ -198,8 +191,6 @@ async updateGMMessage(message, options) {
         let progressStateElement = messageElement.querySelector('.stable-progress-state');
         let titleEl = messageElement.querySelector('h4.stable-job');
         let img = messageElement.querySelector('img.stable-temp-image');
-
-        console.error("image", img);
 
         let percent = Math.trunc(data.progress * 100);
         if (progressBarElement) {
@@ -222,7 +213,6 @@ async updateGMMessage(message, options) {
 
     displayHordeProgress(message, data) {
 
-        console.error('displaying Horde progress', data);
         let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
         if (!messageElement) {
             setTimeout(() => this.displayHordeProgress(message, data), 500);
@@ -233,8 +223,6 @@ async updateGMMessage(message, options) {
         let titleEl = messageElement.querySelector('h4.stable-job');
         let img = messageElement.querySelector('img.stable-temp-image');
 
-        console.error("image", img);
-    
         // Calculate the percentage based on wait time and queue position
         let percent = data.done ? 100 : Math.max(0, 100 - (data.queue_position * 10)); // Simplified calculation
         if (progressBarElement) {
@@ -253,71 +241,49 @@ async updateGMMessage(message, options) {
     
 
 async createImage(data, prompt, message) {
-    console.error('createImage called with initial data:', {data, prompt, message}); // Log initial call data
-
     let source = game.settings.get("stable-images", "source");
-    console.error('Source retrieved from settings:', source); // Log the source setting
 
     let images = [];
 
     if (source === "localA1111") {
-        console.error('Processing images for localA1111:', data.images); // Log data being processed for localA1111
-        // A1111 methodology
         for (let imgData of data.images) {
             images.push({
                 id: foundry.utils.randomID(),
-                data: imgData
-            })
-            console.error('Image processed for localA1111:'); // Log each processed image
+                data: "data:image/png;base64," + imgData
+            });
         }
     } else if (source === "stableHorde") {
-        console.error('Processing images for stableHorde:', data.images); // Log data being processed for stableHorde
-        // Horde methodology
         for (let imgData of data.images) {
             let newImage = {
-                id: imgData.id, // Use the ID provided by the Horde data
+                id: imgData.id,
                 data: imgData.data
             };
             images.push(newImage);
-            console.error('Image processed for stableHorde:', newImage); // Log each processed image
         }
     } else if (source === "comfyUI") {
-        console.error('Processing images for comfyUI:', data.images); // Log data being processed for comfyUI
-        // ComfyUI methodology (assuming similar to A1111 for demonstration)
         for (let imgData of data.images) {
             let newImage = {
-                id: foundry.utils.randomID(), // Assuming ComfyUI also needs random IDs
+                id: foundry.utils.randomID(),
                 data: imgData
             };
             images.push(newImage);
-            console.error('Image processed for comfyUI:', newImage); // Log each processed image
         }
     } else {
-        console.error('Unknown source for image creation:', source); // Log error for unknown source
+        console.error('Unknown source for image creation:', source);
         return;
-   
     }
 
-    console.error('Images prepared for updateGMMessage:', images); // Log all images prepared for message update
-    
-    console.error("FUCK ME: message", message);
-    console.error("FUCK ME: images", images);
-    console.error("FUCK ME: data", data);
-    console.error("FUCK ME: prompt", prompt);
-
-
-
-    // Update the GM message with the processed images
-    this.updateGMMessage(message, {
-        images: images,
-        send: false,
-        title: prompt
-    }).then(() => {
-        console.error('updateGMMessage successfully called with:', {images, prompt}); // Log success of update call
-    }).catch(error => {
-        console.error('Error in updateGMMessage:', error); // Log any errors from the update call
-    });
+    try {
+        await this.updateGMMessage(message, {
+            images: images,
+            send: false,
+            title: prompt
+        });
+    } catch (error) {
+        console.error('Error in updateGMMessage:', error);
+    }
 }
+
     
     
     

@@ -144,7 +144,6 @@ const requestBody = {
 
 
   game.settings.set('stable-images', 'hordeRequestBody', requestBody);
-  console.error("requestBody:", requestBody);
 
   try {
     const apiKey = game.settings.get('stable-images', 'hordeAPIKey');
@@ -162,7 +161,6 @@ const requestBody = {
     }
 
     const data = await response.json();
-    console.error("Image generation initiated:", data);
 
     // Begin the polling process for image generation status
     await this.initProgressRequest(data.id, prompt, message);
@@ -179,6 +177,16 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
 
+//if attempt is 0, wait for 1 second before attempting to fetch the checkSatatusUrl
+
+  if (attempt === 0) {
+    setTimeout(() => {
+      console.error("Waiting for 1 second before polling image generation status.");
+      this.initProgressRequest(generationId, prompt, message, attempt + 1, currentState);
+    }, 2000);
+    return;
+  }
+
   if (attempt >= maxAttempts) {
     console.error("Max progress check attempts reached, stopping further checks.");
     return;
@@ -192,7 +200,7 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     }
     
     const statusData = await statusResponse.json();
-    console.warn("Polling image generation status:", statusData);
+    console.log("Polling image generation status:", statusData);
 
     // Update the UI with the current status
     chatListener.displayHordeProgress(message, statusData);
@@ -216,8 +224,6 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
 
     // Image generation is done, proceed to retrieve the image
         if (statusData.done && currentState === "processing") {
-          console.error("Image generation complete, proceeding to retrieve the image.");
-          console.error('Calling retrieveGeneratedImage with message:', message);
           await this.retrieveGeneratedImage(generationId, prompt, message);
 
         }
@@ -228,10 +234,13 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     
 
 async retrieveGeneratedImage(generationId, prompt, message) {
-
-  console.error('retrieveGeneratedImage called with message:', generationId, prompt,message);
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   const retrieveUrl = `${aiHordeUrl}/api/v2/generate/status/${generationId}`;
+
+
+  // wait one second before attempting to fetch the retrieveUrl
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
 
   try {
     const retrieveResponse = await fetch(retrieveUrl);
@@ -246,7 +255,7 @@ async retrieveGeneratedImage(generationId, prompt, message) {
     }
 
     const imageUrl = retrieveData.generations[0].img;
-    console.error('Direct URL of the generated image:', imageUrl); // Add this line
+    console.log('Direct URL of the generated image:', imageUrl); // Add this line
     await this.fetchAndProcessImage(imageUrl, prompt, message);
   } catch (error) {
     console.error('Error during image retrieval and processing:', error);
@@ -271,8 +280,6 @@ async fetchAndProcessImage(imageUrl, prompt, message, attempts = 0) {
         title: prompt,
         send: false
       };
-
-      console.error(`Image data, prompt, message from fetchAndProcessImage call:`, imageData, prompt, message);
       chatListener.createImage(imageData, prompt, message);
     };
     reader.onerror = error => {

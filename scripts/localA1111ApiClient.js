@@ -110,15 +110,12 @@ async checkStatus() {
     }
 
   async textToImg(prompt, message) {
-    console.error("DEBUG: LocalA1111ApiClient:textToImg:prompt", prompt);
-    console.error("DEBUG: LocalA1111ApiClient:textToImg:message", message);
 
     let requestBody = deepClone(game.settings.get("stable-images", "localA1111RequestBody"));
       requestBody.prompt = this.getFullPrompt(prompt);
       await game.settings.set("stable-images", "fullPrompt", requestBody.prompt)
       let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/txt2img/`;
       await game.settings.set("stable-images", "working", true);
-      console.error('LocalA1111ApiClient:txtToImg:requestBody', requestBody);
     
       try {
         fetch(apiUrl, {
@@ -135,8 +132,6 @@ async checkStatus() {
             return response.json();
           })
           .then(data => {
-            console.error("DEBUG: LocalA1111ApiClient:textToImg:message", message);
-            console.error("DEBUG: LocalA1111ApiClient:textToImg:data", data);
             chatListener.createImage(data, prompt, message);
             game.settings.set("stable-images", "working", false);
           })
