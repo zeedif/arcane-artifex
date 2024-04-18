@@ -32,7 +32,7 @@ class ComfyUIAPIClient {
         await game.settings.set("stable-images", "connected", false);
       }
     } else {
-      console.warn("ComfyUI is not selected. Skipping ComfyUI status check.");
+      console.log("ComfyUI is not selected. Skipping ComfyUI status check.");
       return 'ComfyUI is not selected. Skipping ComfyUI status check.';
     }
   }

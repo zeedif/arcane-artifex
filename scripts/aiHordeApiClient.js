@@ -11,7 +11,7 @@ class HordeAPIClient {
       try {
         const response = await fetch(statusUrl);
         if (response.ok) {
-          console.warn('AI Horde server is accessible at:', aiHordeUrl);
+          console.log('AI Horde server is accessible at:', aiHordeUrl);
           ui.notifications.info('AI Horde server is accessible.');
           return 'AI Horde API is accessible.';
         } else {
@@ -24,7 +24,7 @@ class HordeAPIClient {
         ui.notifications.error(`Error occurred while trying to access AI Horde server; error = ${error}`);
       }
     } else {
-      console.warn("Stable Horde is not selected. Skipping AI Horde status check.");
+      console.log("Stable Horde is not selected. Skipping AI Horde status check.");
       return 'Stable Horde is not selected. Skipping AI Horde status check.';
     }
   }
@@ -177,15 +177,8 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
   const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
 
-//if attempt is 0, wait for 1 second before attempting to fetch the checkSatatusUrl
+//if attempt is 0, wait for 5 second before attempting to fetch the checkSatatusUrl
 
-  if (attempt === 0) {
-    setTimeout(() => {
-      console.error("Waiting for 1 second before polling image generation status.");
-      this.initProgressRequest(generationId, prompt, message, attempt + 1, currentState);
-    }, 2000);
-    return;
-  }
 
   if (attempt >= maxAttempts) {
     console.error("Max progress check attempts reached, stopping further checks.");
@@ -194,13 +187,15 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
 
   try {
     const statusResponse = await fetch(checkStatusUrl);
+
+    console.error("Checking statusResponse:", statusResponse);
     
     if (!statusResponse.ok) {
       throw new Error('Request failed with status ' + statusResponse.status);
     }
     
     const statusData = await statusResponse.json();
-    console.log("Polling image generation status:", statusData);
+    console.error("Polling image generation status:", statusData);
 
     // Update the UI with the current status
     chatListener.displayHordeProgress(message, statusData);
@@ -219,7 +214,7 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     if (!statusData.done) {
       setTimeout(() => {
         this.initProgressRequest(generationId, prompt, message, attempt + 1, currentState);
-      }, 1500);
+      }, 2500);
     }
 
     // Image generation is done, proceed to retrieve the image
@@ -239,7 +234,7 @@ async retrieveGeneratedImage(generationId, prompt, message) {
 
 
   // wait one second before attempting to fetch the retrieveUrl
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 5000));
 
 
   try {

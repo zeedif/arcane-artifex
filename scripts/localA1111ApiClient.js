@@ -33,7 +33,7 @@ async checkStatus() {
                 await game.settings.set("stable-images", "connected", false);
             }
         } else {
-            console.warn("Local A1111 is not selected. Skipping A1111 status check.");
+            console.log("Local A1111 is not selected. Skipping A1111 status check.");
             return 'Local A1111 is not selected. Skipping A1111 status check.';
         }
     }
