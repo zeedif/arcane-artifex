@@ -135,8 +135,6 @@ async checkStatus() {
             return response.json();
           })
           .then(data => {
-            console.error('Received data from A1111 API:', JSON.stringify(data, null, 2));
-            console.error("DEBUG: LocalA1111ApiClient:textToImg:prompt", prompt);
             console.error("DEBUG: LocalA1111ApiClient:textToImg:message", message);
             console.error("DEBUG: LocalA1111ApiClient:textToImg:data", data);
             chatListener.createImage(data, prompt, message);
@@ -157,7 +155,6 @@ async checkStatus() {
 }
 
 async initProgressRequest(message, attempt = 0, currentState = "undefined") {
-  console.error('###################called A1111 initProgressRequest######################');
   const maxAttempts = 100;
   if (attempt >= maxAttempts) {
       console.warn("stable-images: Max progress check attempts reached, stopping further checks.");

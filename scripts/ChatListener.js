@@ -1,6 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
 import localA1111APIClient from './localA1111APIClient.js';
-console.error('localA1111APIClient', localA1111APIClient);
 import aiHordeApiClient from "./aiHordeApiClient.js";
 import sdAPIClient from "./sdAPIClient.js";
 
@@ -57,19 +56,22 @@ class StableImagesChatListener {
         await sdAPIClient.postSkip();
     }
 
-    async updateActorImg(ev) {
+async updateActorImg(ev) {
         let src = ev.currentTarget.closest('.stable-image-block').querySelector('img').src;
         let actor = await fromUuid(ev.currentTarget.closest('.stable-message').dataset.actorId);
         if (!actor) {
             return ui.notifications.error("This actor isn't in your world yet");
         } else {
             let imgId = ev.currentTarget.closest(".stable-image-block").dataset.imageId;
-            let filename = actor.name + '_' + imgId + ".png";
+            const selectedSource = game.settings.get('stable-images', 'source');
+            const fileExtension = selectedSource === 'stableHorde' ? 'webp' : 'png';
+            let filename = `${actor.name}_${imgId}.${fileExtension}`;
             await stableFileManager.saveBase64(filename, src).then(url => {
                 actor.update({ img: url });
             });
         }
     }
+    
 
     copyImgSrc(event) {
         let src = event.currentTarget.closest('.stable-image-block').querySelector('img').src;
@@ -140,10 +142,10 @@ async updateGMMessage(message, options) {
             console.error('Invalid arguments passed to updateGMMessage:', { message, options });
             return; // Stop execution if data is not as expected
         }
-    
+
         let messageData = mergeObject(message, options);
         let content = await renderTemplate(this.template, messageData);
-    
+
         message.update({
             id: message._id,
             content: content,
@@ -170,10 +172,6 @@ async updateGMMessage(message, options) {
         if (message.content.startsWith(":sd: ")) {
             let prompt = message.content.substring(":sd: ".length);
 
-            console.error('DEBUG:getPromptCommand:message', message);
-            console.error('DEBUG:getPromptCommand:prompt', prompt);
-
-
             await this.updateGMMessage(message, { send: true, title: prompt });
 
 
@@ -185,7 +183,12 @@ async updateGMMessage(message, options) {
 
     displayProgress(message, data) {
 
-        console.error('displaying A1111 progress', data);
+
+        console.error('displaying progress:data', data);
+        console.error('displaying progress:message', message);
+
+
+
         let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
         if (!messageElement) {
             setTimeout(() => this.displayProgress(message, data), 500);
@@ -195,6 +198,9 @@ async updateGMMessage(message, options) {
         let progressStateElement = messageElement.querySelector('.stable-progress-state');
         let titleEl = messageElement.querySelector('h4.stable-job');
         let img = messageElement.querySelector('img.stable-temp-image');
+
+        console.error("image", img);
+
         let percent = Math.trunc(data.progress * 100);
         if (progressBarElement) {
             progressBarElement.style.width = `${percent}%`;
@@ -226,6 +232,8 @@ async updateGMMessage(message, options) {
         let progressStateElement = messageElement.querySelector('.stable-progress-state');
         let titleEl = messageElement.querySelector('h4.stable-job');
         let img = messageElement.querySelector('img.stable-temp-image');
+
+        console.error("image", img);
     
         // Calculate the percentage based on wait time and queue position
         let percent = data.done ? 100 : Math.max(0, 100 - (data.queue_position * 10)); // Simplified calculation
@@ -239,28 +247,78 @@ async updateGMMessage(message, options) {
             titleEl.innerText = data.done ? "Processing Complete" : "Processing...";
         }
         if (img) {
-            img.src = data.done ? "data:image/png;base64," + data.current_image : "/modules/stable-images/assets/stable-images-progress.webp";
+            img.src = data.done ? "data:image/webp;base64," + data.current_image : "/modules/stable-images/assets/stable-images-progress.webp";
         }
     }
     
 
-    async createImage(data, prompt, message) {
-        console.error('createImage called with:', {data, prompt, message}); // Additional debug log
-      
-        let images = [];
+async createImage(data, prompt, message) {
+    console.error('createImage called with initial data:', {data, prompt, message}); // Log initial call data
+
+    let source = game.settings.get("stable-images", "source");
+    console.error('Source retrieved from settings:', source); // Log the source setting
+
+    let images = [];
+
+    if (source === "localA1111") {
+        console.error('Processing images for localA1111:', data.images); // Log data being processed for localA1111
+        // A1111 methodology
         for (let imgData of data.images) {
-          images.push({
-            id: imgData.id,
-            data: imgData.data
-          });
+            images.push({
+                id: foundry.utils.randomID(),
+                data: imgData
+            })
+            console.error('Image processed for localA1111:'); // Log each processed image
         }
-      
-        this.updateGMMessage(message, {
-          images: images,
-          send: false,
-          title: prompt
-        });
-      }
+    } else if (source === "stableHorde") {
+        console.error('Processing images for stableHorde:', data.images); // Log data being processed for stableHorde
+        // Horde methodology
+        for (let imgData of data.images) {
+            let newImage = {
+                id: imgData.id, // Use the ID provided by the Horde data
+                data: imgData.data
+            };
+            images.push(newImage);
+            console.error('Image processed for stableHorde:', newImage); // Log each processed image
+        }
+    } else if (source === "comfyUI") {
+        console.error('Processing images for comfyUI:', data.images); // Log data being processed for comfyUI
+        // ComfyUI methodology (assuming similar to A1111 for demonstration)
+        for (let imgData of data.images) {
+            let newImage = {
+                id: foundry.utils.randomID(), // Assuming ComfyUI also needs random IDs
+                data: imgData
+            };
+            images.push(newImage);
+            console.error('Image processed for comfyUI:', newImage); // Log each processed image
+        }
+    } else {
+        console.error('Unknown source for image creation:', source); // Log error for unknown source
+        return;
+   
+    }
+
+    console.error('Images prepared for updateGMMessage:', images); // Log all images prepared for message update
+    
+    console.error("FUCK ME: message", message);
+    console.error("FUCK ME: images", images);
+    console.error("FUCK ME: data", data);
+    console.error("FUCK ME: prompt", prompt);
+
+
+
+    // Update the GM message with the processed images
+    this.updateGMMessage(message, {
+        images: images,
+        send: false,
+        title: prompt
+    }).then(() => {
+        console.error('updateGMMessage successfully called with:', {images, prompt}); // Log success of update call
+    }).catch(error => {
+        console.error('Error in updateGMMessage:', error); // Log any errors from the update call
+    });
+}
+    
     
     
 }
