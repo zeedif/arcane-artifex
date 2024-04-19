@@ -103,7 +103,7 @@ class SdAPIClient {
                         return response.json();
                     })
                     .then(async () => {
-                        await LocalA1111Settings.getA1111EndpointSettings();
+                        await localA1111APIClient.getA1111EndpointSettings();
                         if (ui.activeWindow.title == "settings for stable diffusion image generation") {
                             ui.activeWindow.render(true);
                         }
