@@ -81,10 +81,11 @@ class OpenAiApiClient {
       model: 'dall-e-3',
       n: 1,
       size: game.settings.get("stable-images", "sdwidth") + 'x' + game.settings.get("stable-images", "sdheight"),
-      quality: 'standard',
-      style: 'vivid',
-      response_format: 'b64_json'  // If you want the base64-encoded image directly
+      quality: game.settings.get("stable-images", "openAiHd") ? 'hd' : 'standard',  // Toggle between 'hd' and 'standard'
+      style: game.settings.get("stable-images", "openAiVivid") ? 'vivid' : 'natural',  // Toggle between 'vivid' and 'natural'
+      response_format: 'b64_json'  // Use base64-encoded image directly
     };
+    
   
     try {
       const response = await fetch(openAiUrl, {

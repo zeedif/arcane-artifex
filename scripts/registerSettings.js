@@ -449,6 +449,21 @@ export default function registerSettings() {
     }
   });
 
+  game.settings.register("stable-images", "openAiHd", {
+    name: "openAiHd",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register("stable-images", "openAiVivid", {
+    name: "openAiVivid",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
 
   game.settings.register("stable-images", "numImages", {
     name: "numImages",

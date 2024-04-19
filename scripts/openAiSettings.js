@@ -17,7 +17,9 @@ export default class openAiSettings extends FormApplication {
         let context = {
             openai_api_key: game.settings.get("stable-images", "openAiApiKey"),
             openai_resolution: game.settings.get("stable-images", "openAiResolutionOptions"),
-            openai_resolutions: this.prepareResolutionOptions()
+            openai_resolutions: this.prepareResolutionOptions(),
+            openai_hd: game.settings.get("stable-images", "openAiHd"),
+            openai_vivid: game.settings.get("stable-images", "openAiVivid")
         };
         console.error("context", context);
         return context;
@@ -42,7 +44,17 @@ export default class openAiSettings extends FormApplication {
             await game.settings.set("stable-images", "openAiResolutionOptions", event.target.value);
             this.render();
         });
+        // Update handlers for HD and Vivid checkboxes
+        html.find('[name="openai_hd"]').change(event => this.onSettingChange(event, "openAiHd"));
+        html.find('[name="openai_vivid"]').change(event => this.onSettingChange(event, "openAiVivid"));
     }
+    
+    async onSettingChange(event, settingKey) {
+        const newValue = event.target.checked;
+        await game.settings.set("stable-images", settingKey, newValue);
+    }
+    
+    
 
     async onAPIKeyChange(event) {
         const newAPIKey = event.target.value;
@@ -57,5 +69,13 @@ export default class openAiSettings extends FormApplication {
         if (formData.openai_resolution !== undefined) {
             await game.settings.set("stable-images", "openAiResolutionOptions", formData.openai_resolution);
         }
+        // Handle HD and Vivid settings
+        if (formData.openai_hd !== undefined) {
+            await game.settings.set("stable-images", "openAiHd", formData.openai_hd);
+        }
+        if (formData.openai_vivid !== undefined) {
+            await game.settings.set("stable-images", "openAiVivid", formData.openai_vivid);
+        }
     }
+    
 }
