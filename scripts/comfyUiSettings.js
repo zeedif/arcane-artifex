@@ -7,8 +7,8 @@ export default class ComfyUISettings extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["stable-images", "stable-setting-sheet"],
-            template: "modules/stable-images/templates/comfyui-settings.hbs",
+            classes: ["arcane-artifex", "stable-setting-sheet"],
+            template: "modules/arcane-artifex/templates/comfyui-settings.hbs",
             width: 800,
             height: "auto",
             title: "Settings for Stable Diffusion Image Generation",
@@ -17,20 +17,20 @@ export default class ComfyUISettings extends FormApplication {
     }
 
     getData() {
-        const context = game.settings.get('stable-images', 'stable-settings');
-        context.source = game.settings.get("stable-images", "source");
-        context.comfyUIURL = game.settings.get("stable-images", "comfyUIURL");
+        const context = game.settings.get('arcane-artifex', 'stable-settings');
+        context.source = game.settings.get("arcane-artifex", "source");
+        context.comfyUIURL = game.settings.get("arcane-artifex", "comfyUIURL");
 
 
-        context.comfyUIModel = game.settings.get("stable-images", "comfyUIModel");
-        context.comfyUISampler = game.settings.get("stable-images", "comfyUISampler");
-        context.comfyUIScheduler = game.settings.get("stable-images", "comfyUIScheduler");
-        context.comfyUIUpscaler = game.settings.get("stable-images", "comfyUIUpscaler");
-        context.comfyUIModels = game.settings.get("stable-images", "comfyUIModels");
-        context.comfyUISamplers = game.settings.get("stable-images", "comfyUISamplers");
-        context.comfyUISchedulers = game.settings.get("stable-images", "comfyUISchedulers");
-        context.comfyUIUpscalers = game.settings.get("stable-images", "comfyUIUpscalers");
-        context.comfyUILoras = game.settings.get("stable-images", "comfyUILoras");
+        context.comfyUIModel = game.settings.get("arcane-artifex", "comfyUIModel");
+        context.comfyUISampler = game.settings.get("arcane-artifex", "comfyUISampler");
+        context.comfyUIScheduler = game.settings.get("arcane-artifex", "comfyUIScheduler");
+        context.comfyUIUpscaler = game.settings.get("arcane-artifex", "comfyUIUpscaler");
+        context.comfyUIModels = game.settings.get("arcane-artifex", "comfyUIModels");
+        context.comfyUISamplers = game.settings.get("arcane-artifex", "comfyUISamplers");
+        context.comfyUISchedulers = game.settings.get("arcane-artifex", "comfyUISchedulers");
+        context.comfyUIUpscalers = game.settings.get("arcane-artifex", "comfyUIUpscalers");
+        context.comfyUILoras = game.settings.get("arcane-artifex", "comfyUILoras");
 
         console.log("Context after adding data:", context);
 
@@ -61,12 +61,12 @@ export default class ComfyUISettings extends FormApplication {
         }
 
         html.find('input[name="numImages"]').on("input", async (event) => {
-            await game.settings.set("stable-images", "numImages", parseInt(event.target.value));
+            await game.settings.set("arcane-artifex", "numImages", parseInt(event.target.value));
             this.render(true);
         });
 
         html.find('select[name="source"]').on("change", async (event) => {
-            await game.settings.set("stable-images", "source", event.target.value);
+            await game.settings.set("arcane-artifex", "source", event.target.value);
             this.render();
         });
     }
@@ -89,7 +89,7 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUIModel", modelTitle);
+        await game.settings.set("arcane-artifex", "comfyUIModel", modelTitle);
         this.render(true);
     }
 
@@ -97,7 +97,7 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let samplerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUISampler", samplerName);
+        await game.settings.set("arcane-artifex", "comfyUISampler", samplerName);
         this.render(true);
     }
 
@@ -105,7 +105,7 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let schedulerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUIScheduler", schedulerName);
+        await game.settings.set("arcane-artifex", "comfyUIScheduler", schedulerName);
         this.render(true);
     }
 
@@ -113,13 +113,13 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let upscalerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "comfyUIUpscaler", upscalerName);
+        await game.settings.set("arcane-artifex", "comfyUIUpscaler", upscalerName);
         this.render(true);
     }
 
     async toggleLora(ev, lora) {
         let loraName = ev.currentTarget.innerText.trim();
-        let loras = game.settings.get('stable-images', 'comfyUILoras');
+        let loras = game.settings.get('arcane-artifex', 'comfyUILoras');
         if (!lora) {
             console.error("Lora not found:", loraName);
             return;
@@ -128,23 +128,23 @@ export default class ComfyUISettings extends FormApplication {
         if (lora.active && lora.strength === undefined) {
             lora.strength = 0.5;
         }
-        await game.settings.set('stable-images', 'comfyUILoras', [...loras]);
+        await game.settings.set('arcane-artifex', 'comfyUILoras', [...loras]);
         this.render(true);
     }
 
     async changeLoraStrength(event, loraAlias) {
         let value = parseFloat(event.target.value);
-        let loras = game.settings.get('stable-images', 'comfyUILoras');
+        let loras = game.settings.get('arcane-artifex', 'comfyUILoras');
         let lora = loras.find(l => l.lora === loraAlias);
         if (lora) {
             lora.strength = value;
-            await game.settings.set('stable-images', 'comfyUILoras', [...loras]);
+            await game.settings.set('arcane-artifex', 'comfyUILoras', [...loras]);
         }
         this.render(true);
     }
 
     async changeLoraPrompt() {
-        let loras = game.settings.get('stable-images', 'comfyUILoras');
+        let loras = game.settings.get('arcane-artifex', 'comfyUILoras');
         let loraPrompt = "";
         loras.forEach(lora => {
             if (lora.active) {
@@ -155,12 +155,12 @@ export default class ComfyUISettings extends FormApplication {
         if (this.form) {
             this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
         }
-        await game.settings.set('stable-images', 'comfyUILoras', loras);
+        await game.settings.set('arcane-artifex', 'comfyUILoras', loras);
         this.context.loraPrompt = loraPrompt;
     }
 
     _updateObject(event, formData) {
         const data = { ...this.context, ...expandObject(formData) };
-        game.settings.set('stable-images', 'stable-settings', data);
+        game.settings.set('arcane-artifex', 'stable-settings', data);
     }
 }

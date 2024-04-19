@@ -1,4 +1,4 @@
-<div class="stable-message" data-actor-id="{{flags.stable-images.fromActor}}">
+<div class="stable-message" data-actor-id="{{flags.arcane-artifex.fromActor}}">
     <h3 class="flexrow">{{title}} {{prompt}}
         {{#if imgToImg}}
             <img src="{{sourceSrc}}" class="stable-image source">
@@ -26,7 +26,7 @@
                 <a class="stable-image-create-journal">create journal</a>
                 <a class="stable-image-img2img">create variation (img2img)</a>
                 <a class="stable-image-copySrc">copy src</a>
-                {{#if @root.flags.stable-images.fromActor}}
+                {{#if @root.flags.arcane-artifex.fromActor}}
                     <a class="stable-image-actor-image">affect to actor</a>
                 {{/if}}
             </div>

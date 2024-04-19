@@ -2,10 +2,10 @@ import chatListener from "./ChatListener.js";
 
 class HordeAPIClient {
   async checkStatus() {
-    const selectedSource = game.settings.get('stable-images', 'source');
+    const selectedSource = game.settings.get('arcane-artifex', 'source');
   
     if (selectedSource === 'stableHorde') {
-      const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
+      const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
       const statusUrl = `${aiHordeUrl}/api/v2/status/heartbeat`;
         
       try {
@@ -30,7 +30,7 @@ class HordeAPIClient {
   }
 
   async getHordeSettings() {
-    const connection = game.settings.get('stable-images', 'connected');
+    const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {
       console.warn("Local AI Horde connection not established. Skipping API calls.");
@@ -38,20 +38,20 @@ class HordeAPIClient {
     }
 
     const { hordeModels, hordeModel } = await this.loadHordeModels();
-    await game.settings.set('stable-images', 'hordeModels', hordeModels);
-    await game.settings.set('stable-images', 'hordeModel', hordeModel);
+    await game.settings.set('arcane-artifex', 'hordeModels', hordeModels);
+    await game.settings.set('arcane-artifex', 'hordeModel', hordeModel);
     const samplers = await this.fetchSamplersFromSwagger();
-    await game.settings.set('stable-images', 'hordeSamplers', samplers);
-    let currentSampler = game.settings.get('stable-images', 'hordeSampler');
+    await game.settings.set('arcane-artifex', 'hordeSamplers', samplers);
+    let currentSampler = game.settings.get('arcane-artifex', 'hordeSampler');
     if (!samplers.includes(currentSampler)) {
       currentSampler = samplers[0]; // Default to the first sampler if current is not in the list
-      await game.settings.set('stable-images', 'hordeSampler', currentSampler);
+      await game.settings.set('arcane-artifex', 'hordeSampler', currentSampler);
     }
   
 
   }
   async fetchSamplersFromSwagger() {
-    const hordeUrl = game.settings.get('stable-images', 'hordeURL');
+    const hordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
     const url = `${hordeUrl}/api/swagger.json`;
     try {
         const response = await fetch(url, {
@@ -76,7 +76,7 @@ class HordeAPIClient {
 }
   async loadHordeModels() {
     try {
-        const hordeUrl = game.settings.get('stable-images', 'hordeURL');
+        const hordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
         const response = await fetch(`${hordeUrl}/api/v2/status/models`, {
             method: 'GET',
             headers: {
@@ -93,7 +93,7 @@ class HordeAPIClient {
                 text: `${x.name} (ETA: ${x.eta}s, Queue: ${x.queued}, Workers: ${x.count})`
             }));
 
-            let hordeModel = game.settings.get('stable-images', 'hordeModel');
+            let hordeModel = game.settings.get('arcane-artifex', 'hordeModel');
 
             if (!hordeModel || !hordeModels.some(model => model.value === hordeModel)) {
                 hordeModel = hordeModels[0].value;
@@ -112,12 +112,12 @@ class HordeAPIClient {
 
 
 async textToImg(prompt, message) {
-  const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
+  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
   const apiUrl = `${aiHordeUrl}/api/v2/generate/async`;
  
 const requestBody = {
   prompt: prompt,
-  nsfw: game.settings.get("stable-images", "hordeNSFW"), 
+  nsfw: game.settings.get("arcane-artifex", "hordeNSFW"), 
   censor_nsfw: false,
   trusted_workers: false,
   slow_workers: true,
@@ -126,27 +126,27 @@ const requestBody = {
   worker_blacklist: false,
   dry_run: false,
   r2: true,
-  models: [game.settings.get("stable-images", "hordeModel")],
+  models: [game.settings.get("arcane-artifex", "hordeModel")],
   workers: [], 
   params: {
-    n: game.settings.get("stable-images", "numImages"),
-    width: game.settings.get("stable-images", "sdwidth"),
-    height: game.settings.get("stable-images", "sdheight"),
-    steps: game.settings.get("stable-images", "samplerSteps"),
+    n: game.settings.get("arcane-artifex", "numImages"),
+    width: game.settings.get("arcane-artifex", "sdwidth"),
+    height: game.settings.get("arcane-artifex", "sdheight"),
+    steps: game.settings.get("arcane-artifex", "samplerSteps"),
     denoising_strength: 1.0,
-    sampler_name: game.settings.get("stable-images", "hordeSampler"),
-    cfg_scale: game.settings.get("stable-images", "cfgScale"),
-    karras: game.settings.get("stable-images", "hordeKarras"),
+    sampler_name: game.settings.get("arcane-artifex", "hordeSampler"),
+    cfg_scale: game.settings.get("arcane-artifex", "cfgScale"),
+    karras: game.settings.get("arcane-artifex", "hordeKarras"),
     tiling: false,
-    hires_fix: game.settings.get("stable-images", "enableHr")
+    hires_fix: game.settings.get("arcane-artifex", "enableHr")
   }
 };
 
 
-  game.settings.set('stable-images', 'hordeRequestBody', requestBody);
+  game.settings.set('arcane-artifex', 'hordeRequestBody', requestBody);
 
   try {
-    const apiKey = game.settings.get('stable-images', 'hordeAPIKey');
+    const apiKey = game.settings.get('arcane-artifex', 'hordeAPIKey');
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -174,7 +174,7 @@ const requestBody = {
 
 async initProgressRequest(generationId, prompt, message, attempt = 0, currentState = "undefined") {
   const maxAttempts = 100;
-  const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
+  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
 
   if (attempt >= maxAttempts) {
@@ -224,7 +224,7 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     
 
 async retrieveGeneratedImage(generationId, prompt, message) {
-  const aiHordeUrl = game.settings.get('stable-images', 'hordeURL');
+  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
   const retrieveUrl = `${aiHordeUrl}/api/v2/generate/status/${generationId}`;
 
 

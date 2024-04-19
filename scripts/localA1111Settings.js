@@ -8,8 +8,8 @@ export default class LocalA1111Settings extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["stable-images", "stable-setting-sheet"],
-            template: "modules/stable-images/templates/stable-settings.hbs",
+            classes: ["arcane-artifex", "stable-setting-sheet"],
+            template: "modules/arcane-artifex/templates/stable-settings.hbs",
             width: 800,
             height: "auto",
             title: "Settings for Stable Diffusion Image Generation",
@@ -18,24 +18,24 @@ export default class LocalA1111Settings extends FormApplication {
     }
 
     getData() {
-        let context = game.settings.get('stable-images', 'stable-settings');
-        context.source = game.settings.get("stable-images", "source");
-        context.localA1111URL = game.settings.get("stable-images", "localA1111URL");
+        let context = game.settings.get('arcane-artifex', 'stable-settings');
+        context.source = game.settings.get("arcane-artifex", "source");
+        context.localA1111URL = game.settings.get("arcane-artifex", "localA1111URL");
 
 
-        context.localA1111Sampler = game.settings.get("stable-images", "localA1111Sampler");
-        context.localA1111Upscaler = game.settings.get("stable-images", "localA1111Upscaler");
-        context.activeModel = game.settings.get("stable-images", "localA1111Model");
-        context.numImages = game.settings.get("stable-images", "numImages");
-        context.stableStoragePath = game.settings.get("stable-images", "stableStoragePath");
+        context.localA1111Sampler = game.settings.get("arcane-artifex", "localA1111Sampler");
+        context.localA1111Upscaler = game.settings.get("arcane-artifex", "localA1111Upscaler");
+        context.activeModel = game.settings.get("arcane-artifex", "localA1111Model");
+        context.numImages = game.settings.get("arcane-artifex", "numImages");
+        context.stableStoragePath = game.settings.get("arcane-artifex", "stableStoragePath");
 
 
 
-        context.loras = game.settings.get("stable-images", "localA1111Loras");
-        context.models = game.settings.get("stable-images", "localA1111Models");
-        context.styles = game.settings.get("stable-images", "localA1111Styles");
-        context.upscalers = game.settings.get("stable-images", "localA1111Upscalers");
-        context.samplers = game.settings.get("stable-images", "localA1111Samplers");
+        context.loras = game.settings.get("arcane-artifex", "localA1111Loras");
+        context.models = game.settings.get("arcane-artifex", "localA1111Models");
+        context.styles = game.settings.get("arcane-artifex", "localA1111Styles");
+        context.upscalers = game.settings.get("arcane-artifex", "localA1111Upscalers");
+        context.samplers = game.settings.get("arcane-artifex", "localA1111Samplers");
 
         console.error(context);
 
@@ -69,12 +69,12 @@ export default class LocalA1111Settings extends FormApplication {
         }
     
         html.find('input[name="numImages"]').on("input", async (event) => {
-            await game.settings.set("stable-images", "numImages", parseInt(event.target.value));
+            await game.settings.set("arcane-artifex", "numImages", parseInt(event.target.value));
             this.render(true);
         });
     
         html.find('select[name="source"]').on("change", async (event) => {
-            await game.settings.set("stable-images", "source", event.target.value);
+            await game.settings.set("arcane-artifex", "source", event.target.value);
             this.render();
         });
     }
@@ -97,7 +97,7 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "localA1111Model", modelTitle);
+        await game.settings.set("arcane-artifex", "localA1111Model", modelTitle);
         sdAPIClient.changeModel(modelTitle).then(this.render(true));
     }
 
@@ -105,7 +105,7 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let samplerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "localA1111Sampler", samplerName);
+        await game.settings.set("arcane-artifex", "localA1111Sampler", samplerName);
         this.render(true);
     }
 
@@ -113,13 +113,13 @@ export default class LocalA1111Settings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let upscalerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("stable-images", "localA1111Upscaler", upscalerName);
+        await game.settings.set("arcane-artifex", "localA1111Upscaler", upscalerName);
         this.render(true);
     }
 
     async toggleLora(ev, lora) {
         let loraAlias = ev.currentTarget.innerText.trim();
-        let loras = game.settings.get('stable-images', 'localA1111Loras');
+        let loras = game.settings.get('arcane-artifex', 'localA1111Loras');
         if (!lora) {
             console.error("Lora not found:", loraAlias);
             return;
@@ -128,24 +128,24 @@ export default class LocalA1111Settings extends FormApplication {
         if (lora.active && lora.strength === undefined) {
             lora.strength = 0.5;
         }
-        await game.settings.set('stable-images', 'localA1111Loras', [...loras]);
+        await game.settings.set('arcane-artifex', 'localA1111Loras', [...loras]);
         this.render(true);
     }
     
     async changeLoraStrength(event, loraAlias) {
         let value = parseFloat(event.target.value);
-        let loras = game.settings.get('stable-images', 'localA1111Loras');
+        let loras = game.settings.get('arcane-artifex', 'localA1111Loras');
         let lora = loras.find(l => l.alias === loraAlias);
         if (lora) {
             lora.strength = value;
-            await game.settings.set('stable-images', 'localA1111Loras', [...loras]);
+            await game.settings.set('arcane-artifex', 'localA1111Loras', [...loras]);
         }
         this.render(true);
     }
       
 
       async changeLoraPrompt() {
-        let loras = game.settings.get('stable-images', 'localA1111Loras');
+        let loras = game.settings.get('arcane-artifex', 'localA1111Loras');
         let loraPrompt = "";
         loras.forEach(lora => {
           if (lora.active) {
@@ -156,7 +156,7 @@ export default class LocalA1111Settings extends FormApplication {
         if (this.form) {
           this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
         }
-        await game.settings.set('stable-images', 'localA1111Loras', loras);
+        await game.settings.set('arcane-artifex', 'localA1111Loras', loras);
         this.context.loraPrompt = loraPrompt;
       }
       
@@ -165,6 +165,6 @@ export default class LocalA1111Settings extends FormApplication {
         const data = {  };
         
 
-        game.settings.set('stable-images', 'stable-settings', data);
+        game.settings.set('arcane-artifex', 'stable-settings', data);
     }
 }

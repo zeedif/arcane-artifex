@@ -6,10 +6,10 @@ class LocalA1111APIClient {
     }
 
 async checkStatus() {
-        const selectedSource = game.settings.get('stable-images', 'source');
+        const selectedSource = game.settings.get('arcane-artifex', 'source');
     
         if (selectedSource === 'localA1111') {
-            const a1111url = game.settings.get('stable-images', 'localA1111URL');
+            const a1111url = game.settings.get('arcane-artifex', 'localA1111URL');
             const statusUrl = a1111url;
     
             try {
@@ -18,19 +18,19 @@ async checkStatus() {
                 if (response.ok) {
                     console.log('A1111 server is accessible at:', a1111url);
                     ui.notifications.info('A1111 server is accessible.');
-                    await game.settings.set("stable-images", "connected", true);
+                    await game.settings.set("arcane-artifex", "connected", true);
                     await this.getLocalA1111Settings();
                     return 'A1111 API is accessible.';
                 } else {
                     console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
                     ui.notifications.error(`A1111 server is not accessible: response code: ${response.status}`);
-                    await game.settings.set("stable-images", "connected", false);
+                    await game.settings.set("arcane-artifex", "connected", false);
                     throw new Error(`A1111 API returned an error: ${response.status}`);
                 }
             } catch (error) {
                 console.error('Error occurred while trying to access A1111 server at URL:', a1111url, '; error =', error);
                 ui.notifications.error(`Error occurred while trying to access A1111 server; error = ${error}`);
-                await game.settings.set("stable-images", "connected", false);
+                await game.settings.set("arcane-artifex", "connected", false);
             }
         } else {
             console.log("Local A1111 is not selected. Skipping A1111 status check.");
@@ -40,7 +40,7 @@ async checkStatus() {
     
 
     async getLocalA1111Settings() {
-        const connection = game.settings.get('stable-images', 'connected');
+        const connection = game.settings.get('arcane-artifex', 'connected');
 
         if (!connection) {
             console.warn("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
@@ -48,60 +48,60 @@ async checkStatus() {
         }
         await this.getA1111EndpointSettings();
 
-        this.settings = game.settings.get("stable-images", "stable-settings");
+        this.settings = game.settings.get("arcane-artifex", "stable-settings");
         console.log("Settings:", this.settings);
 
-        await game.settings.set("stable-images", "localA1111RequestBody",  {
-            prompt: game.settings.get("stable-images", "promptPrefix"),
+        await game.settings.set("arcane-artifex", "localA1111RequestBody",  {
+            prompt: game.settings.get("arcane-artifex", "promptPrefix"),
             seed: -1,
-            height: game.settings.get("stable-images", "sdheight"),
-            width: game.settings.get("stable-images", "sdwidth"),
-            negative_prompt: game.settings.get("stable-images", "negativePrompt"),
-            n_iter: game.settings.get("stable-images", "numImages"),
-            restore_faces: game.settings.get("stable-images", "restoreFaces"),
-            steps: game.settings.get("stable-images", "samplerSteps"),
-            sampler_name: game.settings.get("stable-images", "localA1111Sampler"),
-            enable_hr: game.settings.get("stable-images", "enableHr"),
-            hr_upscaler: game.settings.get("stable-images", "localA1111Upscaler"),
-            hr_scale: game.settings.get("stable-images", "hrScale"),
-            denoising_strength: game.settings.get("stable-images", "denoisingStrength"),
-            hr_second_pass_steps: game.settings.get("stable-images", "hrSecondPassSteps"),
-            cfg_scale: game.settings.get("stable-images", "cfgScale")
+            height: game.settings.get("arcane-artifex", "sdheight"),
+            width: game.settings.get("arcane-artifex", "sdwidth"),
+            negative_prompt: game.settings.get("arcane-artifex", "negativePrompt"),
+            n_iter: game.settings.get("arcane-artifex", "numImages"),
+            restore_faces: game.settings.get("arcane-artifex", "restoreFaces"),
+            steps: game.settings.get("arcane-artifex", "samplerSteps"),
+            sampler_name: game.settings.get("arcane-artifex", "localA1111Sampler"),
+            enable_hr: game.settings.get("arcane-artifex", "enableHr"),
+            hr_upscaler: game.settings.get("arcane-artifex", "localA1111Upscaler"),
+            hr_scale: game.settings.get("arcane-artifex", "hrScale"),
+            denoising_strength: game.settings.get("arcane-artifex", "denoisingStrength"),
+            hr_second_pass_steps: game.settings.get("arcane-artifex", "hrSecondPassSteps"),
+            cfg_scale: game.settings.get("arcane-artifex", "cfgScale")
         });
-        console.log("Default Request Body:", game.settings.get("stable-images", "localA1111RequestBody"));
+        console.log("Default Request Body:", game.settings.get("arcane-artifex", "localA1111RequestBody"));
     }
 
     async getA1111EndpointSettings() {
-        const stIP = await game.settings.get("stable-images", "localA1111URL");
+        const stIP = await game.settings.get("arcane-artifex", "localA1111URL");
         try {
             const lorasResponse = await fetch(`${stIP}/sdapi/v1/loras`, { method: 'GET' });
             if (lorasResponse.ok) {
-                game.settings.set("stable-images", "localA1111Loras", await lorasResponse.json());
+                game.settings.set("arcane-artifex", "localA1111Loras", await lorasResponse.json());
             }
 
             const stylesResponse = await fetch(`${stIP}/sdapi/v1/prompt-styles`, { method: 'GET' });
             if (stylesResponse.ok) {
-                game.settings.set("stable-images", "localA1111Styles", await stylesResponse.json());
+                game.settings.set("arcane-artifex", "localA1111Styles", await stylesResponse.json());
             }
 
             const modelsResponse = await fetch(`${stIP}/sdapi/v1/sd-models`, { method: 'GET' });
             if (modelsResponse.ok) {
-                game.settings.set("stable-images", "localA1111Models", await modelsResponse.json());
+                game.settings.set("arcane-artifex", "localA1111Models", await modelsResponse.json());
             }
 
             const samplersResponse = await fetch(`${stIP}/sdapi/v1/samplers`, { method: 'GET' });
             if (samplersResponse.ok) {
-                game.settings.set("stable-images", "localA1111Samplers", await samplersResponse.json());
+                game.settings.set("arcane-artifex", "localA1111Samplers", await samplersResponse.json());
             }
 
             const upscalersResponse = await fetch(`${stIP}/sdapi/v1/upscalers`, { method: 'GET' });
             if (upscalersResponse.ok) {
-                game.settings.set("stable-images", "localA1111Upscalers", await upscalersResponse.json());
+                game.settings.set("arcane-artifex", "localA1111Upscalers", await upscalersResponse.json());
             }
 
             const optionsResponse = await fetch(`${stIP}/sdapi/v1/options`, { method: 'GET' });
             if (optionsResponse.ok) {
-                game.settings.set("stable-images", "localA1111SDOptions", await optionsResponse.json());
+                game.settings.set("arcane-artifex", "localA1111SDOptions", await optionsResponse.json());
             }
 
         } catch (error) {
@@ -111,11 +111,11 @@ async checkStatus() {
 
   async textToImg(prompt, message) {
 
-    let requestBody = deepClone(game.settings.get("stable-images", "localA1111RequestBody"));
+    let requestBody = deepClone(game.settings.get("arcane-artifex", "localA1111RequestBody"));
       requestBody.prompt = this.getFullPrompt(prompt);
-      await game.settings.set("stable-images", "fullPrompt", requestBody.prompt)
-      let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/txt2img/`;
-      await game.settings.set("stable-images", "working", true);
+      await game.settings.set("arcane-artifex", "fullPrompt", requestBody.prompt)
+      let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/txt2img/`;
+      await game.settings.set("arcane-artifex", "working", true);
     
       try {
         fetch(apiUrl, {
@@ -133,7 +133,7 @@ async checkStatus() {
           })
           .then(data => {
             chatListener.createImage(data, prompt, message);
-            game.settings.set("stable-images", "working", false);
+            game.settings.set("arcane-artifex", "working", false);
           })
           .catch(error => {
             console.error('Error:', error);
@@ -152,7 +152,7 @@ async checkStatus() {
 async initProgressRequest(message, attempt = 0, currentState = "undefined") {
   const maxAttempts = 100;
   if (attempt >= maxAttempts) {
-      console.warn("stable-images: Max progress check attempts reached, stopping further checks.");
+      console.warn("arcane-artifex: Max progress check attempts reached, stopping further checks.");
       return;
   }
 
@@ -160,7 +160,7 @@ async initProgressRequest(message, attempt = 0, currentState = "undefined") {
       currentState = "idle";
   }
 
-  let apiUrl = `${game.settings.get("stable-images", "localA1111URL")}/sdapi/v1/progress`;
+  let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/progress`;
   fetch(apiUrl)
       .then(response => {
           if (!response.ok) {
@@ -173,22 +173,22 @@ async initProgressRequest(message, attempt = 0, currentState = "undefined") {
 
           if ((currentState === "idle" || currentState === "waiting") && data.progress === 0) {
               if (currentState === "idle") {
-                  console.log("stable-images: State transition to 'waiting'");
+                  console.log("arcane-artifex: State transition to 'waiting'");
               }
               currentState = "waiting";
               setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
           } else if (currentState === "waiting" && data.progress > 0) {
               currentState = "processing";
-              console.log("stable-images: State transition to 'processing'");
+              console.log("arcane-artifex: State transition to 'processing'");
               setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
           } else if (currentState === "processing" && data.progress < 1.0) {
-              console.log("stable-images: In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
+              console.log("arcane-artifex: In 'processing' state, progress: " + data.progress + ", attempt: " + attempt);
               setTimeout(() => { this.initProgressRequest(message, attempt + 1, currentState) }, 1500);
           }
 
           if (currentState === "processing" && (data.progress === 0 || data.progress === 1)) {
               currentState = "done";
-              console.log("stable-images: State transition to 'done'");
+              console.log("arcane-artifex: State transition to 'done'");
           }
       })
       .catch(error => {

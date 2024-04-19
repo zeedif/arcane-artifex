@@ -5,7 +5,7 @@ class StableFileManager {
 
     async checkFileExists(filename) {
         try {
-            const response = await fetch(`${game.settings.get('stable-images', 'stableStoragePath')}/${filename}`, { method: 'HEAD' });
+            const response = await fetch(`${game.settings.get('arcane-artifex', 'stableStoragePath')}/${filename}`, { method: 'HEAD' });
             if (response.ok) {
                 return true;
             }
@@ -17,8 +17,8 @@ class StableFileManager {
     }
 
     async saveBase64(filename, src) {
-        const fileUrl = `${game.settings.get('stable-images', 'stableStoragePath')}/${filename}`;
-        await ImageHelper.uploadBase64(src, filename, game.settings.get('stable-images', 'stableStoragePath'));
+        const fileUrl = `${game.settings.get('arcane-artifex', 'stableStoragePath')}/${filename}`;
+        await ImageHelper.uploadBase64(src, filename, game.settings.get('arcane-artifex', 'stableStoragePath'));
         return fileUrl;
     }
 }

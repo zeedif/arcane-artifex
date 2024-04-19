@@ -61,7 +61,7 @@ const defaultSettings = {
   style: 'Default',
   styles: defaultStyles,
 
-  // stable-images old settings TO BE DEPRECATED
+  // arcane-artifex old settings TO BE DEPRECATED
   batchCount: 4,
   loras: [],
   styles: [],
@@ -74,7 +74,7 @@ const defaultSettings = {
  */
 export default function registerSettings() {
   // Register menus
-  game.settings.registerMenu("stable-images", "stable-image-menu", {
+  game.settings.registerMenu("arcane-artifex", "stable-image-menu", {
     name: "Local A1111 Images Settings",
     label: "Local A1111 Images Settings",
     icon: "fas fa-images",
@@ -82,7 +82,7 @@ export default function registerSettings() {
     restricted: true
   });
 
-  game.settings.registerMenu('stable-images', 'aihorde-settings', {
+  game.settings.registerMenu('arcane-artifex', 'aihorde-settings', {
     name: 'AI Horde Settings',
     label: 'AI Horde Settings',
     icon: 'fas fa-cog',
@@ -90,7 +90,7 @@ export default function registerSettings() {
     restricted: true,
   });
 
-  game.settings.registerMenu('stable-images', 'comfyui-settings', {
+  game.settings.registerMenu('arcane-artifex', 'comfyui-settings', {
     name: 'ComfyUI Settings',
     label: 'ComfyUI Settings',
     icon: 'fas fa-cog',
@@ -98,7 +98,7 @@ export default function registerSettings() {
     restricted: true,
   });
 
-  game.settings.registerMenu('stable-images', 'openai-settings', {
+  game.settings.registerMenu('arcane-artifex', 'openai-settings', {
     name: 'OpenAI Settings',
     label: 'OpenAI Settings',
     icon: 'fas fa-cog',
@@ -107,7 +107,7 @@ export default function registerSettings() {
   });
 
   // Register non-configurable settings
-  game.settings.register("stable-images", "connected", {
+  game.settings.register("arcane-artifex", "connected", {
     name: "Connection Status",
     scope: "world",
     config: false,
@@ -115,7 +115,7 @@ export default function registerSettings() {
     default: false
   });
 
-  game.settings.register("stable-images", "working", {
+  game.settings.register("arcane-artifex", "working", {
     name: "Image Generation Status",
     scope: "world",
     config: false,
@@ -123,7 +123,7 @@ export default function registerSettings() {
     default: false
   });
 
-  game.settings.register("stable-images", "localA1111URL", {
+  game.settings.register("arcane-artifex", "localA1111URL", {
     name: "localA1111URL",
     scope: "world",
     type: String,
@@ -131,7 +131,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "hordeURL", {
+  game.settings.register("arcane-artifex", "hordeURL", {
     name: "hordeURL",
     scope: "world",
     type: String,
@@ -139,7 +139,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyUIURL", {
+  game.settings.register("arcane-artifex", "comfyUIURL", {
     name: "comfyUIURL",
     scope: "world",
     type: String,
@@ -147,7 +147,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "sdwidth", {
+  game.settings.register("arcane-artifex", "sdwidth", {
     name: "Image Width",
     scope: "world",
     config: false,
@@ -155,7 +155,7 @@ export default function registerSettings() {
     default: 512
   });
 
-  game.settings.register("stable-images", "sdheight", {
+  game.settings.register("arcane-artifex", "sdheight", {
     name: "Image Height",
     scope: "world",
     config: false,
@@ -164,7 +164,7 @@ export default function registerSettings() {
   });
 
   // Register settings for localSDSettings
-  game.settings.register("stable-images", "localSDSettings", {
+  game.settings.register("arcane-artifex", "localSDSettings", {
     name: "Local SD Settings",
     scope: "world",
     type: Array,
@@ -173,7 +173,7 @@ export default function registerSettings() {
   });
 
   // Register settings for localA1111Models
-  game.settings.register("stable-images", "localA1111Models", {
+  game.settings.register("arcane-artifex", "localA1111Models", {
     name: "localA1111Models",
     scope: "world",
     type: Array,
@@ -182,7 +182,7 @@ export default function registerSettings() {
   });
 
   // Register settings for localA1111Loras
-  game.settings.register("stable-images", "localA1111Loras", {
+  game.settings.register("arcane-artifex", "localA1111Loras", {
     name: "localA1111Loras",
     scope: "world",
     type: Array,
@@ -191,7 +191,7 @@ export default function registerSettings() {
   });
 
   // Register settings for localA1111Styles
-  game.settings.register("stable-images", "localA1111Styles", {
+  game.settings.register("arcane-artifex", "localA1111Styles", {
     name: "Local A1111 Styles",
     scope: "world",
     type: Array,
@@ -200,7 +200,7 @@ export default function registerSettings() {
   });
 
   // Register settings for localA1111Samplers
-  game.settings.register("stable-images", "localA1111Samplers", {
+  game.settings.register("arcane-artifex", "localA1111Samplers", {
     name: "localA1111Styles",
     scope: "world",
     type: Array,
@@ -209,7 +209,7 @@ export default function registerSettings() {
   });
 
   // Register settings for localA1111Upscalers
-  game.settings.register("stable-images", "localA1111Upscalers", {
+  game.settings.register("arcane-artifex", "localA1111Upscalers", {
     name: "localA1111Upscalers",
     scope: "world",
     type: Array,
@@ -217,7 +217,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "localA1111SDOptions", {
+  game.settings.register("arcane-artifex", "localA1111SDOptions", {
     name: "localA1111SDOptions",
     scope: "world",
     type: Array,
@@ -225,7 +225,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "localA1111Model", {
+  game.settings.register("arcane-artifex", "localA1111Model", {
     name: "localA1111Model",
     scope: "world",
     type: String,
@@ -233,7 +233,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "localA1111Sampler", {
+  game.settings.register("arcane-artifex", "localA1111Sampler", {
     name: "localA1111Sampler",
     scope: "world",
     type: String,
@@ -241,7 +241,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "localA1111Upscaler", {
+  game.settings.register("arcane-artifex", "localA1111Upscaler", {
     name: "localA1111Upscaler",
     scope: "world",
     type: String,
@@ -249,7 +249,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "localA1111RequestBody", {
+  game.settings.register("arcane-artifex", "localA1111RequestBody", {
     name: "localA1111RequestBody",
     scope: "world",
     type: Object,
@@ -257,7 +257,7 @@ export default function registerSettings() {
     default: {}
   });
 
-  game.settings.register("stable-images", "rawPrompt", {
+  game.settings.register("arcane-artifex", "rawPrompt", {
     name: "rawPrompt",
     scope: "world",
     config: false,
@@ -265,7 +265,7 @@ export default function registerSettings() {
     default: "",
   });
 
-  game.settings.register("stable-images", "fullPrompt", {
+  game.settings.register("arcane-artifex", "fullPrompt", {
     name: "fullPrompt",
     scope: "world",
     config: false,
@@ -274,7 +274,7 @@ export default function registerSettings() {
   });
 
   // Register settings for Horde models
-  game.settings.register("stable-images", "hordeModels", {
+  game.settings.register("arcane-artifex", "hordeModels", {
     name: "Horde Models",
     scope: "world",
     config: false,
@@ -283,7 +283,7 @@ export default function registerSettings() {
   });
 
   // Register setting for the selected Horde model
-  game.settings.register("stable-images", "hordeModel", {
+  game.settings.register("arcane-artifex", "hordeModel", {
     name: "Selected Horde Model",
     scope: "world",
     config: false,
@@ -292,7 +292,7 @@ export default function registerSettings() {
   });
 
   // Register setting for the selected Horde sampler
-  game.settings.register("stable-images", "hordeSampler", {
+  game.settings.register("arcane-artifex", "hordeSampler", {
     name: "Selected Horde Sampler",
     scope: "world",
     config: false,
@@ -301,7 +301,7 @@ export default function registerSettings() {
   });
 
   // Register settings for Horde samplers
-  game.settings.register("stable-images", "hordeSamplers", {
+  game.settings.register("arcane-artifex", "hordeSamplers", {
     name: "Horde Samplers",
     scope: "world",
     config: false,
@@ -309,7 +309,7 @@ export default function registerSettings() {
     default: [],
   });
 
-  game.settings.register("stable-images", "hordeNSFW", {
+  game.settings.register("arcane-artifex", "hordeNSFW", {
     name: "hordeNSFW",
     scope: "world",
     config: false,
@@ -320,7 +320,7 @@ export default function registerSettings() {
     }
   });
 
-  game.settings.register("stable-images", "hordeKarras", {
+  game.settings.register("arcane-artifex", "hordeKarras", {
     name: "hordeKarras",
     scope: "world",
     config: false,
@@ -331,7 +331,7 @@ export default function registerSettings() {
     }
   });
 
-  game.settings.register("stable-images", "hordeAPIKey", {
+  game.settings.register("arcane-artifex", "hordeAPIKey", {
     name: "hordeAPIKey",
     scope: "world",
     type: String,
@@ -339,7 +339,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "hordeRequestBody", {
+  game.settings.register("arcane-artifex", "hordeRequestBody", {
     name: "hordeRequestBody",
     scope: "world",
     type: Object,
@@ -347,7 +347,7 @@ export default function registerSettings() {
     default: {}
   });
 
-  game.settings.register("stable-images", "comfyUIModel", {
+  game.settings.register("arcane-artifex", "comfyUIModel", {
     name: "comfyUIModel",
     scope: "world",
     type: String,
@@ -355,7 +355,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyUIUpscaler", {
+  game.settings.register("arcane-artifex", "comfyUIUpscaler", {
     name: "comfyUIUpscaler",
     scope: "world",
     type: String,
@@ -363,7 +363,7 @@ export default function registerSettings() {
     config: false,
   });    
 
-  game.settings.register("stable-images", "comfyUISampler", {
+  game.settings.register("arcane-artifex", "comfyUISampler", {
     name: "comfyUISampler",
     scope: "world",
     type: String,
@@ -371,14 +371,14 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "comfyUIScheduler", {
+  game.settings.register("arcane-artifex", "comfyUIScheduler", {
     name: "comfyUIScheduler",
     scope: "world",
     type: String,
     default: "sgm_uniform",
     config: false,
   });
-  game.settings.register('stable-images', 'comfyUIModels', {
+  game.settings.register('arcane-artifex', 'comfyUIModels', {
     name: 'ComfyUI Models',
     hint: 'List of available models for ComfyUI.',
     scope: 'world',
@@ -387,7 +387,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('stable-images', 'comfyUILoras', {
+  game.settings.register('arcane-artifex', 'comfyUILoras', {
     name: 'ComfyUI Loras',
     hint: 'List of available Loras for ComfyUI.',
     scope: 'world',
@@ -396,7 +396,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('stable-images', 'comfyUISchedulers', {
+  game.settings.register('arcane-artifex', 'comfyUISchedulers', {
     name: 'comfyUISchedulers',
     hint: 'List of available styles for ComfyUI.',
     scope: 'world',
@@ -405,7 +405,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('stable-images', 'comfyUISamplers', {
+  game.settings.register('arcane-artifex', 'comfyUISamplers', {
     name: 'ComfyUI Samplers',
     hint: 'List of available samplers for ComfyUI.',
     scope: 'world',
@@ -414,7 +414,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('stable-images', 'comfyUIUpscalers', {
+  game.settings.register('arcane-artifex', 'comfyUIUpscalers', {
     name: 'ComfyUI Upscalers',
     hint: 'List of available upscalers for ComfyUI.',
     scope: 'world',
@@ -423,7 +423,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register("stable-images", "openAiApiKey", {
+  game.settings.register("arcane-artifex", "openAiApiKey", {
     name: "openAiApiKey",
     scope: "world",
     type: String,
@@ -431,7 +431,7 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("stable-images", "openAiResolutionOptions", {
+  game.settings.register("arcane-artifex", "openAiResolutionOptions", {
     name: "openAiResolutionOptions",
     hint: "Select a predefined DALLE-3 resolution",
     scope: "world",
@@ -444,12 +444,12 @@ export default function registerSettings() {
     default: "dalle_res_1024x1024",
     onChange: async value => {
       const selectedResolution = openAiResolutionOptions[value];
-      await game.settings.set("stable-images", "sdwidth", selectedResolution.width);
-      await game.settings.set("stable-images", "sdheight", selectedResolution.height);
+      await game.settings.set("arcane-artifex", "sdwidth", selectedResolution.width);
+      await game.settings.set("arcane-artifex", "sdheight", selectedResolution.height);
     }
   });
 
-  game.settings.register("stable-images", "openAiHd", {
+  game.settings.register("arcane-artifex", "openAiHd", {
     name: "openAiHd",
     scope: "world",
     config: false,
@@ -457,7 +457,7 @@ export default function registerSettings() {
     default: false
   });
 
-  game.settings.register("stable-images", "openAiVivid", {
+  game.settings.register("arcane-artifex", "openAiVivid", {
     name: "openAiVivid",
     scope: "world",
     config: false,
@@ -465,7 +465,7 @@ export default function registerSettings() {
     default: true
   });
 
-  game.settings.register("stable-images", "numImages", {
+  game.settings.register("arcane-artifex", "numImages", {
     name: "numImages",
     hint: "Number of images to produce per generation",
     scope: "world",
@@ -480,7 +480,7 @@ export default function registerSettings() {
   });
 
   // Register main configuration page options
-  game.settings.register("stable-images", "source", {
+  game.settings.register("arcane-artifex", "source", {
     name: "Source",
     hint: "Select the source for image generation",
     scope: "world",
@@ -509,7 +509,7 @@ export default function registerSettings() {
     }
   });
 
-  game.settings.register("stable-images", "stableStoragePath", {
+  game.settings.register("arcane-artifex", "stableStoragePath", {
     name: "Storage Path",
     hint: "Set the path for storing generated images",
     scope: "world",
@@ -519,7 +519,7 @@ export default function registerSettings() {
     filePicker: "folder"
   });
 
-  game.settings.register("stable-images", "cfgScale", {
+  game.settings.register("arcane-artifex", "cfgScale", {
     name: "CFG Scale",
     hint: "Set the CFG scale value",
     scope: "world",
@@ -533,7 +533,7 @@ export default function registerSettings() {
     default: 1.5
   });
 
-  game.settings.register("stable-images", "samplerSteps", {
+  game.settings.register("arcane-artifex", "samplerSteps", {
     name: "Sampler Steps",
     hint: "Set the number of sampler steps",
     scope: "world",
@@ -547,7 +547,7 @@ export default function registerSettings() {
     default: 20
   });
 
-  game.settings.register("stable-images", "promptPrefix", {
+  game.settings.register("arcane-artifex", "promptPrefix", {
     name: "Prompt Prefix",
     hint: "Set the default prompt prefix",
     scope: "world",
@@ -556,7 +556,7 @@ export default function registerSettings() {
     default: 'best quality, absurdres, aesthetic,'
   });
 
-  game.settings.register("stable-images", "negativePrompt", {
+  game.settings.register("arcane-artifex", "negativePrompt", {
     name: "Negative Prompt",
     hint: "Set the default negative prompt",
     scope: "world",
@@ -565,7 +565,7 @@ export default function registerSettings() {
     default: 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
   });
 
-  game.settings.register("stable-images", "prompt", {
+  game.settings.register("arcane-artifex", "prompt", {
     name: "prompt",
     hint: "Set the full prompt",
     scope: "world",
@@ -574,7 +574,7 @@ export default function registerSettings() {
     default: ''
   });
 
-  game.settings.register("stable-images", "resolutionOptions", {
+  game.settings.register("arcane-artifex", "resolutionOptions", {
     name: "Resolution Options",
     hint: "Select a predefined resolution",
     scope: "world",
@@ -587,13 +587,13 @@ export default function registerSettings() {
     default: "sd_res_512x512",
     onChange: async value => {
       const selectedResolution = resolutionOptions[value];
-      await game.settings.set("stable-images", "sdwidth", selectedResolution.width);
-      await game.settings.set("stable-images", "sdheight", selectedResolution.height);
+      await game.settings.set("arcane-artifex", "sdwidth", selectedResolution.width);
+      await game.settings.set("arcane-artifex", "sdheight", selectedResolution.height);
       await localA1111APIClient.getLocalA1111Settings();
     }
   });
 
-  game.settings.register("stable-images", "restoreFaces", {
+  game.settings.register("arcane-artifex", "restoreFaces", {
     name: "Restore Faces",
     scope: "world",
     config: true,
@@ -601,7 +601,7 @@ export default function registerSettings() {
     default: true
   });
 
-  game.settings.register("stable-images", "enableHr", {
+  game.settings.register("arcane-artifex", "enableHr", {
     name: "Hires. Fix",
     scope: "world",
     config: true,
@@ -609,7 +609,7 @@ export default function registerSettings() {
     default: true
   });
 
-  game.settings.register("stable-images", "hrScale", {
+  game.settings.register("arcane-artifex", "hrScale", {
     name: "Upscale by",
     hint: "What to multiply the resolution by",
     scope: "world",
@@ -624,7 +624,7 @@ export default function registerSettings() {
     default: true
   });
 
-  game.settings.register("stable-images", "denoisingStrength", {
+  game.settings.register("arcane-artifex", "denoisingStrength", {
     name: "Hires. Fix Denoising Strength",
     hint: "How strongly the upscaler effects image generation",
     scope: "world",
@@ -638,7 +638,7 @@ export default function registerSettings() {
     default: 0.7
   });
 
-  game.settings.register("stable-images", "hrSecondPassSteps", {
+  game.settings.register("arcane-artifex", "hrSecondPassSteps", {
     name: "Number of second pass steps",
     hint: "How many steps to take in the second pass",
     scope: "world",
@@ -652,7 +652,7 @@ export default function registerSettings() {
     default: 0
   });
 
-  game.settings.register("stable-images", "denoisingStrength", {
+  game.settings.register("arcane-artifex", "denoisingStrength", {
     name: "Hires. Fix Denoising Strength",
     hint: "How strongly the upscaler effects image generation",
     scope: "world",
@@ -668,7 +668,7 @@ export default function registerSettings() {
 
   // Dynamically register settings based on defaultSettings
   Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
-    game.settings.register('stable-images', key, {
+    game.settings.register('arcane-artifex', key, {
       name: key,
       hint: `Setting for ${key}`,
       scope: 'world',
@@ -680,7 +680,7 @@ export default function registerSettings() {
   });
 
   // Register stable-settings
-  game.settings.register('stable-images', 'stable-settings', {
+  game.settings.register('arcane-artifex', 'stable-settings', {
     scope: 'world',
     config: false,
     type: Object,

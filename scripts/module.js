@@ -26,7 +26,7 @@ Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
 
 Hooks.once('ready', async function () {
     if (game.user.isGM) {
-        await game.settings.set("stable-images", "working", false);
+        await game.settings.set("arcane-artifex", "working", false);
         localA1111APIClient.checkStatus();
         aiHordeApiClient.checkStatus();
         comfyUIApiClient.checkStatus();
@@ -46,10 +46,10 @@ Hooks.on('renderChatMessage', async function (message, html, data) {
 });
 
 async function generateActorChatCommand(sheet) {
-    if (game.settings.get("stable-images", "working")) {
+    if (game.settings.get("arcane-artifex", "working")) {
         return ui.notifications.warn('Please wait until the previous job is finished.');
     }
-    if (game.user.isGM && game.settings.get('stable-images', 'connected')) {
+    if (game.user.isGM && game.settings.get('arcane-artifex', 'connected')) {
         generatePromptFromActor(sheet);
     }
 }

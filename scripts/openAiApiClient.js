@@ -2,10 +2,10 @@ import chatListener from "./ChatListener.js";
 
 class OpenAiApiClient {
   async checkStatus() {
-    const selectedSource = game.settings.get('stable-images', 'source');
+    const selectedSource = game.settings.get('arcane-artifex', 'source');
 
     if (selectedSource === 'openAI') {
-        const openAiApiKey = game.settings.get('stable-images', 'openAiApiKey');
+        const openAiApiKey = game.settings.get('arcane-artifex', 'openAiApiKey');
     
         console.error('Checking OpenAI API status...');
 
@@ -59,7 +59,7 @@ class OpenAiApiClient {
   
 
   async getOpenAiSettings() {
-    const connection = game.settings.get('stable-images', 'connected');
+    const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {
       console.warn("OpenAI connections not established. Skipping API calls.");
@@ -75,14 +75,14 @@ class OpenAiApiClient {
 
   async textToImg(prompt, message) {
     const openAiUrl = 'https://api.openai.com/v1/images/generations';
-    const apiKey = game.settings.get('stable-images', 'openAiApiKey');
+    const apiKey = game.settings.get('arcane-artifex', 'openAiApiKey');
     const requestBody = {
       prompt: prompt,
       model: 'dall-e-3',
       n: 1,
-      size: game.settings.get("stable-images", "sdwidth") + 'x' + game.settings.get("stable-images", "sdheight"),
-      quality: game.settings.get("stable-images", "openAiHd") ? 'hd' : 'standard',  // Toggle between 'hd' and 'standard'
-      style: game.settings.get("stable-images", "openAiVivid") ? 'vivid' : 'natural',  // Toggle between 'vivid' and 'natural'
+      size: game.settings.get("arcane-artifex", "sdwidth") + 'x' + game.settings.get("arcane-artifex", "sdheight"),
+      quality: game.settings.get("arcane-artifex", "openAiHd") ? 'hd' : 'standard',  // Toggle between 'hd' and 'standard'
+      style: game.settings.get("arcane-artifex", "openAiVivid") ? 'vivid' : 'natural',  // Toggle between 'vivid' and 'natural'
       response_format: 'b64_json'  // Use base64-encoded image directly
     };
     

@@ -4,9 +4,9 @@ export default class openAiSettings extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: 'openai-settings',
-            classes: ['stable-images'],
+            classes: ['arcane-artifex'],
             title: 'OpenAI Settings',
-            template: 'modules/stable-images/templates/openai-settings.hbs',
+            template: 'modules/arcane-artifex/templates/openai-settings.hbs',
             width: 700,
             height: "auto",
             resizable: true
@@ -15,11 +15,11 @@ export default class openAiSettings extends FormApplication {
 
     async getData() {
         let context = {
-            openai_api_key: game.settings.get("stable-images", "openAiApiKey"),
-            openai_resolution: game.settings.get("stable-images", "openAiResolutionOptions"),
+            openai_api_key: game.settings.get("arcane-artifex", "openAiApiKey"),
+            openai_resolution: game.settings.get("arcane-artifex", "openAiResolutionOptions"),
             openai_resolutions: this.prepareResolutionOptions(),
-            openai_hd: game.settings.get("stable-images", "openAiHd"),
-            openai_vivid: game.settings.get("stable-images", "openAiVivid")
+            openai_hd: game.settings.get("arcane-artifex", "openAiHd"),
+            openai_vivid: game.settings.get("arcane-artifex", "openAiVivid")
         };
         console.error("context", context);
         return context;
@@ -41,7 +41,7 @@ export default class openAiSettings extends FormApplication {
         super.activateListeners(html);
         html.find('[name="openai_api_key"]').change(event => this.onAPIKeyChange(event));
         html.find('select[name="openai_resolution"]').on("change", async (event) => {
-            await game.settings.set("stable-images", "openAiResolutionOptions", event.target.value);
+            await game.settings.set("arcane-artifex", "openAiResolutionOptions", event.target.value);
             this.render();
         });
         // Update handlers for HD and Vivid checkboxes
@@ -51,30 +51,30 @@ export default class openAiSettings extends FormApplication {
     
     async onSettingChange(event, settingKey) {
         const newValue = event.target.checked;
-        await game.settings.set("stable-images", settingKey, newValue);
+        await game.settings.set("arcane-artifex", settingKey, newValue);
     }
     
     
 
     async onAPIKeyChange(event) {
         const newAPIKey = event.target.value;
-        await game.settings.set("stable-images", "openAiApiKey", newAPIKey);
+        await game.settings.set("arcane-artifex", "openAiApiKey", newAPIKey);
         this.render(true);
     }
 
     async _updateObject(event, formData) {
         if (formData.openai_api_key !== undefined) {
-            await game.settings.set("stable-images", "openAiApiKey", formData.openai_api_key);
+            await game.settings.set("arcane-artifex", "openAiApiKey", formData.openai_api_key);
         }
         if (formData.openai_resolution !== undefined) {
-            await game.settings.set("stable-images", "openAiResolutionOptions", formData.openai_resolution);
+            await game.settings.set("arcane-artifex", "openAiResolutionOptions", formData.openai_resolution);
         }
         // Handle HD and Vivid settings
         if (formData.openai_hd !== undefined) {
-            await game.settings.set("stable-images", "openAiHd", formData.openai_hd);
+            await game.settings.set("arcane-artifex", "openAiHd", formData.openai_hd);
         }
         if (formData.openai_vivid !== undefined) {
-            await game.settings.set("stable-images", "openAiVivid", formData.openai_vivid);
+            await game.settings.set("arcane-artifex", "openAiVivid", formData.openai_vivid);
         }
     }
     

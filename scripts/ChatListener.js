@@ -5,7 +5,7 @@ import sdAPIClient from "./sdAPIClient.js";
 
 class StableImagesChatListener {
     constructor() {
-        this.template = "modules/stable-images/templates/stable-message.hbs";
+        this.template = "modules/arcane-artifex/templates/stable-message.hbs";
     }
 
     async activateListeners(html) {
@@ -63,7 +63,7 @@ async updateActorImg(ev) {
             return ui.notifications.error("This actor isn't in your world yet");
         } else {
             let imgId = ev.currentTarget.closest(".stable-image-block").dataset.imageId;
-            const selectedSource = game.settings.get('stable-images', 'source');
+            const selectedSource = game.settings.get('arcane-artifex', 'source');
             const fileExtension = selectedSource === 'stableHorde' ? 'webp' : 'png';
             let filename = `${actor.name}_${imgId}.${fileExtension}`;
             await stableFileManager.saveBase64(filename, src).then(url => {
@@ -152,7 +152,7 @@ async updateActorImg(ev) {
             whisper: ChatMessage.getWhisperRecipients("GM")
         }).then(msg => {
             if (options.send) {
-                const selectedSource = game.settings.get('stable-images', 'source');
+                const selectedSource = game.settings.get('arcane-artifex', 'source');
                 if (selectedSource === 'localA1111') {
                     localA1111APIClient.initProgressRequest(msg);
                 } else if (selectedSource === 'stableHorde') {
@@ -166,7 +166,7 @@ async updateActorImg(ev) {
     }
     
     finalizeMessageUpdate(message) {
-        console.log("stable-images: Message update finalized for OpenAI.");
+        console.log("arcane-artifex: Message update finalized for OpenAI.");
         // Perform any cleanup or final notification updates here
         // Example: ui.notifications.info("OpenAI image generation complete.");
     }
@@ -175,7 +175,7 @@ async updateActorImg(ev) {
     
 
     async getPromptCommand(message) {
-        if (!game.user.isGM || !game.settings.get('stable-images', 'connected')) {
+        if (!game.user.isGM || !game.settings.get('arcane-artifex', 'connected')) {
             return;
         }
         if (message.content.startsWith(":sd: ")) {
@@ -184,7 +184,7 @@ async updateActorImg(ev) {
             await this.updateGMMessage(message, { send: true, title: prompt });
 
 
-            await game.settings.set('stable-images', 'rawPrompt', prompt);
+            await game.settings.set('arcane-artifex', 'rawPrompt', prompt);
 
             sdAPIClient.textToImg(prompt, message);
         }
@@ -216,7 +216,7 @@ async updateActorImg(ev) {
             if (data.current_image) {
                 img.src = "data:image/png;base64," + data.current_image;
             } else {
-                img.src = "/modules/stable-images/assets/stable-images-progress.webp";
+                img.src = "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
             }
         }
     }
@@ -245,7 +245,7 @@ async updateActorImg(ev) {
             titleEl.innerText = data.done ? "Processing Complete" : "Processing...";
         }
         if (img) {
-            img.src = data.done ? "data:image/webp;base64," + data.current_image : "/modules/stable-images/assets/stable-images-progress.webp";
+            img.src = data.done ? "data:image/webp;base64," + data.current_image : "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
         }
     }
     
@@ -274,7 +274,7 @@ async updateActorImg(ev) {
             titleEl.innerText = isComplete ? "Image Generation Complete" : "Generating Image...";
         }
         if (img) {
-            img.src = isComplete ? base64ImageData : "/modules/stable-images/assets/stable-images-progress.webp";
+            img.src = isComplete ? base64ImageData : "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
         }
     }
     
@@ -283,7 +283,7 @@ async updateActorImg(ev) {
 
 
     async createImage(data, prompt, message) {
-        let source = game.settings.get("stable-images", "source");
+        let source = game.settings.get("arcane-artifex", "source");
     
         let images = [];
     

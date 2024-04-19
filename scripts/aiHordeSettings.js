@@ -4,9 +4,9 @@ export default class HordeSettings extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: 'aihorde-settings',
-            classes: ['stable-images'],
+            classes: ['arcane-artifex'],
             title: 'AI Horde Settings',
-            template: 'modules/stable-images/templates/aihorde-settings.hbs',
+            template: 'modules/arcane-artifex/templates/aihorde-settings.hbs',
             width: 700,
             height: "auto",
             resizable: true
@@ -15,15 +15,15 @@ export default class HordeSettings extends FormApplication {
 
     async getData() {
         let context = {};
-        context.horde_models = game.settings.get("stable-images", "hordeModels");
-        context.horde_model = game.settings.get("stable-images", "hordeModel");
-        context.horde_sampler = game.settings.get("stable-images", "hordeSampler");
-        context.horde_samplers = game.settings.get("stable-images", "hordeSamplers");
-        context.horde_nsfw = game.settings.get("stable-images", "hordeNSFW");
-        context.horde_karras = game.settings.get("stable-images", "hordeKarras");
-        context.horde_url = game.settings.get("stable-images", "hordeURL");
-        context.horde_api_key = game.settings.get("stable-images", "hordeAPIKey");
-        context.source = game.settings.get("stable-images", "source");
+        context.horde_models = game.settings.get("arcane-artifex", "hordeModels");
+        context.horde_model = game.settings.get("arcane-artifex", "hordeModel");
+        context.horde_sampler = game.settings.get("arcane-artifex", "hordeSampler");
+        context.horde_samplers = game.settings.get("arcane-artifex", "hordeSamplers");
+        context.horde_nsfw = game.settings.get("arcane-artifex", "hordeNSFW");
+        context.horde_karras = game.settings.get("arcane-artifex", "hordeKarras");
+        context.horde_url = game.settings.get("arcane-artifex", "hordeURL");
+        context.horde_api_key = game.settings.get("arcane-artifex", "hordeAPIKey");
+        context.source = game.settings.get("arcane-artifex", "source");
 
         this.context = context;
 
@@ -38,15 +38,15 @@ activateListeners(html) {
         html.find('[name="horde_karras"]').change(event => this.onToggleKarrasChange(event));
         html.find('[name="horde_api_key"]').change(event => this.onAPIKeyChange(event));
         html.find('select[name="source"]').on("change", async (event) => {
-            await game.settings.set("stable-images", "source", event.target.value);
+            await game.settings.set("arcane-artifex", "source", event.target.value);
             this.render();
         });
         html.find('select[name="horde_model"]').on("change", async (event) => {
-            await game.settings.set("stable-images", "hordeModel", event.target.value);
+            await game.settings.set("arcane-artifex", "hordeModel", event.target.value);
             this.render();
         });
         html.find('select[name="horde_sampler"]').on("change", async (event) => {
-            await game.settings.set("stable-images", "hordeSampler", event.target.value);
+            await game.settings.set("arcane-artifex", "hordeSampler", event.target.value);
             this.render();
         });
     }
@@ -54,26 +54,26 @@ activateListeners(html) {
 
     async onToggleNSFWChange(event) {
         const isChecked = event.target.checked;
-        await game.settings.set("stable-images", "hordeNSFW", isChecked);
+        await game.settings.set("arcane-artifex", "hordeNSFW", isChecked);
         this.render(true);
     }
 
     async onToggleKarrasChange(event) {
         const isChecked = event.target.checked;
-        await game.settings.set("stable-images", "hordeKarras", isChecked);
+        await game.settings.set("arcane-artifex", "hordeKarras", isChecked);
         this.render(true);
     }
 
     async onAPIKeyChange(event) {
         const newAPIKey = event.target.value;
-        await game.settings.set("stable-images", "hordeAPIKey", newAPIKey);
+        await game.settings.set("arcane-artifex", "hordeAPIKey", newAPIKey);
         this.render(true);
     }
 
     async _updateObject(event, formData) {
-        const savedSettings = game.settings.get('stable-images', 'stable-settings');
+        const savedSettings = game.settings.get('arcane-artifex', 'stable-settings');
         const updatedSettings = mergeObject(savedSettings, formData);
-        await game.settings.set('stable-images', 'stable-settings', updatedSettings);
+        await game.settings.set('arcane-artifex', 'stable-settings', updatedSettings);
 
         this.render(true);
     }

@@ -10,7 +10,7 @@ export default class PromptApplication extends FormApplication {
             classes: ['form', 'stable-image'],
             popOut: true,
             closeOnSubmit: true,
-            template: 'modules/stable-images/templates/promptApp.hbs',
+            template: 'modules/arcane-artifex/templates/promptApp.hbs',
             id: 'creaPerso',
             title: "actor prompt",
             width: 400,
@@ -34,7 +34,7 @@ export default class PromptApplication extends FormApplication {
             speaker: ChatMessage.getSpeaker(),
             content: prompt,
             flags: {
-                'stable-images': {
+                'arcane-artifex': {
                     fromActor: this.actorId
                 }
             }
