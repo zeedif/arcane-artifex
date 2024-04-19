@@ -55,7 +55,7 @@ async function generateActorChatCommand(sheet) {
 }
 
 function generatePromptFromActor(sheet) {
-    let prompt = ":sd: ";
+    let prompt = ":aa: ";
 
     if (game.system.id == "dnd5e") {
         prompt += "a fantasy ";

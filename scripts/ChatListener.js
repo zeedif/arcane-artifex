@@ -178,8 +178,8 @@ async updateActorImg(ev) {
         if (!game.user.isGM || !game.settings.get('arcane-artifex', 'connected')) {
             return;
         }
-        if (message.content.startsWith(":sd: ")) {
-            let prompt = message.content.substring(":sd: ".length);
+        if (message.content.startsWith(":aa: ")) {
+            let prompt = message.content.substring(":aa: ".length);
 
             await this.updateGMMessage(message, { send: true, title: prompt });
 

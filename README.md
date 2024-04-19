@@ -21,9 +21,9 @@ Before using Arcane Artifex in your Foundry VTT environment, ensure that your Au
 
 ## Generating Images
 - **In-Game Image Generation**:
-    To generate an image, the Game Master initiates a chat message starting with the trigger `:sd: ` followed by the desired prompt. For example:
+    To generate an image, the Game Master initiates a chat message starting with the trigger `:aa: ` followed by the desired prompt. For example:
     ```
-    :sd: A majestic castle at sunset
+    :aa: A majestic castle at sunset
     ```
     The content after the trigger is sent as a prompt to the configured image generation backend.
 
