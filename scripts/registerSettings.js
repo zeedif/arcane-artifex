@@ -5,6 +5,8 @@ import localA1111APIClient from "./localA1111APIClient.js";
 import HordeSettings from "./aiHordeSettings.js";
 import comfyUISettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
+import { comfyUIApiClient } from "./comfyUIApiClient.js";
+import { openAiApiClient } from "./openAiApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
 const defaultNegative = 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry';
@@ -485,7 +487,7 @@ export default function registerSettings() {
       } else if (value === "comfyUI") {
         await comfyUIApiClient.getComfyUISettings();
       } else if (value === "openAI") {
-        await openAiApiClient.getOpenAISettings();
+        await openAiApiClient.getOpenAiSettings();
       }
 
       console.log("Source changed to: ", value);

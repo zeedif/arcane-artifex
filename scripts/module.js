@@ -5,7 +5,8 @@ import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import HordeSettings from './aiHordeSettings.js';
-import comfyUIApiClient from "./comfyUiApiClient.js";
+import openAiApiClient from './openAiApiClient.js';
+import comfyUIApiClient from './comfyUIApiClient.js';
 
 Hooks.on('init', async function () {
     CONFIG.debug.hooks = true;
@@ -29,6 +30,7 @@ Hooks.once('ready', async function () {
         localA1111APIClient.checkStatus();
         aiHordeApiClient.checkStatus();
         comfyUIApiClient.checkStatus();
+        openAiApiClient.checkStatus();
     }
 });
 

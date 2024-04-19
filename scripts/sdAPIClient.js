@@ -1,24 +1,12 @@
 import chatListener from "./ChatListener.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import localA1111APIClient from './localA1111APIClient.js';
-import LocalA1111Settings from './localA1111Settings.js';  // Import LocalA1111Settings
+import comfyUIApiClient from './comfyUIApiClient.js';
+import openAiApiClient from './openAiApiClient.js';
 
 class SdAPIClient {
     constructor() {
         this.settings = {};
-    }
-
-    async checkStatus() {
-        const selectedSource = game.settings.get('stable-images', 'source');
-
-        if (selectedSource === 'localA1111') {
-            return await localA1111APIClient.checkStatus();
-        } else if (selectedSource === 'stableHorde') {
-            return await aiHordeApiClient.checkStatus();
-        } else {
-            console.warn("Invalid source selected. Skipping status check.");
-            return 'Invalid source selected. Skipping status check.';
-        }
     }
 
     postSkip() {
@@ -73,7 +61,7 @@ class SdAPIClient {
             if (game.settings.get("stable-images", "working")) {
               return ui.notifications.warn("Please wait until the previous job is finished");
             }
-
+        
             const selectedSource = game.settings.get("stable-images", "source");
         
             switch (selectedSource) {
@@ -83,10 +71,13 @@ class SdAPIClient {
               case "localA1111":
                 await localA1111APIClient.textToImg(prompt, message);
                 break;
+              case "openAI":
+                await openAiApiClient.textToImg(prompt, message);
+                break;
               default:
                 ui.notifications.warn('Invalid source selected');
             }
-          }
+        }
     
         async changeModel(title) {
             return await this.postOption({

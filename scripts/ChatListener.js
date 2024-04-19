@@ -137,15 +137,15 @@ async updateActorImg(ev) {
         });
     }
 
-async updateGMMessage(message, options) {
+    async updateGMMessage(message, options) {
         if (typeof message !== 'object' || message === null || typeof options !== 'object' || options === null) {
             console.error('Invalid arguments passed to updateGMMessage:', { message, options });
             return; // Stop execution if data is not as expected
         }
-
+    
         let messageData = mergeObject(message, options);
         let content = await renderTemplate(this.template, messageData);
-
+    
         message.update({
             id: message._id,
             content: content,
@@ -157,10 +157,20 @@ async updateGMMessage(message, options) {
                     localA1111APIClient.initProgressRequest(msg);
                 } else if (selectedSource === 'stableHorde') {
                     aiHordeApiClient.initProgressRequest(msg.id, msg.content, msg, 0, "undefined");
+                } else if (selectedSource === 'openAI') {
+                    // Assuming no progress tracking is required, directly update as complete
+                    this.finalizeMessageUpdate(msg);
                 }
             }
         });
     }
+    
+    finalizeMessageUpdate(message) {
+        console.log("stable-images: Message update finalized for OpenAI.");
+        // Perform any cleanup or final notification updates here
+        // Example: ui.notifications.info("OpenAI image generation complete.");
+    }
+    
     
     
 
@@ -239,50 +249,90 @@ async updateGMMessage(message, options) {
         }
     }
     
+    displayOpenAiProgress(message, base64ImageData) {
+        let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
+        if (!messageElement) {
+            setTimeout(() => this.displayOpenAiProgress(message, base64ImageData), 500);
+            return;
+        }
+        let progressBarElement = messageElement.querySelector('.stable-progress-bar');
+        let progressStateElement = messageElement.querySelector('.stable-progress-state');
+        let titleEl = messageElement.querySelector('h4.stable-job');
+        let img = messageElement.querySelector('img.stable-temp-image');
+    
+        // Since data is expected to be a base64 string, we directly use it
+        let isComplete = base64ImageData ? true : false;
+        let percent = isComplete ? 100 : 0;
+        
+        if (progressBarElement) {
+            progressBarElement.style.width = `${percent}%`;
+        }
+        if (progressStateElement) {
+            progressStateElement.innerText = isComplete ? "Complete" : "Awaiting Response...";
+        }
+        if (titleEl) {
+            titleEl.innerText = isComplete ? "Image Generation Complete" : "Generating Image...";
+        }
+        if (img) {
+            img.src = isComplete ? base64ImageData : "/modules/stable-images/assets/stable-images-progress.webp";
+        }
+    }
+    
+    
 
-async createImage(data, prompt, message) {
-    let source = game.settings.get("stable-images", "source");
 
-    let images = [];
 
-    if (source === "localA1111") {
-        for (let imgData of data.images) {
+    async createImage(data, prompt, message) {
+        let source = game.settings.get("stable-images", "source");
+    
+        let images = [];
+    
+        if (source === "localA1111") {
+            for (let imgData of data.images) {
+                images.push({
+                    id: foundry.utils.randomID(),
+                    data: "data:image/png;base64," + imgData
+                });
+            }
+        } else if (source === "stableHorde") {
+            for (let imgData of data.images) {
+                let newImage = {
+                    id: imgData.id,
+                    data: imgData.data
+                };
+                images.push(newImage);
+            }
+        } else if (source === "comfyUI") {
+            for (let imgData of data.images) {
+                let newImage = {
+                    id: foundry.utils.randomID(),
+                    data: imgData
+                };
+                images.push(newImage);
+            }
+        } else if (source === "openAI") {
+            // Correctly handle the base64 string directly passed as `data`
             images.push({
                 id: foundry.utils.randomID(),
-                data: "data:image/png;base64," + imgData
+                data: "data:image/png;base64," + data  // Use `data` directly as it's the base64 string
             });
+        } else {
+            console.error('Unknown source for image creation:', source);
+            return;
         }
-    } else if (source === "stableHorde") {
-        for (let imgData of data.images) {
-            let newImage = {
-                id: imgData.id,
-                data: imgData.data
-            };
-            images.push(newImage);
+    
+        try {
+            await this.updateGMMessage(message, {
+                images: images,
+                send: false,
+                title: prompt
+            });
+        } catch (error) {
+            console.error('Error in updateGMMessage:', error);
         }
-    } else if (source === "comfyUI") {
-        for (let imgData of data.images) {
-            let newImage = {
-                id: foundry.utils.randomID(),
-                data: imgData
-            };
-            images.push(newImage);
-        }
-    } else {
-        console.error('Unknown source for image creation:', source);
-        return;
     }
-
-    try {
-        await this.updateGMMessage(message, {
-            images: images,
-            send: false,
-            title: prompt
-        });
-    } catch (error) {
-        console.error('Error in updateGMMessage:', error);
-    }
-}
+    
+    
 
     
     
