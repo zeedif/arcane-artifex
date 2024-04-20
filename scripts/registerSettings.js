@@ -3,9 +3,9 @@ import openAiSettings from "./openAiSettings.js";
 import localA1111Settings from "./localA1111Settings.js";
 import localA1111APIClient from "./localA1111APIClient.js";
 import HordeSettings from "./aiHordeSettings.js";
-import comfyUISettings from "./comfyUiSettings.js";
+import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
-import { comfyUIApiClient } from "./comfyUIApiClient.js";
+import { comfyUiApiClient } from "./comfyUiApiClient.js";
 import { openAiApiClient } from "./openAiApiClient.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
@@ -94,7 +94,7 @@ export default function registerSettings() {
     name: 'ComfyUI Settings',
     label: 'ComfyUI Settings',
     icon: 'fas fa-cog',
-    type: comfyUISettings,
+    type: comfyUiSettings,
     restricted: true,
   });
 
@@ -139,8 +139,8 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "comfyUIURL", {
-    name: "comfyUIURL",
+  game.settings.register("arcane-artifex", "comfyUiUrl", {
+    name: "comfyUiUrl",
     scope: "world",
     type: String,
     default: "http://localhost:8188",
@@ -347,38 +347,38 @@ export default function registerSettings() {
     default: {}
   });
 
-  game.settings.register("arcane-artifex", "comfyUIModel", {
-    name: "comfyUIModel",
+  game.settings.register("arcane-artifex", "comfyUiModel", {
+    name: "comfyUiModel",
     scope: "world",
     type: String,
     default: "juggernautXL_v9Rdphoto2Lightning.safetensors",
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "comfyUIUpscaler", {
-    name: "comfyUIUpscaler",
+  game.settings.register("arcane-artifex", "comfyUiUpscaler", {
+    name: "comfyUiUpscaler",
     scope: "world",
     type: String,
     default: "4x_foolhardy_Remacri",
     config: false,
   });    
 
-  game.settings.register("arcane-artifex", "comfyUISampler", {
-    name: "comfyUISampler",
+  game.settings.register("arcane-artifex", "comfyUiSampler", {
+    name: "comfyUiSampler",
     scope: "world",
     type: String,
     default: "euler",
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "comfyUIScheduler", {
-    name: "comfyUIScheduler",
+  game.settings.register("arcane-artifex", "comfyUiScheduler", {
+    name: "comfyUiScheduler",
     scope: "world",
     type: String,
     default: "sgm_uniform",
     config: false,
   });
-  game.settings.register('arcane-artifex', 'comfyUIModels', {
+  game.settings.register('arcane-artifex', 'comfyUiModels', {
     name: 'ComfyUI Models',
     hint: 'List of available models for ComfyUI.',
     scope: 'world',
@@ -387,7 +387,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('arcane-artifex', 'comfyUILoras', {
+  game.settings.register('arcane-artifex', 'comfyUiLoras', {
     name: 'ComfyUI Loras',
     hint: 'List of available Loras for ComfyUI.',
     scope: 'world',
@@ -396,8 +396,8 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('arcane-artifex', 'comfyUISchedulers', {
-    name: 'comfyUISchedulers',
+  game.settings.register('arcane-artifex', 'comfyUiSchedulers', {
+    name: 'comfyUiSchedulers',
     hint: 'List of available styles for ComfyUI.',
     scope: 'world',
     config: false,
@@ -405,7 +405,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('arcane-artifex', 'comfyUISamplers', {
+  game.settings.register('arcane-artifex', 'comfyUiSamplers', {
     name: 'ComfyUI Samplers',
     hint: 'List of available samplers for ComfyUI.',
     scope: 'world',
@@ -414,7 +414,7 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register('arcane-artifex', 'comfyUIUpscalers', {
+  game.settings.register('arcane-artifex', 'comfyUiUpscalers', {
     name: 'ComfyUI Upscalers',
     hint: 'List of available upscalers for ComfyUI.',
     scope: 'world',
@@ -422,6 +422,16 @@ export default function registerSettings() {
     type: Array,
     default: []
   });
+
+  game.settings.register("arcane-artifex", "comfyUiWorkflow", {
+    name: "comfyUiWorkflow",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "/assets/comfy_workflows/",
+    filePicker: true
+  });
+
 
   game.settings.register("arcane-artifex", "openAiApiKey", {
     name: "openAiApiKey",
@@ -489,7 +499,7 @@ export default function registerSettings() {
     choices: {
       stableHorde: "Stable Horde",
       localA1111: "Local Web UI (AUTOMATIC1111)",
-      comfyUI: "ComfyUI",
+      comfyUi: "ComfyUI",
       openAI: "OpenAI"
     },
     default: "ComfyUI",
@@ -499,8 +509,8 @@ export default function registerSettings() {
         await localA1111APIClient.getLocalA1111Settings();
       } else if (value === "stableHorde") {
         await aiHordeApiClient.getHordeSettings();
-      } else if (value === "comfyUI") {
-        await comfyUIApiClient.getComfyUISettings();
+      } else if (value === "comfyUi") {
+        await comfyUiApiClient.getComfyUISettings();
       } else if (value === "openAI") {
         await openAiApiClient.getOpenAiSettings();
       }

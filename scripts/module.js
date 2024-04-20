@@ -6,7 +6,7 @@ import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import HordeSettings from './aiHordeSettings.js';
 import openAiApiClient from './openAiApiClient.js';
-import comfyUIApiClient from './comfyUIApiClient.js';
+import comfyUiApiClient from './comfyUIApiClient.js';
 
 Hooks.on('init', async function () {
     CONFIG.debug.hooks = true;
@@ -29,7 +29,7 @@ Hooks.once('ready', async function () {
         await game.settings.set("arcane-artifex", "working", false);
         localA1111APIClient.checkStatus();
         aiHordeApiClient.checkStatus();
-        comfyUIApiClient.checkStatus();
+        comfyUiApiClient.checkStatus();
         openAiApiClient.checkStatus();
     }
 });

@@ -1,5 +1,3 @@
-import comfyUIAPIClient from "./comfyUiApiClient.js";
-
 export default class ComfyUISettings extends FormApplication {
     constructor(...args) {
         super();
@@ -19,20 +17,20 @@ export default class ComfyUISettings extends FormApplication {
     getData() {
         const context = game.settings.get('arcane-artifex', 'stable-settings');
         context.source = game.settings.get("arcane-artifex", "source");
-        context.comfyUIURL = game.settings.get("arcane-artifex", "comfyUIURL");
+        context.comfyui_url = game.settings.get("arcane-artifex", "comfyUiUrl");
 
 
-        context.comfyUIModel = game.settings.get("arcane-artifex", "comfyUIModel");
-        context.comfyUISampler = game.settings.get("arcane-artifex", "comfyUISampler");
-        context.comfyUIScheduler = game.settings.get("arcane-artifex", "comfyUIScheduler");
-        context.comfyUIUpscaler = game.settings.get("arcane-artifex", "comfyUIUpscaler");
-        context.comfyUIModels = game.settings.get("arcane-artifex", "comfyUIModels");
-        context.comfyUISamplers = game.settings.get("arcane-artifex", "comfyUISamplers");
-        context.comfyUISchedulers = game.settings.get("arcane-artifex", "comfyUISchedulers");
-        context.comfyUIUpscalers = game.settings.get("arcane-artifex", "comfyUIUpscalers");
-        context.comfyUILoras = game.settings.get("arcane-artifex", "comfyUILoras");
+        context.comfyui_model = game.settings.get("arcane-artifex", "comfyUiModel");
+        context.comfyui_sampler = game.settings.get("arcane-artifex", "comfyUiSampler");
+        context.comfyui_scheduler = game.settings.get("arcane-artifex", "comfyUiScheduler");
+        context.comfyui_upscaler = game.settings.get("arcane-artifex", "comfyUiUpscaler");
+        context.comfyui_models = game.settings.get("arcane-artifex", "comfyUiModels");
+        context.comfyui_samplers = game.settings.get("arcane-artifex", "comfyUiSamplers");
+        context.comfyui_schedulers = game.settings.get("arcane-artifex", "comfyUiSchedulers");
+        context.comfyui_upscalers = game.settings.get("arcane-artifex", "comfyUiUpscalers");
+        context.comfyui_loras = game.settings.get("arcane-artifex", "comfyUiLoras");
 
-        console.log("Context after adding data:", context);
+        console.error("Context after adding data:", context);
 
         this.context = context;
         return context;
@@ -49,7 +47,7 @@ export default class ComfyUISettings extends FormApplication {
 
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
             let loraName = span.innerText.trim();
-            let lora = this.context.comfyUILoras.find(l => l.lora === loraName);
+            let lora = this.context.comfyui_loras.find(l => l.lora === loraName);
             if (lora && lora.active) {
                 span.classList.add('active');
             }
@@ -89,7 +87,7 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let modelTitle = sel.options[sel.selectedIndex].value;
-        await game.settings.set("arcane-artifex", "comfyUIModel", modelTitle);
+        await game.settings.set("arcane-artifex", "comfyUiModel", modelTitle);
         this.render(true);
     }
 
@@ -97,7 +95,7 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let samplerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("arcane-artifex", "comfyUISampler", samplerName);
+        await game.settings.set("arcane-artifex", "comfyUiSampler", samplerName);
         this.render(true);
     }
 
@@ -105,7 +103,7 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let schedulerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("arcane-artifex", "comfyUIScheduler", schedulerName);
+        await game.settings.set("arcane-artifex", "comfyUiScheduler", schedulerName);
         this.render(true);
     }
 
@@ -113,13 +111,13 @@ export default class ComfyUISettings extends FormApplication {
         ev.preventDefault();
         let sel = ev.currentTarget;
         let upscalerName = sel.options[sel.selectedIndex].value;
-        await game.settings.set("arcane-artifex", "comfyUIUpscaler", upscalerName);
+        await game.settings.set("arcane-artifex", "comfyUiUpscaler", upscalerName);
         this.render(true);
     }
 
     async toggleLora(ev, lora) {
         let loraName = ev.currentTarget.innerText.trim();
-        let loras = game.settings.get('arcane-artifex', 'comfyUILoras');
+        let loras = game.settings.get('arcane-artifex', 'comfyUiLoras');
         if (!lora) {
             console.error("Lora not found:", loraName);
             return;
@@ -128,23 +126,23 @@ export default class ComfyUISettings extends FormApplication {
         if (lora.active && lora.strength === undefined) {
             lora.strength = 0.5;
         }
-        await game.settings.set('arcane-artifex', 'comfyUILoras', [...loras]);
+        await game.settings.set('arcane-artifex', 'comfyUiLoras', [...loras]);
         this.render(true);
     }
 
     async changeLoraStrength(event, loraAlias) {
         let value = parseFloat(event.target.value);
-        let loras = game.settings.get('arcane-artifex', 'comfyUILoras');
+        let loras = game.settings.get('arcane-artifex', 'comfyUiLoras');
         let lora = loras.find(l => l.lora === loraAlias);
         if (lora) {
             lora.strength = value;
-            await game.settings.set('arcane-artifex', 'comfyUILoras', [...loras]);
+            await game.settings.set('arcane-artifex', 'comfyUiLoras', [...loras]);
         }
         this.render(true);
     }
 
     async changeLoraPrompt() {
-        let loras = game.settings.get('arcane-artifex', 'comfyUILoras');
+        let loras = game.settings.get('arcane-artifex', 'comfyUiLoras');
         let loraPrompt = "";
         loras.forEach(lora => {
             if (lora.active) {
@@ -155,7 +153,7 @@ export default class ComfyUISettings extends FormApplication {
         if (this.form) {
             this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
         }
-        await game.settings.set('arcane-artifex', 'comfyUILoras', loras);
+        await game.settings.set('arcane-artifex', 'comfyUiLoras', loras);
         this.context.loraPrompt = loraPrompt;
     }
 
