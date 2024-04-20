@@ -139,14 +139,6 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "comfyUiUrl", {
-    name: "comfyUiUrl",
-    scope: "world",
-    type: String,
-    default: "http://localhost:8188",
-    config: false,
-  });
-
   game.settings.register("arcane-artifex", "sdwidth", {
     name: "Image Width",
     scope: "world",
@@ -347,6 +339,14 @@ export default function registerSettings() {
     default: {}
   });
 
+  game.settings.register("arcane-artifex", "comfyUiUrl", {
+    name: "comfyUiUrl",
+    scope: "world",
+    type: String,
+    default: "http://localhost:8188",
+    config: false,
+  });
+
   game.settings.register("arcane-artifex", "comfyUiModel", {
     name: "comfyUiModel",
     scope: "world",
@@ -423,13 +423,12 @@ export default function registerSettings() {
     default: []
   });
 
-  game.settings.register("arcane-artifex", "comfyUiWorkflow", {
-    name: "comfyUiWorkflow",
+  game.settings.register("arcane-artifex", "comfyRequestBody", {
+    name: "comfyRequestBody",
     scope: "world",
+    type: Object,
     config: false,
-    type: String,
-    default: "/assets/comfy_workflows/",
-    filePicker: true
+    default: {}
   });
 
 

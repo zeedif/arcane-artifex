@@ -20,6 +20,8 @@ class ComfyUiApiClient {
                 await game.settings.set("arcane-artifex", "connected", true);
 
                 await this.getComfyUISettings();
+
+                await this.initWebSocket()
                 return 'ComfyUI API is accessible.';
             } else {
                 console.error('ComfyUI server is not accessible: response code', response.status, 'at URL:', comfyUrl);
@@ -87,6 +89,139 @@ async getComfyUISettings() {
 
     await game.settings.set("arcane-artifex", "comfyUiLoras", updatedLoras);
   }
+
+  async initWebSocket() {
+    const comfyUiUrl = game.settings.get('arcane-artifex', 'comfyUiUrl');
+    const socketUrl = comfyUiUrl.replace('http://', 'ws://') + '/ws';
+  
+    try {
+      const socket = new WebSocket(socketUrl);
+  
+      socket.addEventListener('open', (event) => {
+        console.error('WebSocket connection established');
+        // Perform any necessary actions upon successful connection
+      });
+  
+      socket.addEventListener('message', (event) => {
+        console.error('Received message from ComfyUI:', event.data);
+        // Handle incoming messages from ComfyUI
+      });
+  
+      socket.addEventListener('close', (event) => {
+        console.error('WebSocket connection closed');
+        // Perform any necessary cleanup or reconnection logic
+      });
+  
+      socket.addEventListener('error', (event) => {
+        console.error('WebSocket error occurred:', event);
+        // Handle WebSocket errors
+      });
+  
+      return socket;
+    } catch (error) {
+      console.error('Error initializing WebSocket:', error);
+      throw error;
+    }
+  }
+
+
+
+  async textToImg(prompt, message) {
+    const comfyUiUrl = game.settings.get('arcane-artifex', 'comfyUiUrl');
+    const apiUrl = `${comfyUiUrl}/prompt`;
+    const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/arcane_artifex_simple.json";
+  
+    try {
+      const responseWorkflow = await fetch(workflowPath);
+      if (!responseWorkflow.ok) {
+        throw new Error(`Failed to load workflow from local assets: ${responseWorkflow.statusText}`);
+      }
+      const workflow = await responseWorkflow.json();
+  
+      const settings = {
+        model: game.settings.get("arcane-artifex", "comfyUiModel"),
+        sampler: game.settings.get("arcane-artifex", "comfyUiSampler"),
+        scheduler: game.settings.get("arcane-artifex", "comfyUiScheduler"),
+        scale: game.settings.get("arcane-artifex", "cfgScale"),
+        seed: Math.round(Math.random() * Number.MAX_SAFE_INTEGER),
+        steps: game.settings.get("arcane-artifex", "samplerSteps"),
+        height: game.settings.get("arcane-artifex", "sdheight"),
+        width: game.settings.get("arcane-artifex", "sdwidth"),
+        prompt: prompt,
+        negative_prompt: game.settings.get("arcane-artifex", "negativePrompt")
+      };
+  
+      Object.keys(workflow).forEach(key => {
+        const node = workflow[key];
+        if (node.inputs) {
+          Object.entries(node.inputs).forEach(([inputKey, inputValue]) => {
+            if (typeof inputValue === 'string' && inputValue.startsWith('%') && inputValue.endsWith('%')) {
+              const settingKey = inputValue.slice(1, -1);
+              if (settings[settingKey] !== undefined) {
+                node.inputs[inputKey] = settings[settingKey];
+              }
+            }
+          });
+        }
+      });
+  
+      // Wrap the workflow inside the "prompt" field
+      const promptData = {
+        prompt: workflow
+      };
+  
+      game.settings.set('arcane-artifex', 'comfyRequestBody', promptData);
+      console.log('Generated ComfyUI Payload:', JSON.stringify(promptData, null, 2));
+  
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(promptData)
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error while generating image, status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      // Begin the polling process for image generation status
+      await this.initProgressRequest(data.id, prompt, message);
+    } catch (error) {
+      console.error('Error in generating image:', error);
+      ui.notifications.error(`Error while sending request to ComfyUI: ${error.message}`);
+    }
+  }
+
+  async initProgressRequest(id, prompt, message) {
+    const comfyUiUrl = game.settings.get('arcane-artifex', 'comfyUiUrl');
+    const progressUrl = `${comfyUiUrl}/progress/${id}`;
+  
+    try {
+      const response = await fetch(progressUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to check progress of image generation, status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      if (data.status === 'done') {
+        await this.getImage(id, prompt, message);
+      } else if (data.status === 'error') {
+        throw new Error(`Error while generating image: ${data.error}`);
+      } else {
+        console.log('Image generation in progress:', data);
+        ui.notifications.info('Image generation in progress. Please wait...');
+        await this.pollProgressRequest(id, prompt, message);
+      }
+    } catch (error) {
+      console.error('Error in checking image generation progress:', error);
+      ui.notifications.error(`Error while checking image generation progress: ${error.message}`);
+    }
+  }
+
+
 }
 
 export const comfyUiApiClient = new ComfyUiApiClient();

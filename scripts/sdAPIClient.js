@@ -71,6 +71,9 @@ class SdAPIClient {
               case "localA1111":
                 await localA1111APIClient.textToImg(prompt, message);
                 break;
+            case "comfyUi":
+                await comfyUiApiClient.textToImg(prompt, message);
+                break;
               case "openAI":
                 await openAiApiClient.textToImg(prompt, message);
                 break;

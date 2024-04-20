@@ -67,6 +67,13 @@ export default class ComfyUISettings extends FormApplication {
             await game.settings.set("arcane-artifex", "source", event.target.value);
             this.render();
         });
+        
+        html.find('input[name="comfyui_url"]').on("change", async (event) => {
+            await game.settings.set("arcane-artifex", "comfyUiUrl", event.target.value.trim());
+            console.error("ComfyUI URL updated to:", event.target.value.trim());
+            this.render();
+        });
+
     }
 
     async onChooseStableStorage(event) {
