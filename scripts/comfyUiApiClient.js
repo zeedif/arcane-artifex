@@ -18,9 +18,7 @@ class ComfyUiApiClient {
                 console.log('ComfyUI server is accessible at:', comfyUrl);
                 ui.notifications.info('ComfyUI server is accessible.');
                 await game.settings.set("arcane-artifex", "connected", true);
-
                 await this.getComfyUISettings();
-
                 await this.initWebSocket()
                 return 'ComfyUI API is accessible.';
             } else {
@@ -103,12 +101,12 @@ async getComfyUISettings() {
       });
   
       socket.addEventListener('message', (event) => {
-        console.error('Received message from ComfyUI:', event.data);
+        console.log('Received message from ComfyUI:', event.data);
         // Handle incoming messages from ComfyUI
       });
   
       socket.addEventListener('close', (event) => {
-        console.error('WebSocket connection closed');
+        console.log('WebSocket connection closed');
         // Perform any necessary cleanup or reconnection logic
       });
   
