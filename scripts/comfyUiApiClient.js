@@ -79,7 +79,7 @@ async txt2Img(prompt) {
   const socket = await this.initWebSocket();
 
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
-  const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/arcane_artifex_simple.json";
+  const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/arcane_artifex_wc.json";
 
   try {
       const responseWorkflow = await fetch(workflowPath);
