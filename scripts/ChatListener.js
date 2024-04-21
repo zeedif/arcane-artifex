@@ -278,6 +278,36 @@ async updateActorImg(ev) {
         }
     }
     
+    displayComfyUiProgress(message, data) {
+        let messageElement = document.querySelector(`[data-message-id="${message.id}"]`);
+        if (!messageElement) {
+            setTimeout(() => this.displayComfyUiProgress(message, data), 500);
+            return;
+        }
+    
+        let progressBarElement = messageElement.querySelector('.stable-progress-bar');
+        let progressStateElement = messageElement.querySelector('.stable-progress-state');
+        let titleEl = messageElement.querySelector('h4.stable-job');
+        let img = messageElement.querySelector('img.stable-temp-image');
+    
+        // Calculate the percentage based on steps done vs total steps
+        let percent = Math.floor((data.stepsDone / data.maxSteps) * 100);
+    
+        if (progressBarElement) {
+            progressBarElement.style.width = `${percent}%`;
+        }
+        if (progressStateElement) {
+            progressStateElement.innerText = `Progress: ${percent}% done`;
+        }
+        if (titleEl) {
+            titleEl.innerText = "Processing...";
+        }
+        if (img) {
+            // Assuming that image handling for progress previews will be managed elsewhere or later.
+            img.src = "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
+        }
+    }
+    
     
 
 

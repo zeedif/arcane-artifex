@@ -1,4 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
+import chatListener from "./ChatListener.js";
 
 class ComfyUiApiClient {
   constructor() {
@@ -22,7 +23,6 @@ class ComfyUiApiClient {
                 ui.notifications.info('ComfyUI server is accessible.');
                 await game.settings.set("arcane-artifex", "connected", true);
                 await this.getComfyUISettings();
-                await this.txt2Img("An arcane craftsmans' workshop");
                 //await this.initWebSocket()
                 return 'ComfyUI API is accessible.';
             } else {
@@ -74,7 +74,7 @@ async getComfyUISettings() {
   }
 }
 
-async txt2Img(prompt) {
+async textToImg(prompt, message) {
   // takes a prompt and constructs a workflow to send to ComfyUI, then sends a POST request to ComfyUI and hands off to a websocket for image status updates and retrieval
 
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
@@ -137,7 +137,7 @@ async txt2Img(prompt) {
         const promptId = responseContent.prompt_id;
         console.error('Captured prompt_id:', promptId);
 
-        this.initWebSocketEventListeners(promptId);
+        this.initWebSocketEventListeners(promptId, message);
 
     } catch (error) {
         console.error('Error in txt2Img:', error);
@@ -145,15 +145,14 @@ async txt2Img(prompt) {
 }
 
 
-async initWebSocketEventListeners(promptId) {
+async initWebSocketEventListeners(promptId, message) {
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
   const socketUrl = stIP.replace('http://', 'ws://') + '/ws';
   const socket = new WebSocket(socketUrl);
-
   socket.promptId = promptId;
 
   socket.addEventListener('open', () => {
-    console.warn('WebSocket connection established, with promptID:', socket, socket.promptId);
+    console.log('WebSocket connection established, with promptID:', socket, socket.promptId);
   });
 
   socket.addEventListener('message', async (event) => {
@@ -170,13 +169,7 @@ async initWebSocketEventListeners(promptId) {
             const historyUrl = `${stIP}/history`;
             const historyResponse = await fetch(historyUrl);
             const historyData = await historyResponse.json(); 
-            console.error('History response:', historyData);
-        
-            // Extract the information if the process is completed successfully for the given promptId
             const processInfo = historyData[promptId];
-            console.error('Process info:', processInfo);
-            console.error('Process status:', processInfo.status.status_str);
-            console.error('Process completed:', processInfo.status.completed);
             if (processInfo && processInfo.status.status_str === "success" && processInfo.status.completed) {
                 const outputImages = processInfo.outputs["9"].images;
                 for (const image of outputImages) {
@@ -193,8 +186,12 @@ async initWebSocketEventListeners(promptId) {
         }
         } else if (data.type === 'progress') {
           console.warn(`Progress update: ${data.data.value}/${data.data.max} for prompt ID ${data.data.prompt_id}`);
-        } else {
-          console.error('Received unhandled string message type from ComfyUI:', data);
+
+          // need to find the right data structure to give to the chat listener
+          
+
+          // chatListener.displayComfyUiProgress(message, data.data.value, data.data.max);
+          
         }
       } catch (error) {
         console.error('Error parsing message from ComfyUI:', error, 'Original message:', event.data);
