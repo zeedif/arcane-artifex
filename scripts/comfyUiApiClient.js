@@ -4,6 +4,7 @@ class ComfyUiApiClient {
   constructor() {
     this.settings = {};
     this.comfyUIDefaultRequestBody = {};
+    this.socket = null;
   }
 
   async checkStatus() {
@@ -21,7 +22,7 @@ class ComfyUiApiClient {
                 ui.notifications.info('ComfyUI server is accessible.');
                 await game.settings.set("arcane-artifex", "connected", true);
                 await this.getComfyUISettings();
-                await this.txt2Img();
+                await this.txt2Img("An arcane craftsmans' workshop");
                 //await this.initWebSocket()
                 return 'ComfyUI API is accessible.';
             } else {
@@ -73,51 +74,80 @@ async getComfyUISettings() {
   }
 }
 
-async txt2Img() {
+async txt2Img(prompt) {
+  // Initialize WebSocket connection
+  const socket = await this.initWebSocket();
+
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
-  const jsonPath = '/modules/arcane-artifex/assets/comfy_workflows/first_arcane_artifex.json';
+  const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/arcane_artifex_simple.json";
 
   try {
-    const response = await fetch(jsonPath);
-    if (!response.ok) throw new Error(`Failed to load JSON from ${jsonPath}`);
+      const responseWorkflow = await fetch(workflowPath);
+      if (!responseWorkflow.ok) {
+          throw new Error(`Failed to load workflow from local assets: ${responseWorkflow.statusText}`);
+      }
+      const workflow = await responseWorkflow.json();
+      console.error('Workflow loaded successfully:', workflow);
 
-    const promptWorkflow = await response.json();
-    console.error('JSON loaded successfully:', promptWorkflow);
+      const settings = {
+          model: game.settings.get("arcane-artifex", "comfyUiModel"),
+          sampler: game.settings.get("arcane-artifex", "comfyUiSampler"),
+          scheduler: game.settings.get("arcane-artifex", "comfyUiScheduler"),
+          scale: game.settings.get("arcane-artifex", "cfgScale"),
+          seed: Math.round(Math.random() * Number.MAX_SAFE_INTEGER),
+          steps: game.settings.get("arcane-artifex", "samplerSteps"),
+          height: game.settings.get("arcane-artifex", "sdheight"),
+          width: game.settings.get("arcane-artifex", "sdwidth"),
+          prompt: prompt,
+          negative_prompt: game.settings.get("arcane-artifex", "negativePrompt")
+      };
 
-    if (promptWorkflow['3'] && promptWorkflow['3'].inputs) {
-      const newSeed = Math.floor(Math.random() * 1000000000);
-      promptWorkflow['3'].inputs.seed = newSeed;
-      console.error(`Seed updated in object '3' to: ${newSeed}`);
-    } else {
-      throw new Error("Expected structure not found in JSON");
+      // Substitute settings into the workflow
+      Object.keys(workflow).forEach(key => {
+          const node = workflow[key];
+          if (node.inputs) {
+              Object.entries(node.inputs).forEach(([inputKey, inputValue]) => {
+                  if (typeof inputValue === 'string' && inputValue.startsWith('%') && inputValue.endsWith('%')) {
+                      const settingKey = inputValue.slice(1, -1);
+                      if (settings[settingKey] !== undefined) {
+                          node.inputs[inputKey] = settings[settingKey];
+                      }
+                  }
+              });
+          }
+      });
+
+      console.error('Modified workflow with settings:', workflow);
+
+      const jsonPayload = JSON.stringify({ prompt: workflow });
+        const url = `${stIP}/prompt`;
+        const reqHeaders = {
+            'Content-Type': 'application/json',
+            'Connection': 'keep-alive',
+            'Accept': '*/*',
+            'User-Agent': 'FoundryVTT/1.0'
+        };
+        const fetchOptions = {
+            method: 'POST',
+            body: jsonPayload,
+            headers: reqHeaders
+        };
+
+        console.error('Sending POST request to:', url, ' with payload:', jsonPayload);
+
+        const fetchResponse = await fetch(url, fetchOptions);
+        if (!fetchResponse.ok) {
+            throw new Error(`HTTP error! Status: ${fetchResponse.status}`);
+        }
+        const responseContent = await fetchResponse.json();
+        console.error('Response received from ComfyUI:', responseContent);
+
+    } catch (error) {
+        console.error('Error in txt2Img:', error);
     }
-
-    const requestPayload = {
-      prompt: promptWorkflow,
-      client_id: 'client-id-123'
-    };
-    const jsonPayload = JSON.stringify(requestPayload);
-    const url = `${stIP}/prompt`;
-    const reqHeaders = {'Content-Type': 'application/json'};
-    const fetchOptions = {
-      method: 'POST',
-      body: jsonPayload,
-      headers: reqHeaders
-    };
-
-    console.error('Sending POST request to:', url, ' with payload:', requestPayload);
-
-    const fetchResponse = await fetch(url, fetchOptions);
-    if (!fetchResponse.ok) {
-      throw new Error(`HTTP error! Status: ${fetchResponse.status}`);
-    }
-    const responseContent = await fetchResponse.json();
-    console.error('Response received from ComfyUI:', responseContent);
-
-  } catch (error) {
-    console.error('Error in txt2Img:', error);
-  }
 }
+
+
 
 
 
@@ -148,21 +178,29 @@ async txt2Img() {
   async initWebSocket() {
     const comfyUiUrl = game.settings.get('arcane-artifex', 'comfyUiUrl');
     const socketUrl = comfyUiUrl.replace('http://', 'ws://') + '/ws';
+    let resolveSocketOpen;
+    const socketReady = new Promise(resolve => resolveSocketOpen = resolve);
+
     const socket = new WebSocket(socketUrl);
-    
+
     socket.addEventListener('open', () => {
-        console.error('WebSocket connection established');
-        socket.send(JSON.stringify(this.promptData));
-        console.error('Sent ComfyUI Payload via WebSocket:', JSON.stringify(this.promptData, null, 2));
+        console.error('WebSocket connection established:', socket);
+        resolveSocketOpen(socket);
     });
 
     socket.addEventListener('message', (event) => {
+        console.error('Received WebSocket message event:', event);
         if (typeof event.data === 'string') {
             try {
                 const data = JSON.parse(event.data);
-                console.error('Received message from ComfyUI:', data);
+                console.error('Parsed WebSocket message data from ComfyUI:', data);
+                // Handle completion of image generation process
+                if (data.status === 'complete') {
+                    socket.close();
+                    console.error('Image generation complete, WebSocket connection closed', data);
+                }
             } catch (error) {
-                console.error('Error parsing message from ComfyUI:', error);
+                console.error('Error parsing message from ComfyUI:', error, 'Original message:', event.data);
             }
         } else {
             console.error('Received non-string data from ComfyUI:', event.data);
@@ -177,8 +215,12 @@ async txt2Img() {
         console.error('WebSocket error occurred:', event);
     });
 
+    // Wait for the socket to be ready before returning it
+    await socketReady;
     return socket;
 }
+
+
 
 
 
