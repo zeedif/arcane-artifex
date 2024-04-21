@@ -290,23 +290,32 @@ async updateActorImg(ev) {
         let titleEl = messageElement.querySelector('h4.stable-job');
         let img = messageElement.querySelector('img.stable-temp-image');
     
-        // Calculate the percentage based on steps done vs total steps
-        let percent = Math.floor((data.stepsDone / data.maxSteps) * 100);
+        let percent = 0;
+        let progressText = "";
+    
+        if (data.queue_position !== undefined && data.queue_position > 0) {
+            // Handling the scenario where we're showing queue position
+            percent = 0; // In queue, no progress in terms of percentage
+            progressText = `Queue position: ${data.queue_position}`;
+            titleEl.innerText = "Waiting in queue...";
+            img.src = "/modules/arcane-artifex/assets/arcane-artifex-queued.webp";
+        } else if (data.current_steps !== undefined) {
+            // Handling the scenario where we're showing progress of the task
+            percent = Math.floor((data.current_steps / data.max_steps) * 100);
+            progressText = `Progress: ${percent}% done`;
+            titleEl.innerText = "Processing...";
+            img.src = "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
+        }
     
         if (progressBarElement) {
             progressBarElement.style.width = `${percent}%`;
         }
         if (progressStateElement) {
-            progressStateElement.innerText = `Progress: ${percent}% done`;
-        }
-        if (titleEl) {
-            titleEl.innerText = "Processing...";
-        }
-        if (img) {
-            // Assuming that image handling for progress previews will be managed elsewhere or later.
-            img.src = "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
+            progressStateElement.innerText = progressText;
         }
     }
+    
+    
     
     
 

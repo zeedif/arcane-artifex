@@ -183,16 +183,34 @@ async initWebSocketEventListeners(promptId, message) {
                     // This URL can be used directly in a web browser to view/download the image
                 }
             }
+        }else{
+          // Tell chatListener to update the UI with the queue position
+          const progressData = {
+              prompt_id: data.data.prompt_id,
+              current_steps: 0,
+              max_steps: 0,
+              queue_position: data.data.status.exec_info.queue_remaining
+          };
+          chatListener.displayComfyUiProgress(message, progressData);
         }
-        } else if (data.type === 'progress') {
-          console.warn(`Progress update: ${data.data.value}/${data.data.max} for prompt ID ${data.data.prompt_id}`);
-
-          // need to find the right data structure to give to the chat listener
-          
-
-          // chatListener.displayComfyUiProgress(message, data.data.value, data.data.max);
-          
-        }
+      } else if (data.type === 'progress') {
+        console.warn(`Progress update: ${data.data.value}/${data.data.max} for prompt ID ${data.data.prompt_id}`);
+    
+        // Create a structured data object
+        const progressData = {
+            prompt_id: data.data.prompt_id,  // Unique identifier for the prompt/message
+            current_steps: data.data.value,  // Current steps completed
+            max_steps: data.data.max,        // Total steps to complete the task
+            queue_position: 0  // Position in the queue, if applicable
+        };
+    
+        // Pass the structured data to console.error for inspection
+        console.error('Progress Data Structure:', progressData);
+    
+        // This line will be used to update the UI, commented out for now
+        chatListener.displayComfyUiProgress(message, progressData);
+    }
+    
       } catch (error) {
         console.error('Error parsing message from ComfyUI:', error, 'Original message:', event.data);
       }
