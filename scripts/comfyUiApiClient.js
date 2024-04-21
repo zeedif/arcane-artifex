@@ -137,7 +137,7 @@ async textToImg(prompt, message) {
         const promptId = responseContent.prompt_id;
         console.error('Captured prompt_id:', promptId);
 
-        this.initWebSocketEventListeners(promptId, message);
+        this.initWebSocketEventListeners(promptId, prompt, message);
 
     } catch (error) {
         console.error('Error in txt2Img:', error);
@@ -145,7 +145,7 @@ async textToImg(prompt, message) {
 }
 
 
-async initWebSocketEventListeners(promptId, message) {
+async initWebSocketEventListeners(promptId, prompt, message) {
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
   const socketUrl = stIP.replace('http://', 'ws://') + '/ws';
   const socket = new WebSocket(socketUrl);
@@ -180,7 +180,7 @@ async initWebSocketEventListeners(promptId, message) {
                     });
                     const viewUrl = `${stIP}/view?${imageUrlParams}`;
                     console.error('View Image URL:', viewUrl);
-                    // This URL can be used directly in a web browser to view/download the image
+                    chatListener.fetchAndProcessImage(viewUrl, prompt, message);
                 }
             }
         }else{

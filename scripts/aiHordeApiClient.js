@@ -246,45 +246,13 @@ async retrieveGeneratedImage(generationId, prompt, message) {
 
     const imageUrl = retrieveData.generations[0].img;
     console.log('Direct URL of the generated image:', imageUrl); // Add this line
-    await this.fetchAndProcessImage(imageUrl, prompt, message);
+    await chatListener.fetchAndProcessImage(imageUrl, prompt, message);
   } catch (error) {
     console.error('Error during image retrieval and processing:', error);
   }
 }
 
-async fetchAndProcessImage(imageUrl, prompt, message, attempts = 0) {
-  try {
-    const imageResponse = await fetch(imageUrl);
-    if (!imageResponse.ok) {
-      throw new Error(`Image fetch error! Status: ${imageResponse.status}`);
-    }
-    const imageBlob = await imageResponse.blob();
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const imageData = {
-        images: [{
-          id: foundry.utils.randomID(),
-          data: reader.result
-        }],
-        title: prompt,
-        send: false
-      };
-      chatListener.createImage(imageData, prompt, message);
-    };
-    reader.onerror = error => {
-      console.error('Error converting blob to base64:', error);
-    };
-    reader.readAsDataURL(imageBlob);
-  } catch (error) {
-    if (attempts < 3) { // Retry up to 3 times
-      console.error(`Attempt ${attempts + 1}: Retrying after error fetching image:`, error);
-      setTimeout(() => this.fetchAndProcessImage(imageUrl, prompt, message, attempts + 1), 2000); // Wait 2 seconds before retrying
-    } else {
-      console.error('Failed to fetch image after multiple attempts:', error);
-    }
-  }
-}
 
 }
 

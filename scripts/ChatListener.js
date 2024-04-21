@@ -314,7 +314,41 @@ async updateActorImg(ev) {
             progressStateElement.innerText = progressText;
         }
     }
+  
     
+    async fetchAndProcessImage(imageUrl, prompt, message, attempts = 0) {
+        try {
+          const imageResponse = await fetch(imageUrl);
+          if (!imageResponse.ok) {
+            throw new Error(`Image fetch error! Status: ${imageResponse.status}`);
+          }
+          const imageBlob = await imageResponse.blob();
+      
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageData = {
+              images: [{
+                id: foundry.utils.randomID(),
+                data: reader.result
+              }],
+              title: prompt,
+              send: false
+            };
+            this.createImage(imageData, prompt, message);
+          };
+          reader.onerror = error => {
+            console.error('Error converting blob to base64:', error);
+          };
+          reader.readAsDataURL(imageBlob);
+        } catch (error) {
+          if (attempts < 3) { // Retry up to 3 times
+            console.error(`Attempt ${attempts + 1}: Retrying after error fetching image:`, error);
+            setTimeout(() => this.fetchAndProcessImage(imageUrl, prompt, message, attempts + 1), 2000); // Wait 2 seconds before retrying
+          } else {
+            console.error('Failed to fetch image after multiple attempts:', error);
+          }
+        }
+      }
     
     
     
@@ -333,19 +367,11 @@ async updateActorImg(ev) {
                     data: "data:image/png;base64," + imgData
                 });
             }
-        } else if (source === "stableHorde") {
+        } else if (source === "stableHorde" || source === "comfyUi") {
             for (let imgData of data.images) {
                 let newImage = {
                     id: imgData.id,
                     data: imgData.data
-                };
-                images.push(newImage);
-            }
-        } else if (source === "comfyUI") {
-            for (let imgData of data.images) {
-                let newImage = {
-                    id: foundry.utils.randomID(),
-                    data: imgData
                 };
                 images.push(newImage);
             }
