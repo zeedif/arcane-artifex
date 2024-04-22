@@ -135,7 +135,7 @@ async textToImg(prompt, message) {
         }
         const responseContent = await fetchResponse.json();
         const promptId = responseContent.prompt_id;
-        console.error('Captured prompt_id:', promptId);
+        console.log('arcane-artifex: Captured prompt_id:', promptId);
 
         this.initWebSocketEventListeners(promptId, prompt, message);
 
@@ -149,10 +149,16 @@ async initWebSocketEventListeners(promptId, prompt, message) {
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
   const socketUrl = stIP.replace('http://', 'ws://') + '/ws';
   const socket = new WebSocket(socketUrl);
-  socket.promptId = promptId;
-
+  
   socket.addEventListener('open', () => {
     console.log('WebSocket connection established, with promptID:', socket, socket.promptId);
+    socket.progressData = {
+      prompt_id: promptId,
+      current_steps: 0,
+      max_steps: 0,
+      queue_position: 0,
+      image_data: null
+    };
   });
 
   socket.addEventListener('message', async (event) => {
@@ -168,14 +174,10 @@ async initWebSocketEventListeners(promptId, prompt, message) {
           title: prompt,
           send: false
         };
-        const progressData = {
-          prompt_id: promptId,
-          current_steps: 0,
-          max_steps: 0,
-          queue_position: 0,
-          image_data: reader.result
-      };
-      chatListener.displayComfyUiProgress(message, progressData);
+
+        socket.progressData.image_data = reader.result;
+
+      chatListener.displayComfyUiProgress(message, socket.progressData );
 
       };
       reader.onerror = error => {
@@ -189,7 +191,6 @@ async initWebSocketEventListeners(promptId, prompt, message) {
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'status') {
-          console.warn(`Queue remaining: ${data.data.status.exec_info.queue_remaining}`);
           if (data.data.status.exec_info.queue_remaining === 0) {
             const historyUrl = `${stIP}/history`;
             const historyResponse = await fetch(historyUrl);
@@ -208,29 +209,18 @@ async initWebSocketEventListeners(promptId, prompt, message) {
                     chatListener.fetchAndProcessImage(viewUrl, prompt, message);
                 }
             }
-        }else{
-          // Tell chatListener to update the UI with the queue position
-          const progressData = {
-              prompt_id: data.data.prompt_id,
-              current_steps: 0,
-              max_steps: 0,
-              queue_position: data.data.status.exec_info.queue_remaining,
-              image_data: null
-          };
-          chatListener.displayComfyUiProgress(message, progressData);
+        }else{     
+          socket.progressData.current_steps = 0;
+          socket.progressData.max_steps = 0;
+          socket.progressData.queue_position = data.data.status.exec_info.queue_remaining;
+          socket.progressData.image_data = null;
+
+          chatListener.displayComfyUiProgress(message, socket.progressData);
         }
       } else if (data.type === 'progress') {
-        console.warn(`Progress update: ${data.data.value}/${data.data.max} for prompt ID ${data.data.prompt_id}`);
-    
-        // Create a structured data object
-        const progressData = {
-            prompt_id: data.data.prompt_id,  // Unique identifier for the prompt/message
-            current_steps: data.data.value,  // Current steps completed
-            max_steps: data.data.max,        // Total steps to complete the task
-            queue_position: 0,  // Position in the queue, if applicable
-            image_data: null  // Image data, if applicable
-        };
-        chatListener.displayComfyUiProgress(message, progressData);
+        socket.progressData.current_steps = data.data.value;
+        socket.progressData.max_steps = data.data.max;
+        socket.progressData.queue_position = -1;
     }
     
       } catch (error) {

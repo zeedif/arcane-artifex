@@ -284,8 +284,6 @@ async updateActorImg(ev) {
             setTimeout(() => this.displayComfyUiProgress(message, data), 500);
             return;
         }
-    
-        console.error("data", data);
 
         let progressBarElement = messageElement.querySelector('.stable-progress-bar');
         let progressStateElement = messageElement.querySelector('.stable-progress-state');
@@ -296,21 +294,16 @@ async updateActorImg(ev) {
         let progressText = "";
     
         if (data.queue_position >0 ) {
-            console.error("data.queue_position", data.queue_position);
             percent = 0; // In queue, no progress in terms of percentage
             progressText = `Queue position: ${data.queue_position}`;
             titleEl.innerText = "Waiting in queue...";
             img.src = "/modules/arcane-artifex/assets/arcane-artifex-queued.webp";
-        } else if (data.current_steps !== undefined && !data.image_data ) {
-            console.error("data.current_steps", data.current_steps);
+        } else {
             percent = Math.floor((data.current_steps / data.max_steps) * 100);
             progressText = `Progress: ${percent}% done`;
             titleEl.innerText = "Processing...";
-            img.src = "/modules/arcane-artifex/assets/arcane-artifex-progress.webp";
-        } else if (data.image_data !== undefined) {
-            console.error("data.image_data", data.image_data);
             img.src = data.image_data;
-        }
+        } 
     
         if (progressBarElement) {
             progressBarElement.style.width = `${percent}%`;
