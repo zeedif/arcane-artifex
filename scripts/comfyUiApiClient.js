@@ -157,8 +157,33 @@ async initWebSocketEventListeners(promptId, prompt, message) {
 
   socket.addEventListener('message', async (event) => {
     if (event.data instanceof Blob) {
-      console.error('Received Blob data from ComfyUI:', event.data);
-      const objectURL = URL.createObjectURL(event.data);
+      const imageBlob = event.data.slice(8);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageData = {
+          images: [{
+            id: foundry.utils.randomID(),
+            data: reader.result
+          }],
+          title: prompt,
+          send: false
+        };
+        const progressData = {
+          prompt_id: promptId,
+          current_steps: 0,
+          max_steps: 0,
+          queue_position: 0,
+          image_data: reader.result
+      };
+      chatListener.displayComfyUiProgress(message, progressData);
+
+      };
+      reader.onerror = error => {
+        console.error('Error converting blob to base64:', error);
+      };
+      reader.readAsDataURL(imageBlob);
+
+      const objectURL = URL.createObjectURL(event.data.slice(8));
       console.log('Object URL for Blob:', objectURL);
     } else if (typeof event.data === 'string') {
       try {
@@ -179,7 +204,7 @@ async initWebSocketEventListeners(promptId, prompt, message) {
                         type: image.type
                     });
                     const viewUrl = `${stIP}/view?${imageUrlParams}`;
-                    console.error('View Image URL:', viewUrl);
+                    console.log('View Image URL:', viewUrl);
                     chatListener.fetchAndProcessImage(viewUrl, prompt, message);
                 }
             }
@@ -189,7 +214,8 @@ async initWebSocketEventListeners(promptId, prompt, message) {
               prompt_id: data.data.prompt_id,
               current_steps: 0,
               max_steps: 0,
-              queue_position: data.data.status.exec_info.queue_remaining
+              queue_position: data.data.status.exec_info.queue_remaining,
+              image_data: null
           };
           chatListener.displayComfyUiProgress(message, progressData);
         }
@@ -201,13 +227,9 @@ async initWebSocketEventListeners(promptId, prompt, message) {
             prompt_id: data.data.prompt_id,  // Unique identifier for the prompt/message
             current_steps: data.data.value,  // Current steps completed
             max_steps: data.data.max,        // Total steps to complete the task
-            queue_position: 0  // Position in the queue, if applicable
+            queue_position: 0,  // Position in the queue, if applicable
+            image_data: null  // Image data, if applicable
         };
-    
-        // Pass the structured data to console.error for inspection
-        console.error('Progress Data Structure:', progressData);
-    
-        // This line will be used to update the UI, commented out for now
         chatListener.displayComfyUiProgress(message, progressData);
     }
     
