@@ -260,6 +260,41 @@ async initializeOrUpdateLoras() {
     await game.settings.set("arcane-artifex", "comfyUiLoras", updatedLoras);
   }
 
+
+  postInterrupt() {
+    let apiUrl = `${game.settings.get("arcane-artifex", "comfyUiUrl")}/interrupt`;
+    try {
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        if (response.status === 204 || response.headers.get('Content-Type') !== 'application/json') {
+          return null; // Return null for empty response or non-JSON response
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data !== null) {
+          console.log('Response data:', data);
+          // Handle the response data here
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    } catch (e) {
+      ui.notifications.warn('Error while sending request to ComfyUI');
+    }
+  }
+
+
+
 }
 
 export const comfyUiApiClient = new ComfyUiApiClient();

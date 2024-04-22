@@ -2,6 +2,7 @@ import stableFileManager from "./StableFileManager.js";
 import localA1111APIClient from './localA1111APIClient.js';
 import aiHordeApiClient from "./aiHordeApiClient.js";
 import sdAPIClient from "./sdAPIClient.js";
+import comfyUiApiClient from './comfyUiApiClient.js';
 
 class StableImagesChatListener {
     constructor() {
@@ -49,11 +50,21 @@ class StableImagesChatListener {
     }
 
     async callInterrupt(ev) {
-        await sdAPIClient.postInterrupt();
+        const selectedSource = game.settings.get('arcane-artifex', 'source');
+        if (selectedSource === 'localA1111') {
+            await sdAPIClient.postInterrupt();
+        } else if (selectedSource === 'comfyUi') {
+            await comfyUiApiClient.postInterrupt();
+        }
     }
 
     async callSkip(ev) {
-        await sdAPIClient.postSkip();
+        const selectedSource = game.settings.get('arcane-artifex', 'source');
+        if (selectedSource === 'localA1111') {
+            await sdAPIClient.postSkip();
+        } else if (selectedSource === 'comfyUi') {
+            await comfyUiApiClient.postInterrupt();
+        }
     }
 
 async updateActorImg(ev) {
