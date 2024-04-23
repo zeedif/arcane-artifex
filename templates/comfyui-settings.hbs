@@ -10,8 +10,41 @@
                             </div>
                         </div>
                     </div>
-                    <h2 style="text-align: center;">These each represent a placeholder in the ComfyUI .json file.</h2>
-                    <div class="models">
+
+            <div class="sd3">
+            <h2>STABLE DIFFUSION 3</h2>
+            <div class="form-group">
+            <label>Stability API Key</label>
+            <div class="form-fields">
+                <input type="password" name="comfyui_stability_api_key" value="{{comfyui_stability_api_key}}">
+            </div>
+            </div>
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <label>Use Stability Diffusion 3</label>
+                <input type="checkbox" name="comfyui_usesd3" data-dtype="Boolean" {{#if comfyui_usesd3}}checked{{/if}}>
+                <p class="notes">Use SD3 for image generation for better prompt adherence</p>
+            </div>
+            <div>
+                <label>Use SD3 Upscaler</label>
+                <input type="checkbox" name="comfyui_usesd3upscaler" data-dtype="Boolean" {{#if comfyui_usesd3upscaler}}checked{{/if}}>
+                <p class="notes">Use SD3 creative upscaler (expensive)</p>
+            </div>
+            </div>
+            <div class="form-group">
+            <label>SD3 Aspect Ratio</label>
+            <div class="form-fields">
+                <select name="comfyui_s3d_aspect_ratio">
+                {{#select comfyui_s3d_aspect_ratio}}
+                {{#each comfyui_s3d_aspect_ratio_choices as |choice key|}}
+                <option value="{{key}}">{{choice}}</option>
+                {{/each}}
+                {{/select}}
+                </select>
+            </div>
+            </div>
+                                <h2 style="text-align: center;">These each represent a placeholder in the ComfyUI .json file.</h2>
+            <div class="models">
                         <h2>MODELS</h2>
                         <h4>active model : {{comfyui_model}}</h4>
                         <select id="change-model">
@@ -23,6 +56,7 @@
                     </div>
                 </section>
             </div>
+
             <div class="samplers">
                 <h2>SAMPLING METHOD</h2>
                 <h4>active sampler : {{comfyui_sampler}}</h4>

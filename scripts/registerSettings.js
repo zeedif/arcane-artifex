@@ -21,12 +21,12 @@ const defaultStyles = [
 const promptTemplates = {};
 
 const resolutionOptions = {
-  "sd_res_512x512": { width: 512, height: 512, name: "512x512 (1:1, icons, profile pictures)" },
-  "sd_res_600x600": { width: 600, height: 600, name: "600x600 (1:1, icons, profile pictures)" },
-  "sd_res_512x768": { width: 512, height: 768, name: "512x768 (2:3, vertical character card)" },
-  "sd_res_768x512": { width: 768, height: 512, name: "768x512 (3:2, horizontal 35-mm movie film)" },
-  "sd_res_960x540": { width: 960, height: 540, name: "960x540 (16:9, horizontal wallpaper)" },
-  "sd_res_540x960": { width: 540, height: 960, name: "540x960 (9:16, vertical wallpaper)" },
+  "sd_res_512x512": { width: 512, height: 512, name: "512x512 (1:1, icons, profile pictures. SD1.5)" },
+  "sd_res_600x600": { width: 600, height: 600, name: "600x600 (1:1, icons, profile pictures, SD1.5)" },
+  "sd_res_512x768": { width: 512, height: 768, name: "512x768 (2:3, vertical character card, SD1.5)" },
+  "sd_res_768x512": { width: 768, height: 512, name: "768x512 (3:2, horizontal 35-mm movie film, SD1.5)" },
+  "sd_res_960x540": { width: 960, height: 540, name: "960x540 (16:9, horizontal wallpaper, SD1.5)" },
+  "sd_res_540x960": { width: 540, height: 960, name: "540x960 (9:16, vertical wallpaper, SD1.5)" },
   "sd_res_1920x1088": { width: 1920, height: 1088, name: "1920x1088 (16:9, 1080p, horizontal wallpaper)" },
   "sd_res_1088x1920": { width: 1088, height: 1920, name: "1088x1920 (9:16, 1080p, vertical wallpaper)" },
   "sd_res_1280x720": { width: 1280, height: 720, name: "1280x720 (16:9, 720p, horizontal wallpaper)" },
@@ -43,9 +43,9 @@ const resolutionOptions = {
 };
 
 const openAiResolutionOptions = {
-  "dalle_res_1024x1024": { width: 1024, height: 1024, name: "1024x1024 (1:1)" },
-  "dalle_res_1792x1024": { width: 1792, height: 1024, name: "1792x1024 (Landscape)" },
-  "dalle_res_1024x1792": { width: 1024, height: 1792, name: "1024x1792 (Portriat)" }
+  "dalle_res_1024x1024": { width: 1024, height: 1024, name: "1024x1024 (1:1, DALLE-3)" },
+  "dalle_res_1792x1024": { width: 1792, height: 1024, name: "1792x1024 (Landscape, DALLE-3)" },
+  "dalle_res_1024x1792": { width: 1024, height: 1792, name: "1024x1792 (Portriat, DALLE-3)" }
 };
 
 
@@ -430,6 +430,58 @@ export default function registerSettings() {
     config: false,
     default: {}
   });
+
+  game.settings.register("arcane-artifex", "comfyUiStabilityApiKey", {
+    name: "comfyUiStabilityApiKey",
+    scope: "world",
+    type: String,
+    default: "0000000000",
+    config: false,
+  });
+
+
+  game.settings.register("arcane-artifex", "comfyUiUseSd3", {
+    name: "comfyUiUseSd3",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: async () => {
+      await comfyUiApiClient.getComfyUISettings();
+    }
+  });
+
+  game.settings.register("arcane-artifex", "comfyUiUseSd3Upscaler", {
+    name: "comfyUiUseSd3Upscaler",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: async () => {
+      await comfyUiApiClient.getComfyUISettings();
+    }
+  });
+
+  game.settings.register("arcane-artifex", "comfyUiS3dAspectRatio", {
+    name: "comfyUiS3dAspectRatio",
+    hint: "Select a predefined Stable Diffusion 3 aspect ratio",
+    scope: "world",
+    config: false,
+    type: String,
+    choices: {
+      "16:9": "2040x1152 (16:9, SD3)",
+      "9:16": "1152x2040 (9:16, SD3)",
+      "1:1": "1536x1536 (1:1, SD3)",
+      "21:9": "2336x992 (21:9, SD3)",
+      "9:21": "992x2336 (9:21, SD3)",
+      "2:3": "1248x1872 (2:3, SD3)",
+      "3:2": "1872x1248 (3:2, SD3)",
+      "4:5": "1368x1712 (4:5, SD3)",
+      "5:4": "1712x1368 (5:4, SD3)"
+    },
+    default: "1:1"
+  });
+
 
 
   game.settings.register("arcane-artifex", "openAiApiKey", {
