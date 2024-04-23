@@ -1,0 +1,31 @@
+{
+  "9": {
+    "inputs": {
+      "filename_prefix": "ArcaneArtifex",
+      "images": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "10": {
+    "inputs": {
+      "prompt": "%prompt%",
+      "negative_prompt": "%negative_prompt%",
+      "seed": "%seed%",
+      "output_format": "png",
+      "aspect_ratio": "%aspect_ratio%",
+      "style": false,
+      "style_preset": "3d-model",
+      "api_key_override": "%stability_api_key%"
+    },
+    "class_type": "Stability Image Core",
+    "_meta": {
+      "title": "Stability Image Core"
+    }
+  }
+}
