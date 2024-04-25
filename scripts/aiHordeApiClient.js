@@ -129,7 +129,7 @@ const requestBody = {
   models: [game.settings.get("arcane-artifex", "hordeModel")],
   workers: [], 
   params: {
-    n: game.settings.get("arcane-artifex", "numImages"),
+    n: 1,
     width: game.settings.get("arcane-artifex", "sdwidth"),
     height: game.settings.get("arcane-artifex", "sdheight"),
     steps: game.settings.get("arcane-artifex", "samplerSteps"),

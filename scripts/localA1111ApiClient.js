@@ -57,7 +57,7 @@ async checkStatus() {
             height: game.settings.get("arcane-artifex", "sdheight"),
             width: game.settings.get("arcane-artifex", "sdwidth"),
             negative_prompt: game.settings.get("arcane-artifex", "negativePrompt"),
-            n_iter: game.settings.get("arcane-artifex", "numImages"),
+            n_iter: 1,
             restore_faces: game.settings.get("arcane-artifex", "restoreFaces"),
             steps: game.settings.get("arcane-artifex", "samplerSteps"),
             sampler_name: game.settings.get("arcane-artifex", "localA1111Sampler"),

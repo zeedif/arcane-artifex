@@ -26,7 +26,6 @@ export default class LocalA1111Settings extends FormApplication {
         context.localA1111Sampler = game.settings.get("arcane-artifex", "localA1111Sampler");
         context.localA1111Upscaler = game.settings.get("arcane-artifex", "localA1111Upscaler");
         context.activeModel = game.settings.get("arcane-artifex", "localA1111Model");
-        context.numImages = game.settings.get("arcane-artifex", "numImages");
         context.stableStoragePath = game.settings.get("arcane-artifex", "stableStoragePath");
 
 
@@ -67,11 +66,6 @@ export default class LocalA1111Settings extends FormApplication {
         for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
             range.addEventListener('change', (event) => this.changeLoraStrength(event, range.dataset.loraAlias));
         }
-    
-        html.find('input[name="numImages"]').on("input", async (event) => {
-            await game.settings.set("arcane-artifex", "numImages", parseInt(event.target.value));
-            this.render(true);
-        });
     
         html.find('select[name="source"]').on("change", async (event) => {
             await game.settings.set("arcane-artifex", "source", event.target.value);

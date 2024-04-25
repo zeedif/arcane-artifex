@@ -440,6 +440,16 @@ export default function registerSettings() {
   });
 
 
+  game.settings.register("arcane-artifex", "comfyUiWorkflowStoragePath", {
+    name: "comfyUiWorkflowStoragePath",
+    hint: "Set the path for ComfyUI workflow storage",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "",
+    filePicker: "folder"
+  });
+
   game.settings.register("arcane-artifex", "comfyUiUseSd3", {
     name: "comfyUiUseSd3",
     scope: "world",
@@ -524,20 +534,6 @@ export default function registerSettings() {
     config: false,
     type: Boolean,
     default: true
-  });
-
-  game.settings.register("arcane-artifex", "numImages", {
-    name: "numImages",
-    hint: "Number of images to produce per generation",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: {
-      min: 0,
-      max: 4,
-      step: 1
-    },
-    default: 1
   });
 
   // Register main configuration page options
