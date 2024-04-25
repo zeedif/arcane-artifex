@@ -1,6 +1,6 @@
 import chatListener from "./ChatListener.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
-import localA1111APIClient from './localA1111APIClient.js';
+import localA1111APIClient from './localA1111ApiClient.js';
 import comfyUiApiClient from './comfyUiApiClient.js';
 import openAiApiClient from './openAiApiClient.js';
 

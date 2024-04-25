@@ -1,7 +1,7 @@
 import stableFileManager from "./StableFileManager.js";
 import openAiSettings from "./openAiSettings.js";
 import localA1111Settings from "./localA1111Settings.js";
-import localA1111APIClient from "./localA1111APIClient.js";
+import localA1111APIClient from "./localA1111ApiClient.js";
 import HordeSettings from "./aiHordeSettings.js";
 import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";

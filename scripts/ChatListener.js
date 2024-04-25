@@ -1,5 +1,5 @@
 import stableFileManager from "./StableFileManager.js";
-import localA1111APIClient from './localA1111APIClient.js';
+import localA1111APIClient from './localA1111ApiClient.js';
 import aiHordeApiClient from "./aiHordeApiClient.js";
 import sdAPIClient from "./sdAPIClient.js";
 import comfyUiApiClient from './comfyUiApiClient.js';

@@ -1,12 +1,12 @@
 import registerSettings from "./registerSettings.js";
 import chatListener from './ChatListener.js';
-import localA1111APIClient from './localA1111APIClient.js';
+import localA1111APIClient from './localA1111ApiClient.js';
 import PromptApplication from "./PromptApplication.js";
 import stableFileManager from "./StableFileManager.js";
 import aiHordeApiClient from './aiHordeApiClient.js';
 import HordeSettings from './aiHordeSettings.js';
 import openAiApiClient from './openAiApiClient.js';
-import comfyUiApiClient from './comfyUIApiClient.js';
+import comfyUiApiClient from './comfyUiApiClient.js';
 
 Hooks.on('init', async function () {
     CONFIG.debug.hooks = true;
