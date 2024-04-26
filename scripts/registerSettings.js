@@ -441,7 +441,7 @@ export default function registerSettings() {
 
 
   game.settings.register("arcane-artifex", "comfyUiWorkflowStoragePath", {
-    name: "comfyUiWorkflowStoragePath",
+    name: "ComfyUI Workflow Storage Path",
     hint: "Set the path for ComfyUI workflow storage",
     scope: "world",
     config: true,

@@ -45,7 +45,7 @@ export default class ComfyUISettings extends FormApplication {
             "5:4": "1712x1368 (5:4, SD3)"
           };
 
-        console.error("Context after adding data:", context);
+        console.warn("Context after adding data:", context);
 
         this.context = context;
         return context;
@@ -57,7 +57,7 @@ export default class ComfyUISettings extends FormApplication {
 
         html.find('[name="comfyui_usesd3"]').change(event => this.onToggleUseSd3Change(event));
         html.find('[name="comfyui_usesd3upscaler"]').change(event => this.onToggleUseSd3UpscalerChange(event));
-        html.find('[name="stability_api_key"]').change(event => this.onAPIKeyChange(event));
+        html.find('[name="comfyui_stability_api_key"]').change(event => this.onAPIKeyChange(event));
 
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
         html[0].querySelector('select#change-sampler').addEventListener('change', this.changeSampler.bind(this));
@@ -79,7 +79,7 @@ export default class ComfyUISettings extends FormApplication {
 
         html.find('input[name="comfyui_url"]').on("change", async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiUrl", event.target.value.trim());
-            console.error("ComfyUI URL updated to:", event.target.value.trim());
+            console.log("ComfyUI URL updated to:", event.target.value.trim());
             this.render();
         });
 

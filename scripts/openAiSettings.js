@@ -21,7 +21,7 @@ export default class openAiSettings extends FormApplication {
             openai_hd: game.settings.get("arcane-artifex", "openAiHd"),
             openai_vivid: game.settings.get("arcane-artifex", "openAiVivid")
         };
-        console.error("context", context);
+        console.warn("context", context);
         return context;
     }
 

@@ -67,7 +67,6 @@ class HordeAPIClient {
 
         // Navigate directly to the enum for samplers based on the JSON structure you provided
         const samplers = data.definitions.ModelPayloadRootStable.properties.sampler_name.enum;
-        console.error("Samplers:", samplers);
         return samplers;
     } catch (error) {
         console.error('Failed to fetch or parse the Swagger JSON:', error);
@@ -166,13 +165,12 @@ const requestBody = {
     await this.initProgressRequest(data.id, prompt, message);
   }
   catch (error) {
-    console.error('Error in generating image:', error);
     ui.notifications.error(`Error while sending request to Horde AI: ${error.message}`);
   }
 }
 
 
-async initProgressRequest(generationId, prompt, message, attempt = 0, currentState = "undefined") {
+async initProgressRequest(generationId, prompt, message, attempt = 0, currentState = "undefined", initialDelay = 1000) {
   const maxAttempts = 100;
   const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
@@ -182,45 +180,45 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     return;
   }
 
-  try {
-    const statusResponse = await fetch(checkStatusUrl);
+  const delay = attempt === 0 ? initialDelay : 5000;
 
-    
-    if (!statusResponse.ok) {
-      throw new Error('Request failed with status ' + statusResponse.status);
-    }
-    
-    const statusData = await statusResponse.json();
+  setTimeout(async () => {
+    try {
+      const statusResponse = await fetch(checkStatusUrl);
+      if (!statusResponse.ok) {
+        throw new Error('Request failed with status ' + statusResponse.status);
+      }
 
-    // Update the UI with the current status
-    chatListener.displayHordeProgress(message, statusData);
+      const statusData = await statusResponse.json();
+      chatListener.displayHordeProgress(message, statusData);
 
-    if (currentState === "undefined" && attempt === 0) {
-      currentState = "idle";
-    }
+      if (currentState === "undefined" && attempt === 0) {
+        currentState = "idle";
+      }
 
-    if (!statusData.done && currentState !== "waiting") {
-      currentState = "waiting";
-    } else if (statusData.done && currentState !== "processing") {
-      currentState = "processing";
-    }
-    
-    // Image is still being processed, increment attempt count and poll again
-    if (!statusData.done) {
-      setTimeout(() => {
+      if (!statusData.done && currentState !== "waiting") {
+        currentState = "waiting";
+      } else if (statusData.done && currentState !== "processing") {
+        currentState = "processing";
+      }
+
+      if (!statusData.done) {
         this.initProgressRequest(generationId, prompt, message, attempt + 1, currentState);
-      }, 2500);
-    }
+      }
 
-    // Image generation is done, proceed to retrieve the image
-        if (statusData.done && currentState === "processing") {
-          await this.retrieveGeneratedImage(generationId, prompt, message);
-
-        }
-      } catch (error) {
-        console.error('Error fetching progress:', error);
+      if (statusData.done && currentState === "processing") {
+        await this.retrieveGeneratedImage(generationId, prompt, message);
+      }
+    } catch (error) {
+      if (attempt === 0) {
+        // Retry the initial call with a back-off strategy
+        this.initProgressRequest(generationId, prompt, message, attempt + 1, currentState, Math.min(delay * 2, 2500));
       }
     }
+  }, delay);
+}
+
+
     
 
 async retrieveGeneratedImage(generationId, prompt, message) {
