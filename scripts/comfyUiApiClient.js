@@ -79,6 +79,7 @@ async textToImg(prompt, message) {
 
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
   const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/arcane_artifex_simple.json";
+ 
 
   try {
       const responseWorkflow = await fetch(workflowPath);
@@ -97,7 +98,9 @@ async textToImg(prompt, message) {
           height: game.settings.get("arcane-artifex", "sdheight"),
           width: game.settings.get("arcane-artifex", "sdwidth"),
           prompt: prompt,
-          negative_prompt: game.settings.get("arcane-artifex", "negativePrompt")
+          negative_prompt: game.settings.get("arcane-artifex", "negativePrompt"),
+          stability_api_key: game.settings.get("arcane-artifex", "comfyUiStabilityApiKey"),
+          aspect_ratio: game.settings.get("arcane-artifex", "comfyUiS3dAspectRatio"),
       };
 
       // Substitute settings into the workflow
