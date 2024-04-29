@@ -431,13 +431,7 @@ export default function registerSettings() {
     default: {}
   });
 
-  game.settings.register("arcane-artifex", "comfyUiStabilityApiKey", {
-    name: "comfyUiStabilityApiKey",
-    scope: "world",
-    type: String,
-    default: "0000000000",
-    config: false,
-  });
+
 
 
   game.settings.register("arcane-artifex", "comfyUiWorkflowStoragePath", {
@@ -450,18 +444,15 @@ export default function registerSettings() {
     filePicker: "folder"
   });
 
-  game.settings.register("arcane-artifex", "comfyUiUseSd3", {
-    name: "comfyUiUseSd3",
+  game.settings.register("arcane-artifex", "stabilityApiKey", {
+    name: "stabilityApiKey",
     scope: "world",
+    type: String,
+    default: "0000000000",
     config: false,
-    type: Boolean,
-    default: false,
-    onChange: async () => {
-      await comfyUiApiClient.getComfyUISettings();
-    }
   });
 
-  game.settings.register("arcane-artifex", "comfyUiUseSd3Upscaler", {
+  game.settings.register("arcane-artifex", "stabilityUseSd3Upscaler", {
     name: "comfyUiUseSd3Upscaler",
     scope: "world",
     config: false,
@@ -472,7 +463,7 @@ export default function registerSettings() {
     }
   });
 
-  game.settings.register("arcane-artifex", "comfyUiS3dAspectRatio", {
+  game.settings.register("arcane-artifex", "stabilityS3dAspectRatio", {
     name: "comfyUiS3dAspectRatio",
     hint: "Select a predefined Stable Diffusion 3 aspect ratio",
     scope: "world",
@@ -491,8 +482,6 @@ export default function registerSettings() {
     },
     default: "1:1"
   });
-
-
 
   game.settings.register("arcane-artifex", "openAiApiKey", {
     name: "openAiApiKey",
@@ -547,7 +536,8 @@ export default function registerSettings() {
       stableHorde: "Stable Horde",
       localA1111: "Local Web UI (AUTOMATIC1111)",
       comfyUi: "ComfyUI",
-      openAI: "OpenAI"
+      openAI: "OpenAI",
+      stability: "Stability"
     },
     default: "ComfyUI",
     requiresReload: true,
@@ -560,6 +550,8 @@ export default function registerSettings() {
         await comfyUiApiClient.getComfyUISettings();
       } else if (value === "openAI") {
         await openAiApiClient.getOpenAiSettings();
+      } else if (value === "stability") {
+        await stabilityApiClient.getStabilitySettings();
       }
 
       console.log("Source changed to: ", value);
