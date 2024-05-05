@@ -7,6 +7,7 @@ import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 import { comfyUiApiClient } from "./comfyUiApiClient.js";
 import { openAiApiClient } from "./openAiApiClient.js";
+import stabilitySettings from "./stabilitySettings.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
 const defaultNegative = 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry';
@@ -106,7 +107,15 @@ export default function registerSettings() {
     restricted: true,
   });
 
-  // Register non-configurable settings
+  game.settings.registerMenu('arcane-artifex', 'stability-settings', {
+    name: 'Stability Settings',
+    label: 'Stability Settings',
+    icon: 'fas fa-cog',
+    type: stabilitySettings,
+    restricted: true,
+  });
+
+    // Register non-configurable settings
   game.settings.register("arcane-artifex", "connected", {
     name: "Connection Status",
     scope: "world",
@@ -452,34 +461,20 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "stabilityUseSd3Upscaler", {
-    name: "comfyUiUseSd3Upscaler",
+  game.settings.register("arcane-artifex", "stabilityModel", {
+    name: "stabilityModel",
     scope: "world",
     config: false,
-    type: Boolean,
-    default: false,
-    onChange: async () => {
-      await comfyUiApiClient.getComfyUISettings();
-    }
-  });
+    type: String,
+    default: "sd3_turbo"
+  })
 
-  game.settings.register("arcane-artifex", "stabilityS3dAspectRatio", {
-    name: "comfyUiS3dAspectRatio",
+  game.settings.register("arcane-artifex", "stabilityAspectRatio", {
+    name: "stabilityAspectRatio",
     hint: "Select a predefined Stable Diffusion 3 aspect ratio",
     scope: "world",
     config: false,
     type: String,
-    choices: {
-      "16:9": "2040x1152 (16:9, SD3)",
-      "9:16": "1152x2040 (9:16, SD3)",
-      "1:1": "1536x1536 (1:1, SD3)",
-      "21:9": "2336x992 (21:9, SD3)",
-      "9:21": "992x2336 (9:21, SD3)",
-      "2:3": "1248x1872 (2:3, SD3)",
-      "3:2": "1872x1248 (3:2, SD3)",
-      "4:5": "1368x1712 (4:5, SD3)",
-      "5:4": "1712x1368 (5:4, SD3)"
-    },
     default: "1:1"
   });
 
@@ -553,7 +548,6 @@ export default function registerSettings() {
       } else if (value === "stability") {
         await stabilityApiClient.getStabilitySettings();
       }
-
       console.log("Source changed to: ", value);
     }
   });

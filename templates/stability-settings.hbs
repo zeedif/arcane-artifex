@@ -1,0 +1,44 @@
+<form autocomplete="on">
+  <div class="sheet-body flexrow">
+    <section>
+      <div class="api">
+        <h2>STABILITY API KEY</h2>
+        <div class="form-group">
+          <label>API Key</label>
+          <div class="form-fields">
+            <input type="password" name="stability_api_key" value="{{stability_api_key}}">
+          </div>
+        </div>
+      </div>
+
+      <div class="aspect_ratio">
+        <h2>ASPECT RATIO</h2> 
+        <h4>active aspect_ratio: {{stability_aspect_ratio}}</h4> 
+        <select id="aspect_ratio-select" name="stability_aspect_ratio">
+          <option>change aspect_ratio here</option>
+          {{#each stability_aspect_ratios}}
+            <option value="{{this.value}}" {{#if (eq this.value ../stability_aspect_ratio)}}selected{{/if}}>{{this.text}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </section>
+  </div>
+<div class="model">
+    <h2>MODEL</h2>
+        <h4>active model: {{stability_model}}</h4> 
+        <select id="model-select" name="stability_model">
+          <option>change model here</option>
+          {{#each stability_models}}
+            <option value="{{this.value}}" {{#if (eq this.value ../stability_model)}}selected{{/if}}>{{this.text}}</option>
+          {{/each}}
+        </select>
+    </div>
+</div>
+
+
+  <div class="sheet-footer">
+    <button type="submit"> 
+      <i class="far fa-save"></i> {{ localize "Submit"}} 
+    </button>
+  </div>
+</form>

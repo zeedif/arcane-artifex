@@ -7,6 +7,7 @@ import aiHordeApiClient from './aiHordeApiClient.js';
 import HordeSettings from './aiHordeSettings.js';
 import openAiApiClient from './openAiApiClient.js';
 import comfyUiApiClient from './comfyUiApiClient.js';
+import stabilityApiClient from './stabilityApiClient.js';
 
 Hooks.on('init', async function () {
     CONFIG.debug.hooks = true;
@@ -31,6 +32,7 @@ Hooks.once('ready', async function () {
         aiHordeApiClient.checkStatus();
         comfyUiApiClient.checkStatus();
         openAiApiClient.checkStatus();
+        stabilityApiClient.checkStatus();
     }
 });
 
