@@ -19,7 +19,6 @@ export default class stabilitySettings extends FormApplication {
             stability_model: game.settings.get("arcane-artifex", "stabilityModel"),
             stability_models: this.prepareModels()
         };
-        console.warn("context", context);
         return context;
     }
 
@@ -44,7 +43,7 @@ export default class stabilitySettings extends FormApplication {
     prepareModels() {
         const stabilityModels = {
             "sd3": "SD3",
-            "sd3_turbo": "SD3 Turbo",
+            "sd3-turbo": "SD3 Turbo",
           };
         return Object.keys(stabilityModels).map(key => ({
             value: key,

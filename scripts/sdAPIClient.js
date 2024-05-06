@@ -3,6 +3,7 @@ import aiHordeApiClient from './aiHordeApiClient.js';
 import localA1111APIClient from './localA1111ApiClient.js';
 import comfyUiApiClient from './comfyUiApiClient.js';
 import openAiApiClient from './openAiApiClient.js';
+import stabilityApiClient from './stabilityApiClient.js';
 
 class SdAPIClient {
     constructor() {
@@ -61,9 +62,9 @@ class SdAPIClient {
             if (game.settings.get("arcane-artifex", "working")) {
               return ui.notifications.warn("Please wait until the previous job is finished");
             }
-        
+          
             const selectedSource = game.settings.get("arcane-artifex", "source");
-        
+          
             switch (selectedSource) {
               case "stableHorde":
                 await aiHordeApiClient.textToImg(prompt, message);
@@ -71,16 +72,19 @@ class SdAPIClient {
               case "localA1111":
                 await localA1111APIClient.textToImg(prompt, message);
                 break;
-            case "comfyUi":
+              case "comfyUi":
                 await comfyUiApiClient.textToImg(prompt, message);
                 break;
               case "openAI":
                 await openAiApiClient.textToImg(prompt, message);
                 break;
+              case "stability":
+                await stabilityApiClient.textToImg(prompt, message);
+                break;
               default:
                 ui.notifications.warn('Invalid source selected');
             }
-        }
+          }
     
         async changeModel(title) {
             return await this.postOption({

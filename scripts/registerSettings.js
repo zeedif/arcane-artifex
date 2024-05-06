@@ -466,7 +466,7 @@ export default function registerSettings() {
     scope: "world",
     config: false,
     type: String,
-    default: "sd3_turbo"
+    default: "sd3-turbo"
   })
 
   game.settings.register("arcane-artifex", "stabilityAspectRatio", {

@@ -364,7 +364,7 @@ async updateActorImg(ev) {
 
 
 
-    async createImage(data, prompt, message) {
+      async createImage(data, prompt, message) {
         let source = game.settings.get("arcane-artifex", "source");
     
         let images = [];
@@ -385,16 +385,26 @@ async updateActorImg(ev) {
                 images.push(newImage);
             }
         } else if (source === "openAI") {
-            // Correctly handle the base64 string directly passed as `data`
             images.push({
                 id: foundry.utils.randomID(),
-                data: "data:image/png;base64," + data  // Use `data` directly as it's the base64 string
+                data: "data:image/png;base64," + data
             });
+        } else if (source === "stability") {
+            if (typeof data === 'object' && data.images && data.images.length > 0) {
+                for (let imgData of data.images) {
+                    images.push({
+                        id: imgData.id,
+                        data: imgData.data
+                    });
+                }
+            } else {
+                console.error('Unexpected data format for Stability source:', data);
+                return;
+            }
         } else {
             console.error('Unknown source for image creation:', source);
             return;
         }
-    
         try {
             await this.updateGMMessage(message, {
                 images: images,
