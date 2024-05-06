@@ -99,8 +99,6 @@ async textToImg(prompt, message) {
           width: game.settings.get("arcane-artifex", "sdwidth"),
           prompt: prompt,
           negative_prompt: game.settings.get("arcane-artifex", "negativePrompt"),
-          stability_api_key: game.settings.get("arcane-artifex", "comfyUiStabilityApiKey"),
-          aspect_ratio: game.settings.get("arcane-artifex", "comfyUiS3dAspectRatio"),
       };
 
       // Substitute settings into the workflow

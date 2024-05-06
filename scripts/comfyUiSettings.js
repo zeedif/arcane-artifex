@@ -29,21 +29,6 @@ export default class ComfyUISettings extends FormApplication {
         context.comfyui_schedulers = game.settings.get("arcane-artifex", "comfyUiSchedulers");
         context.comfyui_upscalers = game.settings.get("arcane-artifex", "comfyUiUpscalers");
         context.comfyui_loras = game.settings.get("arcane-artifex", "comfyUiLoras");
-        context.comfyui_stability_api_key = game.settings.get("arcane-artifex", "comfyUiStabilityApiKey");
-        context.comfyui_usesd3 = game.settings.get("arcane-artifex", "comfyUiUseSd3");
-        context.comfyui_usesd3upscaler = game.settings.get("arcane-artifex", "comfyUiUseSd3Upscaler");
-        context.comfyui_s3d_aspect_ratio = game.settings.get("arcane-artifex", "comfyUiS3dAspectRatio");
-        context.comfyui_s3d_aspect_ratio_choices = {
-            "16:9": "2040x1152 (16:9, SD3)",
-            "9:16": "1152x2040 (9:16, SD3)",
-            "1:1": "1536x1536 (1:1, SD3)",
-            "21:9": "2336x992 (21:9, SD3)",
-            "9:21": "992x2336 (9:21, SD3)",
-            "2:3": "1248x1872 (2:3, SD3)",
-            "3:2": "1872x1248 (3:2, SD3)",
-            "4:5": "1368x1712 (4:5, SD3)",
-            "5:4": "1712x1368 (5:4, SD3)"
-          };
 
         console.warn("Context after adding data:", context);
 
@@ -54,10 +39,6 @@ export default class ComfyUISettings extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         this.changeLoraPrompt();
-
-        html.find('[name="comfyui_usesd3"]').change(event => this.onToggleUseSd3Change(event));
-        html.find('[name="comfyui_usesd3upscaler"]').change(event => this.onToggleUseSd3UpscalerChange(event));
-        html.find('[name="comfyui_stability_api_key"]').change(event => this.onAPIKeyChange(event));
 
         html[0].querySelector('select#change-model').addEventListener('change', this.changeModel.bind(this));
         html[0].querySelector('select#change-sampler').addEventListener('change', this.changeSampler.bind(this));
@@ -159,26 +140,6 @@ export default class ComfyUISettings extends FormApplication {
         await game.settings.set('arcane-artifex', 'comfyUiLoras', loras);
         this.context.loraPrompt = loraPrompt;
     }
-
-    async onToggleUseSd3Change(event) {
-        const isChecked = event.target.checked;
-        await game.settings.set("arcane-artifex", "comfyUiUseSd3", isChecked);
-        this.render(true);
-    }
-
-    async onToggleUseSd3UpscalerChange(event) {
-        const isChecked = event.target.checked;
-        await game.settings.set("arcane-artifex", "comfyUiUseSd3Upscaler", isChecked);
-        this.render(true);
-    }
-
-    async onAPIKeyChange(event) {
-        const newAPIKey = event.target.value;
-        await game.settings.set("arcane-artifex", "comfyUiStabilityApiKey", newAPIKey);
-        this.render(true);
-    }
-
-
 
     _updateObject(event, formData) {
         const data = { ...this.context, ...expandObject(formData) };
