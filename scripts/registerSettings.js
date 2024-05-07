@@ -177,7 +177,7 @@ export default function registerSettings() {
     name: "hordeUrl",
     scope: "world",
     type: String,
-    default: "https://stablehorde.net",
+    default: "https://aihorde.net",
     config: false,
   });
 
@@ -568,22 +568,28 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "openAiResolutionOptions", {
-    name: "openAiResolutionOptions",
-    hint: "Select a predefined DALLE-3 resolution",
+  game.settings.register("arcane-artifex", "openAiResolutionOption", {
+    name: "openAiResolutionOption",
     scope: "world",
     config: false,
     type: String,
-    choices: Object.keys(openAiResolutionOptions).reduce((choices, key) => {
-      choices[key] = openAiResolutionOptions[key].name;
-      return choices;
-    }, {}),
-    default: "dalle_res_1024x1024",
-    onChange: async value => {
-      const selectedResolution = openAiResolutionOptions[value];
-      await game.settings.set("arcane-artifex", "sdwidth", selectedResolution.width);
-      await game.settings.set("arcane-artifex", "sdheight", selectedResolution.height);
-    }
+    default: ""
+  });
+
+  game.settings.register("arcane-artifex", "openAiHeight", {
+    name: "openAiHeight",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 1024
+  });
+
+  game.settings.register("arcane-artifex", "openAiWidth", {
+    name: "openAiWidth",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 1024
   });
 
   game.settings.register("arcane-artifex", "openAiHd", {

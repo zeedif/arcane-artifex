@@ -1,5 +1,3 @@
-import { defaultSettings } from './registerSettings.js';
-
 export default class openAiSettings extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -14,68 +12,56 @@ export default class openAiSettings extends FormApplication {
     }
 
     async getData() {
-        let context = {
-            openai_api_key: game.settings.get("arcane-artifex", "openAiApiKey"),
-            openai_resolution: game.settings.get("arcane-artifex", "openAiResolutionOptions"),
-            openai_resolutions: this.prepareResolutionOptions(),
-            openai_hd: game.settings.get("arcane-artifex", "openAiHd"),
-            openai_vivid: game.settings.get("arcane-artifex", "openAiVivid")
-        };
-        console.warn("context", context);
+        let context = {};
+        context.openai_api_key = game.settings.get("arcane-artifex", "openAiApiKey");
+        context.openai_resolution = game.settings.get("arcane-artifex", "openAiResolutionOption");
+        context.openai_hd = game.settings.get("arcane-artifex", "openAiHd");
+        context.openai_vivid = game.settings.get("arcane-artifex", "openAiVivid");
+
+        const openAiResolutionOptions = this.prepareResolutionOptions();
+        context.openai_resolutions = Object.entries(openAiResolutionOptions).map(([key, value]) => ({ text: key, value: key }));
+
         return context;
     }
 
     prepareResolutionOptions() {
         const openAiResolutionOptions = {
-            "dalle_res_1024x1024": { width: 1024, height: 1024, name: "1024x1024 (1:1)" },
-            "dalle_res_1792x1024": { width: 1792, height: 1024, name: "1792x1024 (Landscape)" },
-            "dalle_res_1024x1792": { width: 1024, height: 1792, name: "1024x1792 (Portrait)" }
+            "1024x1024 (1:1)": { width: 1024, height: 1024},
+            "1792x1024 (Landscape)": { width: 1792, height: 1024 },
+            "1024x1792 (Portrait)": { width: 1024, height: 1792  }
         };
-        return Object.keys(openAiResolutionOptions).map(key => ({
-            value: key,
-            text: openAiResolutionOptions[key].name
-        }));
+        return openAiResolutionOptions;
     }
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="openai_api_key"]').change(event => this.onAPIKeyChange(event));
-        html.find('select[name="openai_resolution"]').on("change", async (event) => {
-            await game.settings.set("arcane-artifex", "openAiResolutionOptions", event.target.value);
-            this.render();
+        html.find('[name="openai_api_key"]').change(async (event) => {
+            await game.settings.set("arcane-artifex", "openAiApiKey", event.target.value);
+            this.render(true);
         });
-        // Update handlers for HD and Vivid checkboxes
-        html.find('[name="openai_hd"]').change(event => this.onSettingChange(event, "openAiHd"));
-        html.find('[name="openai_vivid"]').change(event => this.onSettingChange(event, "openAiVivid"));
-    }
-    
-    async onSettingChange(event, settingKey) {
-        const newValue = event.target.checked;
-        await game.settings.set("arcane-artifex", settingKey, newValue);
-    }
-    
-    
+        html.find('[name="openai_hd"]').change(async (event) => {
+            await game.settings.set("arcane-artifex", "openAiHd", event.target.checked);
+        });
+        html.find('[name="openai_vivid"]').change(async (event) => {
+            await game.settings.set("arcane-artifex", "openAiVivid", event.target.checked);
+        });
 
-    async onAPIKeyChange(event) {
-        const newAPIKey = event.target.value;
-        await game.settings.set("arcane-artifex", "openAiApiKey", newAPIKey);
-        this.render(true);
+        html.find('select[name="openai_resolution"]').change(async (event) => {
+            const openAiResolutionOptions = this.prepareResolutionOptions();
+            const resolutionObject = openAiResolutionOptions[event.target.value];
+            const { width, height } = resolutionObject;
+
+            await game.settings.set("arcane-artifex", "openAiResolutionOption", event.target.value);
+            await game.settings.set("arcane-artifex", "openAiHeight", height);
+            await game.settings.set("arcane-artifex", "openAiWidth", width);
+
+            this.render(true);
+
+        });
     }
 
     async _updateObject(event, formData) {
-        if (formData.openai_api_key !== undefined) {
-            await game.settings.set("arcane-artifex", "openAiApiKey", formData.openai_api_key);
-        }
-        if (formData.openai_resolution !== undefined) {
-            await game.settings.set("arcane-artifex", "openAiResolutionOptions", formData.openai_resolution);
-        }
-        // Handle HD and Vivid settings
-        if (formData.openai_hd !== undefined) {
-            await game.settings.set("arcane-artifex", "openAiHd", formData.openai_hd);
-        }
-        if (formData.openai_vivid !== undefined) {
-            await game.settings.set("arcane-artifex", "openAiVivid", formData.openai_vivid);
-        }
+        this.render(true);
     }
     
 }

@@ -80,7 +80,7 @@ class OpenAiApiClient {
       prompt: prompt,
       model: 'dall-e-3',
       n: 1,
-      size: game.settings.get("arcane-artifex", "sdwidth") + 'x' + game.settings.get("arcane-artifex", "sdheight"),
+      size: game.settings.get("arcane-artifex", "openAiWidth") + 'x' + game.settings.get("arcane-artifex", "openAiHeight"),
       quality: game.settings.get("arcane-artifex", "openAiHd") ? 'hd' : 'standard',  // Toggle between 'hd' and 'standard'
       style: game.settings.get("arcane-artifex", "openAiVivid") ? 'vivid' : 'natural',  // Toggle between 'vivid' and 'natural'
       response_format: 'b64_json'  // Use base64-encoded image directly

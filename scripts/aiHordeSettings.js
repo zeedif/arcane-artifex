@@ -28,8 +28,6 @@ export default class HordeSettings extends FormApplication {
         const hordeResolutionOptions = this.prepareResolutionOptions();
         context.horde_resolutions = Object.entries(hordeResolutionOptions).map(([key, value]) => ({ text: key, value: key }));
 
-        this.context = context;
-
         return context;
     }
 
@@ -104,10 +102,9 @@ const hordeResolutionOptions = {
         
             this.render(true);
         });
-        
     }
+    
     async _updateObject(event, formData) {
-
         this.render(true);
     }
 }
