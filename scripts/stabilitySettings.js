@@ -12,14 +12,15 @@ export default class stabilitySettings extends FormApplication {
     }
 
     async getData() {
-        let context = {
-            stability_api_key: game.settings.get("arcane-artifex", "stabilityApiKey"),
-            stability_aspect_ratio: game.settings.get("arcane-artifex", "stabilityAspectRatio"),
-            stability_aspect_ratios: this.prepareAspectRatios(),
-            stability_model: game.settings.get("arcane-artifex", "stabilityModel"),
-            stability_models: this.prepareModels()
-        };
+        let context = {};
+        context.stability_api_key = game.settings.get("arcane-artifex", "stabilityApiKey");
+        context.stability_aspect_ratio = game.settings.get("arcane-artifex", "stabilityAspectRatio");
+        context.stability_model = game.settings.get("arcane-artifex", "stabilityModel");
+        context.stability_aspect_ratios = this.prepareAspectRatios();
+        context.stability_models = this.prepareModels();
+
         return context;
+
     }
 
     prepareAspectRatios() {
@@ -53,34 +54,25 @@ export default class stabilitySettings extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="stability_api_key"]').change(event => this.onAPIKeyChange(event));
-        html.find('select[name="stability_aspect_ratio"]').on("change", async (event) => {
-            await game.settings.set("arcane-artifex", "stabilityAspectRatio", event.target.value);
-            this.render();
-        });
-        html.find('select[name="stability_model"]').on("change", async (event) => {
-            await game.settings.set("arcane-artifex", "stabilityModel", event.target.value);
-            this.render();
+        html.find('[name="stability_api_key"]').change(async (event) => {
+            await game.settings.set("arcane-artifex", "stabilityApiKey", event.target.value);
+            this.render(true);
         });
 
-    }
-          async onAPIKeyChange(event) {
-        const newAPIKey = event.target.value;
-        await game.settings.set("arcane-artifex", "stabilityApiKey", newAPIKey);
-        this.render(true);
+        html.find('[name="stability_aspect_ratio"]').change(async (event) => {
+            await game.settings.set("arcane-artifex", "stabilityAspectRatio", event.target.value);
+            this.render(true);
+        });
+
+        html.find('[name="stability_model"]').change(async (event) => {
+            await game.settings.set("arcane-artifex", "stabilityModel", event.target.value);
+            this.render(true);
+        });
+
     }
 
     async _updateObject(event, formData) {
-        if (formData.stability_api_key !== undefined) {
-            await game.settings.set("arcane-artifex", "stabilityApiKey", formData.stability_api_key);
-        }
-        if (formData.stability_aspect_ratio !== undefined) {
-            await game.settings.set("arcane-artifex", "stabilityAspectRatio", formData.stability_aspect_ratio);
-        }
-        if (formData.stability_model !== undefined) {
-            await game.settings.set("arcane-artifex", "stabilityModel", formData.stability_model);
-        }
-
+        this.render(true);
     }
     
 }

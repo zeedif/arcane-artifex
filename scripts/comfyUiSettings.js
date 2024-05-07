@@ -30,8 +30,6 @@ export default class ComfyUISettings extends FormApplication {
         context.comfyui_upscalers = game.settings.get("arcane-artifex", "comfyUiUpscalers");
         context.comfyui_loras = game.settings.get("arcane-artifex", "comfyUiLoras");
 
-        console.warn("Context after adding data:", context);
-
         this.context = context;
         return context;
     }

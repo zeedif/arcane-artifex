@@ -47,7 +47,7 @@ async getSettings() {
   const connection = game.settings.get('arcane-artifex', 'connected');
 
   if (!connection) {
-    console.warn("Local ComfyUI connection not established. Skipping API calls.");
+    console.log("Local ComfyUI connection not established. Skipping API calls.");
     return;
   }
 

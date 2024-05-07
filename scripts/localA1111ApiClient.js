@@ -43,7 +43,7 @@ async checkStatus() {
         const connection = game.settings.get('arcane-artifex', 'connected');
 
         if (!connection) {
-            console.warn("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
+            console.log("Local A1111 Stable Diffusion connection not established. Skipping API calls.");
             return;
         }
         await this.getA1111EndpointSettings();
@@ -152,7 +152,7 @@ async checkStatus() {
 async initProgressRequest(message, attempt = 0, currentState = "undefined") {
   const maxAttempts = 100;
   if (attempt >= maxAttempts) {
-      console.warn("arcane-artifex: Max progress check attempts reached, stopping further checks.");
+      console.log("arcane-artifex: Max progress check attempts reached, stopping further checks.");
       return;
   }
 

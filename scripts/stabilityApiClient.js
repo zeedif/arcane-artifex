@@ -27,7 +27,7 @@ class StabilityApiClient {
         console.log('Stability API response:', responseData);
   
         if (response.ok) {
-          console.warn('Stability API is accessible and operational.');
+          console.log('Stability API is accessible and operational.');
           ui.notifications.info(`Stability API is accessible. Email: ${responseData.email}`);
           return `Stability API is accessible and functioning. Email: ${responseData.email}`;
         } else if (response.status === 401) {
@@ -53,7 +53,7 @@ class StabilityApiClient {
     const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {
-      console.warn("Stability connections not established. Skipping API calls.");
+      console.log("Stability connections not established. Skipping API calls.");
       return;
     }
   }

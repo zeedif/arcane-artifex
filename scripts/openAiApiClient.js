@@ -62,7 +62,7 @@ class OpenAiApiClient {
     const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {
-      console.warn("OpenAI connections not established. Skipping API calls.");
+      console.log("OpenAI connections not established. Skipping API calls.");
       return;
     }
 

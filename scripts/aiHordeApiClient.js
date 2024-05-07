@@ -33,7 +33,7 @@ class HordeAPIClient {
     const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {
-      console.warn("Local AI Horde connection not established. Skipping API calls.");
+      console.log("Local AI Horde connection not established. Skipping API calls.");
       return;
     }
 
