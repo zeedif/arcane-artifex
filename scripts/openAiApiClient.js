@@ -58,7 +58,7 @@ class OpenAiApiClient {
 
   
 
-  async getOpenAiSettings() {
+  async getSettings() {
     const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {

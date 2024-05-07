@@ -19,7 +19,7 @@ async checkStatus() {
                     console.log('A1111 server is accessible at:', a1111url);
                     ui.notifications.info('A1111 server is accessible.');
                     await game.settings.set("arcane-artifex", "connected", true);
-                    await this.getLocalA1111Settings();
+                    await this.getSettings();
                     return 'A1111 API is accessible.';
                 } else {
                     console.error('A1111 server is not accessible: response code', response.status, 'at URL:', a1111url);
@@ -39,7 +39,7 @@ async checkStatus() {
     }
     
 
-    async getLocalA1111Settings() {
+    async getSettings() {
         const connection = game.settings.get('arcane-artifex', 'connected');
 
         if (!connection) {

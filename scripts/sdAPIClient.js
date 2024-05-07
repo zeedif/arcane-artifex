@@ -66,7 +66,7 @@ class SdAPIClient {
             const selectedSource = game.settings.get("arcane-artifex", "source");
           
             switch (selectedSource) {
-              case "stableHorde":
+              case "aiHorde":
                 await aiHordeApiClient.textToImg(prompt, message);
                 break;
               case "localA1111":

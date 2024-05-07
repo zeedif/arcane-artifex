@@ -75,7 +75,7 @@ async updateActorImg(ev) {
         } else {
             let imgId = ev.currentTarget.closest(".stable-image-block").dataset.imageId;
             const selectedSource = game.settings.get('arcane-artifex', 'source');
-            const fileExtension = selectedSource === 'stableHorde' ? 'webp' : 'png';
+            const fileExtension = selectedSource === 'aiHorde' ? 'webp' : 'png';
             let filename = `${actor.name}_${imgId}.${fileExtension}`;
             await stableFileManager.saveBase64(filename, src).then(url => {
                 actor.update({ img: url });
@@ -166,7 +166,7 @@ async updateActorImg(ev) {
                 const selectedSource = game.settings.get('arcane-artifex', 'source');
                 if (selectedSource === 'localA1111') {
                     localA1111APIClient.initProgressRequest(msg);
-                } else if (selectedSource === 'stableHorde') {
+                } else if (selectedSource === 'aiHorde') {
                     aiHordeApiClient.initProgressRequest(msg.id, msg.content, msg, 0, "undefined");
                 } else if (selectedSource === 'openAI') {
                     // Assuming no progress tracking is required, directly update as complete
@@ -376,7 +376,7 @@ async updateActorImg(ev) {
                     data: "data:image/png;base64," + imgData
                 });
             }
-        } else if (source === "stableHorde" || source === "comfyUi") {
+        } else if (source === "aiHorde" || source === "comfyUi") {
             for (let imgData of data.images) {
                 let newImage = {
                     id: imgData.id,

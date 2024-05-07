@@ -22,7 +22,7 @@ class ComfyUiApiClient {
                 console.log('ComfyUI server is accessible at:', comfyUrl);
                 ui.notifications.info('ComfyUI server is accessible.');
                 await game.settings.set("arcane-artifex", "connected", true);
-                await this.getComfyUISettings();
+                await this.getSettings();
                 //await this.initWebSocket()
                 return 'ComfyUI API is accessible.';
             } else {
@@ -43,7 +43,7 @@ class ComfyUiApiClient {
     }
 }
 
-async getComfyUISettings() {
+async getSettings() {
   const connection = game.settings.get('arcane-artifex', 'connected');
 
   if (!connection) {

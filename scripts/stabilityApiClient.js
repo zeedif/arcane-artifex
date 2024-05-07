@@ -49,7 +49,7 @@ class StabilityApiClient {
     }
   }
 
-  async getStabilitySettings() {
+  async getSettings() {
     const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {

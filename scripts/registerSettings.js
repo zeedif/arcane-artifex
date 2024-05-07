@@ -2,11 +2,12 @@ import stableFileManager from "./StableFileManager.js";
 import openAiSettings from "./openAiSettings.js";
 import localA1111Settings from "./localA1111Settings.js";
 import localA1111APIClient from "./localA1111ApiClient.js";
-import HordeSettings from "./aiHordeSettings.js";
+import hordeSettings from "./aiHordeSettings.js";
 import comfyUiSettings from "./comfyUiSettings.js";
 import { aiHordeApiClient } from "./aiHordeApiClient.js";
 import { comfyUiApiClient } from "./comfyUiApiClient.js";
 import { openAiApiClient } from "./openAiApiClient.js";
+import { stabilityApiClient } from "./stabilityApiClient.js";
 import stabilitySettings from "./stabilitySettings.js";
 
 const defaultPrefix = 'best quality, absurdres, aesthetic,';
@@ -51,51 +52,38 @@ const openAiResolutionOptions = {
 
 
 const defaultSettings = {
-
-  horde_model: '',
-  horde_models: [],
-
-
-
   prompts: promptTemplates,
-
-  style: 'Default',
-  styles: defaultStyles,
-
   // arcane-artifex old settings TO BE DEPRECATED
-  batchCount: 4,
   loras: [],
   styles: [],
   loraPrompt: '',
   activeLoras: [],
 };
 
-/**
- * Registers the settings for the Stable Images module.
- */
-export default function registerSettings() {
-  // Register menus
-  game.settings.registerMenu("arcane-artifex", "stable-image-menu", {
-    name: "Local A1111 Images Settings",
-    label: "Local A1111 Images Settings",
-    icon: "fas fa-images",
-    type: localA1111Settings,
-    restricted: true
-  });
 
-  game.settings.registerMenu('arcane-artifex', 'aihorde-settings', {
-    name: 'AI Horde Settings',
-    label: 'AI Horde Settings',
-    icon: 'fas fa-cog',
-    type: HordeSettings,
-    restricted: true,
-  });
+export default function registerSettings() {
 
   game.settings.registerMenu('arcane-artifex', 'comfyui-settings', {
     name: 'ComfyUI Settings',
     label: 'ComfyUI Settings',
     icon: 'fas fa-cog',
     type: comfyUiSettings,
+    restricted: true,
+  });
+
+  game.settings.registerMenu("arcane-artifex", "locala1111-settings", {
+    name: "Local A1111 Settings",
+    label: "Local A1111 Settings",
+    icon: "fas fa-cog",
+    type: localA1111Settings,
+    restricted: true
+  });
+
+  game.settings.registerMenu('arcane-artifex', 'horde-settings', {
+    name: 'AI Horde Settings',
+    label: 'AI Horde Settings',
+    icon: 'fas fa-cog',
+    type: hordeSettings,
     restricted: true,
   });
 
@@ -114,6 +102,51 @@ export default function registerSettings() {
     type: stabilitySettings,
     restricted: true,
   });
+
+  // Register main configuration page options
+  game.settings.register("arcane-artifex", "source", {
+    name: "Source",
+    hint: "Select the source for image generation",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      aiHorde: "AI Horde",
+      localA1111: "Local Web UI (AUTOMATIC1111)",
+      comfyUi: "ComfyUI",
+      openAI: "OpenAI",
+      stability: "Stability"
+    },
+    default: "ComfyUI",
+    requiresReload: true,
+    onChange: async value => {
+      if (value === "localA1111") {
+        await localA1111APIClient.getSettings();
+      } else if (value === "aiHorde") {
+        console.error("selected aiHorde");
+        await aiHordeApiClient.getSettings();
+      } else if (value === "comfyUi") {
+        await comfyUiApiClient.getSettings();
+      } else if (value === "openAI") {
+        await openAiApiClient.getSettings();
+      } else if (value === "stability") {
+        await stabilityApiClient.getSettings();
+      }
+      console.log("Source changed to: ", value);
+    }
+  });
+
+  game.settings.register("arcane-artifex", "stableStoragePath", {
+    name: "Storage Path",
+    hint: "Set the path for storing generated images",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "",
+    filePicker: "folder"
+  });
+
+
 
     // Register non-configurable settings
   game.settings.register("arcane-artifex", "connected", {
@@ -140,13 +173,62 @@ export default function registerSettings() {
     config: false,
   });
 
-  game.settings.register("arcane-artifex", "hordeURL", {
-    name: "hordeURL",
+  game.settings.register("arcane-artifex", "hordeUrl", {
+    name: "hordeUrl",
     scope: "world",
     type: String,
     default: "https://stablehorde.net",
     config: false,
   });
+
+game.settings.register("arcane-artifex", "localA1111Height", {
+    name: "Image Height",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+  
+  game.settings.register("arcane-artifex", "hordeHeight", {
+    name: "Image Height",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+  
+  game.settings.register("arcane-artifex", "comfyUiHeight", {
+    name: "Image Height",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+  
+  game.settings.register("arcane-artifex", "localA1111Width", {
+    name: "Image Width",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+
+  game.settings.register("arcane-artifex", "hordeWidth", {
+    name: "Image Width",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+
+  game.settings.register("arcane-artifex", "comfyUiWidth", {
+    name: "Image Width",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+
 
   game.settings.register("arcane-artifex", "sdwidth", {
     name: "Image Width",
@@ -317,7 +399,7 @@ export default function registerSettings() {
     type: Boolean,
     default: false,
     onChange: async () => {
-      await aiHordeApiClient.getHordeSettings();
+      await aiHordeApiClient.getSettings();
     }
   });
 
@@ -328,7 +410,7 @@ export default function registerSettings() {
     type: Boolean,
     default: false,
     onChange: async () => {
-      await aiHordeApiClient.getHordeSettings();
+      await aiHordeApiClient.getSettings();
     }
   });
 
@@ -520,47 +602,232 @@ export default function registerSettings() {
     default: true
   });
 
-  // Register main configuration page options
-  game.settings.register("arcane-artifex", "source", {
-    name: "Source",
-    hint: "Select the source for image generation",
+
+  // For image height settings
+  game.settings.register("arcane-artifex", "localA1111Height", {
+    name: "Image Height",
     scope: "world",
-    config: true,
+    config: false,
+    type: Number,
+    default: 512
+  });
+  game.settings.register("arcane-artifex", "hordeResolutionOption", {
+    name: "hordeResolutionOption",
+    scope: "world",
+    config: false,
     type: String,
-    choices: {
-      stableHorde: "Stable Horde",
-      localA1111: "Local Web UI (AUTOMATIC1111)",
-      comfyUi: "ComfyUI",
-      openAI: "OpenAI",
-      stability: "Stability"
-    },
-    default: "ComfyUI",
-    requiresReload: true,
-    onChange: async value => {
-      if (value === "localA1111") {
-        await localA1111APIClient.getLocalA1111Settings();
-      } else if (value === "stableHorde") {
-        await aiHordeApiClient.getHordeSettings();
-      } else if (value === "comfyUi") {
-        await comfyUiApiClient.getComfyUISettings();
-      } else if (value === "openAI") {
-        await openAiApiClient.getOpenAiSettings();
-      } else if (value === "stability") {
-        await stabilityApiClient.getStabilitySettings();
-      }
-      console.log("Source changed to: ", value);
-    }
+    default: ""
   });
 
-  game.settings.register("arcane-artifex", "stableStoragePath", {
-    name: "Storage Path",
-    hint: "Set the path for storing generated images",
+  game.settings.register("arcane-artifex", "hordeHeight", {
+    name: "hordeResolutionOption",
     scope: "world",
-    config: true,
-    type: String,
-    default: "",
-    filePicker: "folder"
+    config: false,
+    type: Number,
+    default: 512
   });
+
+  game.settings.register("arcane-artifex", "comfyUiHeight", {
+    name: "Image Height",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 512
+  });
+
+  // For CFG scale settings
+  game.settings.register("arcane-artifex", "localA1111CfgScale", {
+    name: "CFG Scale",
+    hint: "Set the CFG scale value",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1, max: 30, step: 0.5 },
+    default: 1.5
+  });
+  game.settings.register("arcane-artifex", "hordeCfgScale", {
+    name: "CFG Scale",
+    hint: "Set the CFG scale value",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1, max: 30, step: 0.5 },
+    default: 1.5
+  });
+  game.settings.register("arcane-artifex", "comfyUiCfgScale", {
+    name: "CFG Scale",
+    hint: "Set the CFG scale value",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1, max: 30, step: 0.5 },
+    default: 1.5
+  });
+
+  // For sampler steps settings
+  game.settings.register("arcane-artifex", "localA1111SamplerSteps", {
+    name: "Sampler Steps",
+    hint: "Set the number of sampler steps",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1, max: 150, step: 1 },
+    default: 20
+  });
+  game.settings.register("arcane-artifex", "hordeSamplerSteps", {
+    name: "Sampler Steps",
+    hint: "Set the number of sampler steps",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1, max: 150, step: 1 },
+    default: 20
+  });
+  game.settings.register("arcane-artifex", "comfyUiSamplerSteps", {
+    name: "Sampler Steps",
+    hint: "Set the number of sampler steps",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1, max: 150, step: 1 },
+    default: 20
+  });
+
+  // For restore faces settings
+  game.settings.register("arcane-artifex", "localA1111RestoreFaces", {
+    name: "Restore Faces",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+  game.settings.register("arcane-artifex", "hordeRestoreFaces", {
+    name: "Restore Faces",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+  game.settings.register("arcane-artifex", "comfyUiRestoreFaces", {
+    name: "Restore Faces",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+
+  // For hires fix settings
+  game.settings.register("arcane-artifex", "localA1111EnableHr", {
+    name: "Hires. Fix",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+  game.settings.register("arcane-artifex", "hordeEnableHr", {
+    name: "Hires. Fix",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+  game.settings.register("arcane-artifex", "comfyUiEnableHr", {
+    name: "Hires. Fix",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true
+  });
+
+  // For HR scale settings
+  game.settings.register("arcane-artifex", "localA1111HrScale", {
+    name: "Upscale by",
+    hint: "What to multiply the resolution by",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1.0, max: 4.0, step: 0.1 },
+    default: 2.0
+  });
+  game.settings.register("arcane-artifex", "hordeHrScale", {
+    name: "Upscale by",
+    hint: "What to multiply the resolution by",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1.0, max: 4.0, step: 0.1 },
+    default: 2.0
+  });
+  game.settings.register("arcane-artifex", "comfyUiHrScale", {
+    name: "Upscale by",
+    hint: "What to multiply the resolution by",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 1.0, max: 4.0, step: 0.1 },
+    default: 2.0
+  });
+
+  // For denoising strength settings
+  game.settings.register("arcane-artifex", "localA1111DenoisingStrength", {
+    name: "Hires. Fix Denoising Strength",
+    hint: "How strongly the upscaler effects image generation",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 0.0, max: 1.0, step: 0.01 },
+    default: 0.7
+  });
+  game.settings.register("arcane-artifex", "hordeDenoisingStrength", {
+    name: "Hires. Fix Denoising Strength",
+    hint: "How strongly the upscaler effects image generation",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 0.0, max: 1.0, step: 0.01 },
+    default: 0.7
+  });
+  game.settings.register("arcane-artifex", "comfyUiDenoisingStrength", {
+    name: "Hires. Fix Denoising Strength",
+    hint: "How strongly the upscaler effects image generation",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 0.0, max: 1.0, step: 0.01 },
+    default: 0.7
+  });
+
+  // For HR second pass steps settings
+  game.settings.register("arcane-artifex", "localA1111HrSecondPassSteps", {
+    name: "Number of second pass steps",
+    hint: "How many steps to take in the second pass",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 0, max: 150, step: 1 },
+    default: 0
+  });
+  game.settings.register("arcane-artifex", "hordeHrSecondPassSteps", {
+    name: "Number of second pass steps",
+    hint: "How many steps to take in the second pass",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 0, max: 150, step: 1 },
+    default: 0
+  });
+  game.settings.register("arcane-artifex", "comfyUiHrSecondPassSteps", {
+    name: "Number of second pass steps",
+    hint: "How many steps to take in the second pass",
+    scope: "world",
+    config: false,
+    type: Number,
+    range: { min: 0, max: 150, step: 1 },
+    default: 0
+  });
+
+
+
 
   game.settings.register("arcane-artifex", "cfgScale", {
     name: "CFG Scale",
@@ -632,7 +899,7 @@ export default function registerSettings() {
       const selectedResolution = resolutionOptions[value];
       await game.settings.set("arcane-artifex", "sdwidth", selectedResolution.width);
       await game.settings.set("arcane-artifex", "sdheight", selectedResolution.height);
-      await localA1111APIClient.getLocalA1111Settings();
+      await localA1111APIClient.getSettings();
     }
   });
 

@@ -4,8 +4,8 @@ class HordeAPIClient {
   async checkStatus() {
     const selectedSource = game.settings.get('arcane-artifex', 'source');
   
-    if (selectedSource === 'stableHorde') {
-      const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
+    if (selectedSource === 'aiHorde') {
+      const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeUrl');
       const statusUrl = `${aiHordeUrl}/api/v2/status/heartbeat`;
         
       try {
@@ -29,7 +29,7 @@ class HordeAPIClient {
     }
   }
 
-  async getHordeSettings() {
+  async getSettings() {
     const connection = game.settings.get('arcane-artifex', 'connected');
 
     if (!connection) {
@@ -51,7 +51,7 @@ class HordeAPIClient {
 
   }
   async fetchSamplersFromSwagger() {
-    const hordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
+    const hordeUrl = game.settings.get('arcane-artifex', 'hordeUrl');
     const url = `${hordeUrl}/api/swagger.json`;
     try {
         const response = await fetch(url, {
@@ -64,8 +64,6 @@ class HordeAPIClient {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-
-        // Navigate directly to the enum for samplers based on the JSON structure you provided
         const samplers = data.definitions.ModelPayloadRootStable.properties.sampler_name.enum;
         return samplers;
     } catch (error) {
@@ -75,7 +73,7 @@ class HordeAPIClient {
 }
   async loadHordeModels() {
     try {
-        const hordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
+        const hordeUrl = game.settings.get('arcane-artifex', 'hordeUrl');
         const response = await fetch(`${hordeUrl}/api/v2/status/models`, {
             method: 'GET',
             headers: {
@@ -111,35 +109,35 @@ class HordeAPIClient {
 
 
 async textToImg(prompt, message) {
-  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
+  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeUrl');
   const apiUrl = `${aiHordeUrl}/api/v2/generate/async`;
  
-const requestBody = {
-  prompt: prompt,
-  nsfw: game.settings.get("arcane-artifex", "hordeNSFW"), 
-  censor_nsfw: false,
-  trusted_workers: false,
-  slow_workers: true,
-  shared: true,
-  replacement_filter: true,
-  worker_blacklist: false,
-  dry_run: false,
-  r2: true,
-  models: [game.settings.get("arcane-artifex", "hordeModel")],
-  workers: [], 
-  params: {
-    n: 1,
-    width: game.settings.get("arcane-artifex", "sdwidth"),
-    height: game.settings.get("arcane-artifex", "sdheight"),
-    steps: game.settings.get("arcane-artifex", "samplerSteps"),
-    denoising_strength: 1.0,
-    sampler_name: game.settings.get("arcane-artifex", "hordeSampler"),
-    cfg_scale: game.settings.get("arcane-artifex", "cfgScale"),
-    karras: game.settings.get("arcane-artifex", "hordeKarras"),
-    tiling: false,
-    hires_fix: game.settings.get("arcane-artifex", "enableHr")
-  }
-};
+  const requestBody = {
+    prompt: prompt,
+    nsfw: game.settings.get("arcane-artifex", "hordeNSFW"), 
+    censor_nsfw: false,
+    trusted_workers: false,
+    slow_workers: true,
+    shared: false,
+    replacement_filter: true,
+    worker_blacklist: false,
+    dry_run: false,
+    r2: true,
+    models: [game.settings.get("arcane-artifex", "hordeModel")],
+    workers: [], 
+    params: {
+      n: 1,
+      width: game.settings.get("arcane-artifex", "hordeWidth"),
+      height: game.settings.get("arcane-artifex", "hordeHeight"),
+      steps: game.settings.get("arcane-artifex", "hordeSamplerSteps"),
+      sampler_name: game.settings.get("arcane-artifex", "hordeSampler"),
+      cfg_scale: game.settings.get("arcane-artifex", "hordeCfgScale"),
+      karras: game.settings.get("arcane-artifex", "hordeKarras"),
+      denoising_strength: 1.0,
+      tiling: false,
+      hires_fix: false
+    }
+  };
 
 
   game.settings.set('arcane-artifex', 'hordeRequestBody', requestBody);
@@ -172,7 +170,7 @@ const requestBody = {
 
 async initProgressRequest(generationId, prompt, message, attempt = 0, currentState = "undefined", initialDelay = 1000) {
   const maxAttempts = 100;
-  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
+  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeUrl');
   let checkStatusUrl = `${aiHordeUrl}/api/v2/generate/check/${generationId}`;
 
   if (attempt >= maxAttempts) {
@@ -222,7 +220,7 @@ async initProgressRequest(generationId, prompt, message, attempt = 0, currentSta
     
 
 async retrieveGeneratedImage(generationId, prompt, message) {
-  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeURL');
+  const aiHordeUrl = game.settings.get('arcane-artifex', 'hordeUrl');
   const retrieveUrl = `${aiHordeUrl}/api/v2/generate/status/${generationId}`;
 
 
