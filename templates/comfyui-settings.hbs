@@ -9,21 +9,27 @@
                         <input name="comfyui_url" type="text" value="{{comfyui_url}}" />
                     </div>
                 </div>
-                <div class="form-group flexrow">
-                    <div class="half">
-                        <label>Workflow Storage Path</label>
-                        <div class="form-fields">
-                            <input name="comfyui_workflow_storage_path" type="text" value="{{comfyui_workflow_storage_path}}" />
-                        </div>
+            <div class="form-group flexrow">
+                <div class="half">
+                    <label>Workflow Storage Path</label>
+                    <div class="form-fields">
+                        <input name="comfyui_workflow_storage_path" type="text" value="{{comfyui_workflow_storage_path}}" />
+                        <button type="button" class="file-picker" data-type="folder" data-target="input[name='comfyui_workflow_storage_path']" title="Pick Directory">
+                            <i class="fas fa-folder-open"></i>
+                        </button>
                     </div>
-                    <div class="half">
-                        <label>Workflow</label>
-                        <div class="form-fields">
-                            <input name="comfyui_workflow" type="text" value="{{comfyui_workflow}}" />
-                        </div>
+                </div>
+                <div class="half">
+                    <label>Workflow</label>
+                    <div class="form-fields">
+                        <input name="comfyui_workflow" type="text" value="{{comfyui_workflow}}" />
+                        <button type="button" class="file-picker" data-type="file" data-target="input[name='comfyui_workflow']" title="Pick File">
+                            <i class="fas fa-file"></i>
+                        </button>
                     </div>
                 </div>
             </div>
+
             <h2 style="text-align: center;">These each represent a placeholder in the ComfyUI .json file.</h2>
             <div class="comfyui-settings">
                 <h2>Configuration</h2>

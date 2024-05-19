@@ -510,8 +510,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
   });
 
 
-
-
   game.settings.register("arcane-artifex", "comfyUiWorkflowStoragePath", {
     name: "ComfyUI Workflow Storage Path",
     hint: "Set the path for ComfyUI workflow storage",

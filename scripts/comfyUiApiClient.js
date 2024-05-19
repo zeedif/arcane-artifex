@@ -72,7 +72,8 @@ async textToImg(prompt, message) {
   // takes a prompt and constructs a workflow to send to ComfyUI, then sends a POST request to ComfyUI and hands off to a websocket for image status updates and retrieval
 
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
-  const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/sparse_api_wc.json";
+  const workflowPath = game.settings.get("arcane-artifex", "comfyUiWorkflow");
+  
  
 
   try {
@@ -252,7 +253,7 @@ async initializeOrUpdateLoras() {
 
     updatedLoras = updatedLoras.filter(lora => loraNames.includes(lora.lora));
 
-    console.error("Updated Loras:", updatedLoras);
+    console.log("Updated Loras:", updatedLoras);
 
     await game.settings.set("arcane-artifex", "comfyUiLoras", updatedLoras);
   }

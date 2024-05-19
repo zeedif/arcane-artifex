@@ -80,6 +80,23 @@ export default class ComfyUISettings extends FormApplication {
             await game.settings.set("arcane-artifex", "comfyUiWidth", event.target.value);
             this.render(true);
         });
+        
+        html.find('button.file-picker').click(async (event) => {
+            new FilePicker({
+                type: event.currentTarget.dataset.type,
+                current: html.find(event.currentTarget.dataset.target).val(),
+                callback: async (path) => {
+                    html.find(event.currentTarget.dataset.target).val(path).change();
+                    if (event.currentTarget.dataset.type === 'folder') {
+                        await game.settings.set("arcane-artifex", "comfyUiWorkflowStoragePath", path);
+                    } else if (event.currentTarget.dataset.type === 'file') {
+                        await game.settings.set("arcane-artifex", "comfyUiWorkflow", path);
+                    }
+                    this.render(true);
+                }
+            }).render(true);
+        });
+        
 
         
         this.changeLoraPrompt();
