@@ -32,7 +32,7 @@ export default class HordeSettings extends FormApplication {
     }
 
     prepareResolutionOptions() {
-const hordeResolutionOptions = {
+        const hordeResolutionOptions = {
             "512x512 (1:1, icons, profile pictures. SD1.5)": { width: 512, height: 512 },
             "600x600 (1:1, icons, profile pictures, SD1.5)": { width: 600, height: 600 },
             "512x768 (2:3, vertical character card, SD1.5)": { width: 512, height: 768 },

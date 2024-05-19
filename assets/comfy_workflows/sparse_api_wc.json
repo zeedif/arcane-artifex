@@ -1,0 +1,537 @@
+{
+  "47": {
+    "inputs": {
+      "ckpt_name": "%model%",
+      "vae_name": "Baked VAE",
+      "clip_skip": -2,
+      "lora_name": "None",
+      "lora_model_strength": 1,
+      "lora_clip_strength": 1,
+      "positive": "%prompt%",
+      "negative": "%negative_prompt%",
+      "token_normalization": "none",
+      "weight_interpretation": "comfy",
+      "empty_latent_width": "%width%",
+      "empty_latent_height": "%height%",
+      "batch_size": 1
+    },
+    "class_type": "Efficient Loader",
+    "_meta": {
+      "title": "Efficient Loader"
+    }
+  },
+  "48": {
+    "inputs": {
+      "steps": "%steps%",
+      "cfg": "%scale%",
+      "sampler_name": "%sampler%",
+      "scheduler": "%scheduler%",
+      "denoise": 1,
+      "preview_method": "vae_decoded_only",
+      "vae_decode": "true",
+      "model": [
+        "47",
+        0
+      ],
+      "positive": [
+        "47",
+        1
+      ],
+      "negative": [
+        "47",
+        2
+      ],
+      "latent_image": [
+        "47",
+        3
+      ],
+      "optional_vae": [
+        "47",
+        4
+      ]
+    },
+    "class_type": "KSampler (Efficient)",
+    "_meta": {
+      "title": "KSampler (Efficient)"
+    }
+  },
+  "49": {
+    "inputs": {
+      "images": [
+        "48",
+        5
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "63": {
+    "inputs": {
+      "image": [
+        "48",
+        5
+      ],
+      "vae": [
+        "64",
+        4
+      ],
+      "latent_size": [
+        "64",
+        3
+      ]
+    },
+    "class_type": "ACN_SparseCtrlRGBPreprocessor",
+    "_meta": {
+      "title": "RGB SparseCtrl 🛂🅐🅒🅝"
+    }
+  },
+  "64": {
+    "inputs": {
+      "ckpt_name": "1.5/photon_v1.safetensors",
+      "vae_name": "Baked VAE",
+      "clip_skip": -2,
+      "lora_name": "sd15_lora_beta.safetensors",
+      "lora_model_strength": 1,
+      "lora_clip_strength": 0,
+      "positive": "%prompt%",
+      "negative": "%negative_prompt%",
+      "token_normalization": "none",
+      "weight_interpretation": "comfy",
+      "empty_latent_width": 512,
+      "empty_latent_height": 512,
+      "batch_size": 24
+    },
+    "class_type": "Efficient Loader",
+    "_meta": {
+      "title": "Efficient Loader"
+    }
+  },
+  "65": {
+    "inputs": {
+      "sparsectrl_name": "SD1.5/animatediff/v3_sd15_sparsectrl_rgb.ckpt",
+      "use_motion": true,
+      "motion_strength": 1,
+      "motion_scale": 1,
+      "sparse_method": [
+        "68",
+        0
+      ]
+    },
+    "class_type": "ACN_SparseCtrlLoaderAdvanced",
+    "_meta": {
+      "title": "Load SparseCtrl Model 🛂🅐🅒🅝"
+    }
+  },
+  "66": {
+    "inputs": {
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 0.45,
+      "positive": [
+        "64",
+        1
+      ],
+      "negative": [
+        "64",
+        2
+      ],
+      "control_net": [
+        "65",
+        0
+      ],
+      "image": [
+        "63",
+        0
+      ]
+    },
+    "class_type": "ACN_AdvancedControlNetApply",
+    "_meta": {
+      "title": "Apply Advanced ControlNet 🛂🅐🅒🅝"
+    }
+  },
+  "68": {
+    "inputs": {
+      "spread": "uniform"
+    },
+    "class_type": "ACN_SparseCtrlSpreadMethodNode",
+    "_meta": {
+      "title": "SparseCtrl Spread Method 🛂🅐🅒🅝"
+    }
+  },
+  "69": {
+    "inputs": {
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "lcm",
+      "scheduler": "sgm_uniform",
+      "denoise": 1,
+      "preview_method": "taesd",
+      "vae_decode": "true",
+      "model": [
+        "72",
+        0
+      ],
+      "positive": [
+        "66",
+        0
+      ],
+      "negative": [
+        "66",
+        1
+      ],
+      "latent_image": [
+        "64",
+        3
+      ],
+      "optional_vae": [
+        "64",
+        4
+      ]
+    },
+    "class_type": "KSampler (Efficient)",
+    "_meta": {
+      "title": "KSampler (Efficient)"
+    }
+  },
+  "70": {
+    "inputs": {
+      "motion_model": [
+        "71",
+        0
+      ]
+    },
+    "class_type": "ADE_ApplyAnimateDiffModelSimple",
+    "_meta": {
+      "title": "Apply AnimateDiff Model 🎭🅐🅓②"
+    }
+  },
+  "71": {
+    "inputs": {
+      "model_name": "sd15_t2v_beta.ckpt"
+    },
+    "class_type": "ADE_LoadAnimateDiffModel",
+    "_meta": {
+      "title": "Load AnimateDiff Model 🎭🅐🅓②"
+    }
+  },
+  "72": {
+    "inputs": {
+      "beta_schedule": "sqrt_linear (AnimateDiff)",
+      "model": [
+        "109",
+        0
+      ],
+      "m_models": [
+        "70",
+        0
+      ],
+      "context_options": [
+        "73",
+        0
+      ],
+      "sample_settings": [
+        "74",
+        0
+      ]
+    },
+    "class_type": "ADE_UseEvolvedSampling",
+    "_meta": {
+      "title": "Use Evolved Sampling 🎭🅐🅓②"
+    }
+  },
+  "73": {
+    "inputs": {
+      "context_length": 16,
+      "context_stride": 1,
+      "context_overlap": 6,
+      "closed_loop": true,
+      "fuse_method": "flat",
+      "use_on_equal_length": true,
+      "start_percent": 0,
+      "guarantee_steps": 1
+    },
+    "class_type": "ADE_LoopedUniformContextOptions",
+    "_meta": {
+      "title": "Context Options◆Looped Uniform 🎭🅐🅓"
+    }
+  },
+  "74": {
+    "inputs": {
+      "batch_offset": 0,
+      "noise_type": "FreeNoise",
+      "seed_gen": "comfy",
+      "seed_offset": 0,
+      "adapt_denoise_steps": false
+    },
+    "class_type": "ADE_AnimateDiffSamplingSettings",
+    "_meta": {
+      "title": "Sample Settings 🎭🅐🅓"
+    }
+  },
+  "76": {
+    "inputs": {
+      "frame_rate": 8,
+      "loop_count": 0,
+      "filename_prefix": "2024-05-07/previews/AD_",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "69",
+        5
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "82": {
+    "inputs": {
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "lcm",
+      "scheduler": "sgm_uniform",
+      "denoise": 0.35000000000000003,
+      "preview_method": "taesd",
+      "vae_decode": "true",
+      "model": [
+        "69",
+        0
+      ],
+      "positive": [
+        "69",
+        1
+      ],
+      "negative": [
+        "69",
+        2
+      ],
+      "latent_image": [
+        "88",
+        0
+      ],
+      "optional_vae": [
+        "64",
+        4
+      ]
+    },
+    "class_type": "KSampler (Efficient)",
+    "_meta": {
+      "title": "KSampler (Efficient)"
+    }
+  },
+  "83": {
+    "inputs": {
+      "frame_rate": 8,
+      "loop_count": 0,
+      "filename_prefix": "2024-05-07/upscaled/AD_",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "82",
+        5
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "88": {
+    "inputs": {
+      "pixels": [
+        "80:2",
+        0
+      ],
+      "vae": [
+        "69",
+        4
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "90": {
+    "inputs": {
+      "ckpt_name": "rife47.pth",
+      "clear_cache_after_n_frames": 320,
+      "multiplier": 4,
+      "fast_mode": true,
+      "ensemble": true,
+      "scale_factor": 4,
+      "frames": [
+        "94",
+        0
+      ]
+    },
+    "class_type": "RIFE VFI",
+    "_meta": {
+      "title": "RIFE VFI (recommend rife47 and rife49)"
+    }
+  },
+  "91": {
+    "inputs": {
+      "frame_rate": 30,
+      "loop_count": 0,
+      "filename_prefix": "ArcaneArtifex",
+      "format": "image/webp",
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "90",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "93": {
+    "inputs": {
+      "selected_indexes": "0",
+      "images": [
+        "82",
+        5
+      ]
+    },
+    "class_type": "ImageSelector",
+    "_meta": {
+      "title": "ImageSelector"
+    }
+  },
+  "94": {
+    "inputs": {
+      "image1": [
+        "93",
+        0
+      ],
+      "image2": [
+        "82",
+        5
+      ]
+    },
+    "class_type": "ImageBatch",
+    "_meta": {
+      "title": "Batch Images"
+    }
+  },
+  "97": {
+    "inputs": {
+      "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "98": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus_sd15.safetensors"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "IPAdapter Model Loader"
+    }
+  },
+  "105": {
+    "inputs": {
+      "seed": "%seed%"
+    },
+    "class_type": "Seed Everywhere",
+    "_meta": {
+      "title": "Seed Everywhere"
+    }
+  },
+  "107": {
+    "inputs": {
+      "image": "DALL·E 2024-02-29 11.01.14 - Create an image of a cute, chibi version of a grey-skinned, bearded Aasimar Warlock. The character has a dignified presence, marked by a wise beard an.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "109": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "64",
+        0
+      ],
+      "ipadapter": [
+        "98",
+        0
+      ],
+      "image": [
+        "48",
+        5
+      ],
+      "clip_vision": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "80:0": {
+    "inputs": {
+      "model_name": "4x_NMKD-Siax_200k.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "80:1": {
+    "inputs": {
+      "upscale_model": [
+        "80:0",
+        0
+      ],
+      "image": [
+        "69",
+        5
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "Upscale Image (using Model)"
+    }
+  },
+  "80:2": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 0.38,
+      "image": [
+        "80:1",
+        0
+      ]
+    },
+    "class_type": "ImageScaleBy",
+    "_meta": {
+      "title": "Upscale Image By"
+    }
+  }
+}

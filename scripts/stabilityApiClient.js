@@ -12,6 +12,7 @@ class StabilityApiClient {
       if (!stabilityApiKey || stabilityApiKey === '0000000000') {
         console.error('Stability API key is not configured correctly.');
         ui.notifications.error('Stability API key is not configured. Please check your settings.');
+        await game.settings.set("arcane-artifex", "connected", false);
         return 'Stability API key is not configured.';
       }
   
@@ -29,6 +30,7 @@ class StabilityApiClient {
         if (response.ok) {
           console.log('Stability API is accessible and operational.');
           ui.notifications.info(`Stability API is accessible. Email: ${responseData.email}`);
+          await game.settings.set("arcane-artifex", "connected", true);
           return `Stability API is accessible and functioning. Email: ${responseData.email}`;
         } else if (response.status === 401) {
           console.error('Unauthorized access to Stability API:', responseData.message);
@@ -42,6 +44,7 @@ class StabilityApiClient {
       } catch (error) {
         console.error('Error occurred while trying to access Stability API:', error);
         ui.notifications.error(`Error occurred while trying to access Stability API: ${error.message}`);
+        await game.settings.set("arcane-artifex", "connected", false);
       }
     } else {
       console.log("Stability is not the selected source. Skipping Stability status check.");

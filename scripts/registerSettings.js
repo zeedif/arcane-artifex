@@ -44,13 +44,6 @@ const resolutionOptions = {
   "sd_res_640x1536": { width: 640, height: 1536, name: "640x1536 (10:24, SDXL)" }
 };
 
-const openAiResolutionOptions = {
-  "dalle_res_1024x1024": { width: 1024, height: 1024, name: "1024x1024 (1:1, DALLE-3)" },
-  "dalle_res_1792x1024": { width: 1792, height: 1024, name: "1792x1024 (Landscape, DALLE-3)" },
-  "dalle_res_1024x1792": { width: 1024, height: 1792, name: "1024x1792 (Portriat, DALLE-3)" }
-};
-
-
 const defaultSettings = {
   prompts: promptTemplates,
   // arcane-artifex old settings TO BE DEPRECATED
@@ -398,9 +391,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     config: false,
     type: Boolean,
     default: false,
-    onChange: async () => {
-      await aiHordeApiClient.getSettings();
-    }
   });
 
   game.settings.register("arcane-artifex", "hordeKarras", {
@@ -409,9 +399,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     config: false,
     type: Boolean,
     default: false,
-    onChange: async () => {
-      await aiHordeApiClient.getSettings();
-    }
   });
 
   game.settings.register("arcane-artifex", "hordeAPIKey", {
@@ -529,10 +516,20 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     name: "ComfyUI Workflow Storage Path",
     hint: "Set the path for ComfyUI workflow storage",
     scope: "world",
-    config: true,
+    config: false,
     type: String,
     default: "",
     filePicker: "folder"
+  });
+
+  game.settings.register("arcane-artifex", "comfyUiWorkflow", {
+    name: "ComfyUI Workflow",
+    hint: "Workflow to be used for image generation",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "",
+    filePicker: "file"
   });
 
   game.settings.register("arcane-artifex", "stabilityApiKey", {

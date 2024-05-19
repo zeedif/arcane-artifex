@@ -15,7 +15,7 @@ Hooks.on('init', async function () {
 Hooks.on('getActorSheetHeaderButtons', async function (actor5eSheet, buttons) {
     if (game.user.isGM) {
         buttons.unshift({
-            label: 'Generate Art',
+            label: 'AA Gen',
             class: 'stable-image-actor',
             icon: 'fas fa-images',
             onclick: () => generateActorChatCommand(actor5eSheet)
@@ -46,13 +46,28 @@ Hooks.on('renderChatMessage', async function (message, html, data) {
 });
 
 async function generateActorChatCommand(sheet) {
-    if (game.settings.get("arcane-artifex", "working")) {
+    console.error("generateActorChatCommand called with sheet:", sheet);
+
+    const workingSetting = game.settings.get("arcane-artifex", "working");
+    console.error("Arcane Artifex 'working' setting:", workingSetting);
+
+    if (workingSetting) {
+        console.error("Warning issued: Please wait until the previous job is finished.");
         return ui.notifications.warn('Please wait until the previous job is finished.');
     }
-    if (game.user.isGM && game.settings.get('arcane-artifex', 'connected')) {
+
+    const isGM = game.user.isGM;
+    console.error("Is current user a GM:", isGM);
+
+    const connectedSetting = game.settings.get('arcane-artifex', 'connected');
+    console.error("Arcane Artifex 'connected' setting:", connectedSetting);
+
+    if (isGM && connectedSetting) {
+        console.error("Generating prompt from actor, sheet:", sheet);
         generatePromptFromActor(sheet);
     }
 }
+
 
 function generatePromptFromActor(sheet) {
     let prompt = ":aa: ";

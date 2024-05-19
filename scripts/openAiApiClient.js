@@ -7,11 +7,12 @@ class OpenAiApiClient {
     if (selectedSource === 'openAI') {
         const openAiApiKey = game.settings.get('arcane-artifex', 'openAiApiKey');
     
-        console.error('Checking OpenAI API status...');
+        console.log('Checking OpenAI API status...');
 
         if (!openAiApiKey || openAiApiKey === '0000000000') {
             console.error('OpenAI API key is not configured correctly.');
             ui.notifications.error('OpenAI API key is not configured. Please check your settings.');
+            await game.settings.set("arcane-artifex", "connected", false);
             return 'OpenAI API key is not configured.';
         }
     
@@ -35,11 +36,12 @@ class OpenAiApiClient {
                 if (responseData.choices && responseData.choices[0].message.content.trim() !== "") {
                     console.log('OpenAI text API is accessible and operational.');
                     ui.notifications.info('OpenAI text API is accessible.');
+                    await game.settings.set("arcane-artifex", "connected", true);
                     return 'OpenAI text API is accessible and functioning.';
                 } else {
                     console.error('OpenAI text API did not return the expected content:', responseData);
                     ui.notifications.error('OpenAI text API is operational but did not return the expected content.');
-                    return 'OpenAI text API operational but check content.';
+                    throw new Error(`OpenAI text API operational but check content ${responseData.error.message}`);
                 }
             } else {
                 console.error('OpenAI text API is not accessible:', responseData.error.message);
@@ -49,6 +51,7 @@ class OpenAiApiClient {
         } catch (error) {
             console.error('Error occurred while trying to access OpenAI text API;', error);
             ui.notifications.error(`Error occurred while trying to access OpenAI text API; error = ${error.message}`);
+            await game.settings.set("arcane-artifex", "connected", false);
         }
     } else {
         console.log("OpenAI is not the selected source. Skipping OpenAI status check.");
@@ -65,9 +68,6 @@ class OpenAiApiClient {
       console.log("OpenAI connections not established. Skipping API calls.");
       return;
     }
-
-    // put setting of OpenAI here
-
   }
 
 

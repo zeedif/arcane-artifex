@@ -1,12 +1,6 @@
-import stableFileManager from "./StableFileManager.js";
 import chatListener from "./ChatListener.js";
 
 class ComfyUiApiClient {
-  constructor() {
-    this.settings = {};
-    this.comfyUIDefaultRequestBody = {};
-    this.socket = null;
-  }
 
   async checkStatus() {
     const selectedSource = game.settings.get('arcane-artifex', 'source');
@@ -78,7 +72,7 @@ async textToImg(prompt, message) {
   // takes a prompt and constructs a workflow to send to ComfyUI, then sends a POST request to ComfyUI and hands off to a websocket for image status updates and retrieval
 
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
-  const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/arcane_artifex_simple.json";
+  const workflowPath = "/modules/arcane-artifex/assets/comfy_workflows/sparse_api_wc.json";
  
 
   try {
@@ -92,11 +86,11 @@ async textToImg(prompt, message) {
           model: game.settings.get("arcane-artifex", "comfyUiModel"),
           sampler: game.settings.get("arcane-artifex", "comfyUiSampler"),
           scheduler: game.settings.get("arcane-artifex", "comfyUiScheduler"),
-          scale: game.settings.get("arcane-artifex", "cfgScale"),
+          scale: game.settings.get("arcane-artifex", "comfyUiCfgScale"),
           seed: Math.round(Math.random() * Number.MAX_SAFE_INTEGER),
-          steps: game.settings.get("arcane-artifex", "samplerSteps"),
-          height: game.settings.get("arcane-artifex", "sdheight"),
-          width: game.settings.get("arcane-artifex", "sdwidth"),
+          steps: game.settings.get("arcane-artifex", "comfyUiSamplerSteps"),
+          height: game.settings.get("arcane-artifex", "comfyUiHeight"),
+          width: game.settings.get("arcane-artifex", "comfyUiWidth"),
           prompt: prompt,
           negative_prompt: game.settings.get("arcane-artifex", "negativePrompt"),
       };
@@ -257,6 +251,8 @@ async initializeOrUpdateLoras() {
     });
 
     updatedLoras = updatedLoras.filter(lora => loraNames.includes(lora.lora));
+
+    console.error("Updated Loras:", updatedLoras);
 
     await game.settings.set("arcane-artifex", "comfyUiLoras", updatedLoras);
   }
