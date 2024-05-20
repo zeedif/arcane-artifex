@@ -1,0 +1,192 @@
+{
+  "1": {
+    "inputs": {
+      "ckpt_name": "PixArt-Sigma-XL-2-1024-MS.pth",
+      "model": "PixArtMS_Sigma_XL_2"
+    },
+    "class_type": "PixArtCheckpointLoader",
+    "_meta": {
+      "title": "PixArt Sigma .pth Loader"
+    }
+  },
+  "5": {
+    "inputs": {
+      "text": "%prompt%",
+      "T5": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "T5TextEncode",
+    "_meta": {
+      "title": "T5 Text Encode+"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": "",
+      "T5": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "T5TextEncode",
+    "_meta": {
+      "title": "T5 Text Encode-"
+    }
+  },
+  "7": {
+    "inputs": {
+      "t5v11_name": "model-00001-of-00002.safetensors",
+      "t5v11_ver": "xxl",
+      "path_type": "folder",
+      "device": "gpu",
+      "dtype": "auto (comfy)"
+    },
+    "class_type": "T5v11Loader",
+    "_meta": {
+      "title": "T5 Loader"
+    }
+  },
+  "39": {
+    "inputs": {
+      "ckpt_name": "zavychromaxl_v70.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "SDXL Checkpoint Loader"
+    }
+  },
+  "40": {
+    "inputs": {
+      "text": "%prompt%",
+      "clip": [
+        "39",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "SDXL +CLIP Encoder"
+    }
+  },
+  "42": {
+    "inputs": {
+      "add_noise": "enable",
+      "noise_seed": 410363140660996,
+      "steps": 50,
+      "cfg": 6.5,
+      "sampler_name": "dpmpp_sde",
+      "scheduler": "karras",
+      "start_at_step": 20,
+      "end_at_step": 10000,
+      "return_with_leftover_noise": "disable",
+      "model": [
+        "39",
+        0
+      ],
+      "positive": [
+        "40",
+        0
+      ],
+      "negative": [
+        "83",
+        0
+      ],
+      "latent_image": [
+        "60",
+        0
+      ]
+    },
+    "class_type": "KSamplerAdvanced",
+    "_meta": {
+      "title": "SDXL KSampler (Refiner)"
+    }
+  },
+  "51": {
+    "inputs": {
+      "samples": [
+        "42",
+        0
+      ],
+      "vae": [
+        "39",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Final Decoder"
+    }
+  },
+  "60": {
+    "inputs": {
+      "add_noise": "enable",
+      "noise_seed": "%seed%",
+      "steps": 20,
+      "cfg": 4,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "start_at_step": 0,
+      "end_at_step": 10000,
+      "return_with_leftover_noise": "disable",
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "76",
+        0
+      ]
+    },
+    "class_type": "KSamplerAdvanced",
+    "_meta": {
+      "title": "PixArt Sigma KSampler"
+    }
+  },
+  "61": {
+    "inputs": {
+      "filename_prefix": "ArcaneArtifex",
+      "images": [
+        "51",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Final Image"
+    }
+  },
+  "76": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Image Size"
+    }
+  },
+  "83": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "39",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "SDXL -CLIP Encoder"
+    }
+  }
+}

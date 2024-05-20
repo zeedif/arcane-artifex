@@ -530,6 +530,14 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     filePicker: "file"
   });
 
+  game.settings.register("arcane-artifex", "comfyUiSaveNode", {
+    name: "comfyUiSaveNode",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 9
+  });
+
   game.settings.register("arcane-artifex", "stabilityApiKey", {
     name: "stabilityApiKey",
     scope: "world",

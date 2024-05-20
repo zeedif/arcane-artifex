@@ -46,10 +46,10 @@ Hooks.on('renderChatMessage', async function (message, html, data) {
 });
 
 async function generateActorChatCommand(sheet) {
-    console.error("generateActorChatCommand called with sheet:", sheet);
+    console.log("generateActorChatCommand called with sheet:", sheet);
 
     const workingSetting = game.settings.get("arcane-artifex", "working");
-    console.error("Arcane Artifex 'working' setting:", workingSetting);
+    console.log("Arcane Artifex 'working' setting:", workingSetting);
 
     if (workingSetting) {
         console.error("Warning issued: Please wait until the previous job is finished.");
@@ -57,13 +57,13 @@ async function generateActorChatCommand(sheet) {
     }
 
     const isGM = game.user.isGM;
-    console.error("Is current user a GM:", isGM);
+    console.log("Is current user a GM:", isGM);
 
     const connectedSetting = game.settings.get('arcane-artifex', 'connected');
-    console.error("Arcane Artifex 'connected' setting:", connectedSetting);
+    console.log("Arcane Artifex 'connected' setting:", connectedSetting);
 
     if (isGM && connectedSetting) {
-        console.error("Generating prompt from actor, sheet:", sheet);
+        console.log("Generating prompt from actor, sheet:", sheet);
         generatePromptFromActor(sheet);
     }
 }

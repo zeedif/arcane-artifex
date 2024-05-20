@@ -73,8 +73,6 @@ async textToImg(prompt, message) {
 
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
   const workflowPath = game.settings.get("arcane-artifex", "comfyUiWorkflow");
-  
- 
 
   try {
       const responseWorkflow = await fetch(workflowPath);
@@ -111,35 +109,43 @@ async textToImg(prompt, message) {
           }
       });
 
+      // Locate and log nodes with "SaveImage" as their class_type and set the comfyUiSaveNode setting
+      Object.keys(workflow).forEach(async key => {
+          const node = workflow[key];
+          if (node.class_type === "SaveImage") {
+              console.log(`Node with SaveImage class_type found: ${key}`, node);
+              await game.settings.set("arcane-artifex", "comfyUiSaveNode", Number(key));
+          }
+      });
+
       const jsonPayload = JSON.stringify({ prompt: workflow });
-        const url = `${stIP}/prompt`;
-        const reqHeaders = {
-            'Content-Type': 'application/json',
-            'Connection': 'keep-alive',
-            'Accept': '*/*',
-            'User-Agent': 'FoundryVTT/1.0'
-        };
-        const fetchOptions = {
-            method: 'POST',
-            body: jsonPayload,
-            headers: reqHeaders
-        };
+      const url = `${stIP}/prompt`;
+      const reqHeaders = {
+          'Content-Type': 'application/json',
+          'Connection': 'keep-alive',
+          'Accept': '*/*',
+          'User-Agent': 'FoundryVTT/1.0'
+      };
+      const fetchOptions = {
+          method: 'POST',
+          body: jsonPayload,
+          headers: reqHeaders
+      };
 
-        const fetchResponse = await fetch(url, fetchOptions);
-        if (!fetchResponse.ok) {
-            throw new Error(`HTTP error! Status: ${fetchResponse.status}`);
-        }
-        const responseContent = await fetchResponse.json();
-        const promptId = responseContent.prompt_id;
-        console.log('arcane-artifex: Captured prompt_id:', promptId);
+      const fetchResponse = await fetch(url, fetchOptions);
+      if (!fetchResponse.ok) {
+          throw new Error(`HTTP error! Status: ${fetchResponse.status}`);
+      }
+      const responseContent = await fetchResponse.json();
+      const promptId = responseContent.prompt_id;
+      console.log('arcane-artifex: Captured prompt_id:', promptId);
 
-        this.initWebSocketEventListeners(promptId, prompt, message);
+      this.initWebSocketEventListeners(promptId, prompt, message);
 
-    } catch (error) {
-        console.error('Error in txt2Img:', error);
-    }
+  } catch (error) {
+      console.error('Error in txt2Img:', error);
+  }
 }
-
 
 async initWebSocketEventListeners(promptId, prompt, message) {
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
@@ -193,7 +199,8 @@ async initWebSocketEventListeners(promptId, prompt, message) {
             const historyData = await historyResponse.json(); 
             const processInfo = historyData[promptId];
             if (processInfo && processInfo.status.status_str === "success" && processInfo.status.completed) {
-                const outputImages = processInfo.outputs["9"].images;
+                const saveNode = await game.settings.get("arcane-artifex", "comfyUiSaveNode");
+                const outputImages = processInfo.outputs[saveNode.toString()].images;
                 for (const image of outputImages) {
                     const imageUrlParams = new URLSearchParams({
                         filename: image.filename,
