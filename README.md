@@ -3,12 +3,12 @@
 Arcane Artifex is a powerful Foundry VTT module that facilitates the creation of visual content directly within your gaming sessions. This module integrates with several AI-powered image generation systems, enabling Game Masters to enhance their storytelling by generating images based on textual prompts provided within the Foundry VTT chat interface.
 
 ## Supported Endpoints
-### Local Installations with selectable models, schedulers, sampler, and resolutions with optional upscalers and LoRAs (with weights)
-- **ComfyUI**: A local installation using Stable Diffusion with custom workflows including face restore, upscaling, animmation, and much more. 
-- **Automatic1111**: A Local installation using Stable Diffusion with Face Restore and Creative Upscaling
+### Stable Diffusion endpoints (either local or via appropriate tunnel e.g. ngrok) with selectable models, schedulers, sampler, and resolutions with optional upscalers and LoRAs (with weights)
+- **ComfyUI**: A local or accessible installation using Stable Diffusion with custom workflows including support for custom workflows. Current workflows include fast, complex-prompt, and animation flows with more to come. 
+- **Automatic1111**: A local or accessible online installation using Stable Diffusion with Face Restore and Creative Upscaling
 
 ### Web-Based Image Solutions
-- **Stable Horde**: An online service offering cloud-based image generation with SD1.5 and SDXL models and LoRAs
+- **AI Horde**: An online service offering cloud-based image generation with SD1.5 and SDXL models and LoRAs, usable with an API key.
 - **Stable Diffusion 3**: An advanced iteration of Stable Diffusion available online that requires a Stability API key for operation.
 - **DALL-E 3**: Utilizes OpenAI's DALL-E 3 for generating high-quality images from prompts, accessible online with an API key.
 
@@ -22,7 +22,7 @@ Before using Arcane Artifex in your Foundry VTT environment, ensure that your we
     ```
     For ComfyUI, start the service with:
     ```
-    python main.py --disable-xformers --enable-cors-header http://localhost:30000 --verbose
+    python main.py --enable-cors-header [your_local_ip_of_foundry] (e.g. http://localhost:30000)
     ```
 
 2. **Launching Foundry VTT**:
@@ -49,9 +49,4 @@ To use web-based image generation services like Stable Horde, Stable Diffusion 3
     The content after the trigger is sent as a prompt to the configured image generation backend.
 
 - **Customizing Prompts**:
-    The beginning of the prompt can be customized in the module's settings to include any required prefixes or stylistic choices that influence the generation style.
-
-## Upcoming Features
-- **Enhanced UI Integration**: Future updates will include enhanced user interfaces for both local and web-based services, improving the ease of selecting options and viewing generated images.
-
-Ensure that all configurations are correctly set to leverage the full capabilities of Arcane Artifex, enriching your gaming experience with seamlessly integrated visual content generation.
+    The beginning of the prompt can be customized in the module's settings to include any required prefixes or stylistic choices that influence the generation style (e.g. Pony scores, etc.)
