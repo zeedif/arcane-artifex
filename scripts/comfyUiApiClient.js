@@ -151,7 +151,7 @@ async initWebSocketEventListeners(promptId, prompt, message) {
   const stIP = await game.settings.get("arcane-artifex", "comfyUiUrl");
   const socketUrl = stIP.replace('http://', 'ws://') + '/ws';
   const socket = new WebSocket(socketUrl);
-  
+
   socket.addEventListener('open', () => {
     console.log('WebSocket connection established, with promptID:', socket, socket.promptId);
     socket.progressData = {
@@ -176,17 +176,13 @@ async initWebSocketEventListeners(promptId, prompt, message) {
           title: prompt,
           send: false
         };
-
         socket.progressData.image_data = reader.result;
-
-      chatListener.displayComfyUiProgress(message, socket.progressData );
-
+        chatListener.displayComfyUiProgress(message, socket.progressData);
       };
       reader.onerror = error => {
         console.error('Error converting blob to base64:', error);
       };
       reader.readAsDataURL(imageBlob);
-
       const objectURL = URL.createObjectURL(event.data.slice(8));
       console.log('Object URL for Blob:', objectURL);
     } else if (typeof event.data === 'string') {
@@ -196,36 +192,46 @@ async initWebSocketEventListeners(promptId, prompt, message) {
           if (data.data.status.exec_info.queue_remaining === 0) {
             const historyUrl = `${stIP}/history`;
             const historyResponse = await fetch(historyUrl);
-            const historyData = await historyResponse.json(); 
+            const historyData = await historyResponse.json();
             const processInfo = historyData[promptId];
             if (processInfo && processInfo.status.status_str === "success" && processInfo.status.completed) {
-                const saveNode = await game.settings.get("arcane-artifex", "comfyUiSaveNode");
-                const outputImages = processInfo.outputs[saveNode.toString()].images;
-                for (const image of outputImages) {
-                    const imageUrlParams = new URLSearchParams({
-                        filename: image.filename,
-                        subfolder: image.subfolder,
-                        type: image.type
-                    });
-                    const viewUrl = `${stIP}/view?${imageUrlParams}`;
-                    console.log('View Image URL:', viewUrl);
-                    chatListener.fetchAndProcessImage(viewUrl, prompt, message);
+             
+              let outputFile;
+             
+              for (const nodeKey of Object.keys(processInfo.outputs)) {
+                const nodeData = processInfo.outputs[nodeKey];
+                console.log('nodeData:', nodeData);
+             
+                if (nodeData.gifs && nodeData.gifs.length > 0) {
+                  outputFile = nodeData.gifs[0];
+                  break;
+                } else if (!outputFile && nodeData.images && nodeData.images.length > 0) {
+                  outputFile = nodeData.images[0];
                 }
-            }
-        }else{     
-          socket.progressData.current_steps = 0;
-          socket.progressData.max_steps = 0;
-          socket.progressData.queue_position = data.data.status.exec_info.queue_remaining;
-          socket.progressData.image_data = null;
+              }
 
-          chatListener.displayComfyUiProgress(message, socket.progressData);
+              if (outputFile) {
+                const fileUrlParams = new URLSearchParams({
+                  filename: outputFile.filename,
+                  subfolder: outputFile.subfolder,
+                  type: outputFile.type
+                });
+                const viewUrl = `${stIP}/view?${fileUrlParams}`;
+                chatListener.fetchAndProcessImage(viewUrl, prompt, message);
+              }
+             }
+          } else {
+            socket.progressData.current_steps = 0;
+            socket.progressData.max_steps = 0;
+            socket.progressData.queue_position = data.data.status.exec_info.queue_remaining;
+            socket.progressData.image_data = null;
+            chatListener.displayComfyUiProgress(message, socket.progressData);
+          }
+        } else if (data.type === 'progress') {
+          socket.progressData.current_steps = data.data.value;
+          socket.progressData.max_steps = data.data.max;
+          socket.progressData.queue_position = -1;
         }
-      } else if (data.type === 'progress') {
-        socket.progressData.current_steps = data.data.value;
-        socket.progressData.max_steps = data.data.max;
-        socket.progressData.queue_position = -1;
-    }
-    
       } catch (error) {
         console.error('Error parsing message from ComfyUI:', error, 'Original message:', event.data);
       }

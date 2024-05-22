@@ -65,8 +65,8 @@ export default function registerSettings() {
   });
 
   game.settings.registerMenu("arcane-artifex", "locala1111-settings", {
-    name: "Local A1111 Settings",
-    label: "Local A1111 Settings",
+    name: "A1111 Settings",
+    label: "A1111 Settings",
     icon: "fas fa-cog",
     type: localA1111Settings,
     restricted: true
@@ -105,7 +105,7 @@ export default function registerSettings() {
     type: String,
     choices: {
       aiHorde: "AI Horde",
-      localA1111: "Local Web UI (AUTOMATIC1111)",
+      localA1111: "A1111",
       comfyUi: "ComfyUI",
       openAI: "OpenAI",
       stability: "Stability"
@@ -116,7 +116,6 @@ export default function registerSettings() {
       if (value === "localA1111") {
         await localA1111APIClient.getSettings();
       } else if (value === "aiHorde") {
-        console.error("selected aiHorde");
         await aiHordeApiClient.getSettings();
       } else if (value === "comfyUi") {
         await comfyUiApiClient.getSettings();

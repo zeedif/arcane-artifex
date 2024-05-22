@@ -1,77 +1,9 @@
 {
-  "47": {
-    "inputs": {
-      "ckpt_name": "%model%",
-      "vae_name": "Baked VAE",
-      "clip_skip": -2,
-      "lora_name": "None",
-      "lora_model_strength": 1,
-      "lora_clip_strength": 1,
-      "positive": "%prompt%",
-      "negative": "%negative_prompt%",
-      "token_normalization": "none",
-      "weight_interpretation": "comfy",
-      "empty_latent_width": "%width%",
-      "empty_latent_height": "%height%",
-      "batch_size": 1
-    },
-    "class_type": "Efficient Loader",
-    "_meta": {
-      "title": "Efficient Loader"
-    }
-  },
-  "48": {
-    "inputs": {
-      "steps": "%steps%",
-      "cfg": "%scale%",
-      "sampler_name": "%sampler%",
-      "scheduler": "%scheduler%",
-      "denoise": 1,
-      "preview_method": "vae_decoded_only",
-      "vae_decode": "true",
-      "model": [
-        "47",
-        0
-      ],
-      "positive": [
-        "47",
-        1
-      ],
-      "negative": [
-        "47",
-        2
-      ],
-      "latent_image": [
-        "47",
-        3
-      ],
-      "optional_vae": [
-        "47",
-        4
-      ]
-    },
-    "class_type": "KSampler (Efficient)",
-    "_meta": {
-      "title": "KSampler (Efficient)"
-    }
-  },
-  "49": {
-    "inputs": {
-      "images": [
-        "48",
-        5
-      ]
-    },
-    "class_type": "PreviewImage",
-    "_meta": {
-      "title": "Preview Image"
-    }
-  },
   "63": {
     "inputs": {
       "image": [
-        "48",
-        5
+        "119",
+        0
       ],
       "vae": [
         "64",
@@ -89,18 +21,18 @@
   },
   "64": {
     "inputs": {
-      "ckpt_name": "1.5/photon_v1.safetensors",
+      "ckpt_name": "1.5/juggernaut_reborn.safetensors",
       "vae_name": "Baked VAE",
       "clip_skip": -2,
       "lora_name": "sd15_lora_beta.safetensors",
       "lora_model_strength": 1,
       "lora_clip_strength": 0,
       "positive": "%prompt%",
-      "negative": "%negative_prompt%",
+      "negative": "",
       "token_normalization": "none",
       "weight_interpretation": "comfy",
-      "empty_latent_width": 512,
-      "empty_latent_height": 512,
+      "empty_latent_width": 768,
+      "empty_latent_height": 768,
       "batch_size": 24
     },
     "class_type": "Efficient Loader",
@@ -162,6 +94,7 @@
   },
   "69": {
     "inputs": {
+      "seed": "%seed%",
       "steps": 8,
       "cfg": 1,
       "sampler_name": "lcm",
@@ -270,99 +203,6 @@
       "title": "Sample Settings 🎭🅐🅓"
     }
   },
-  "76": {
-    "inputs": {
-      "frame_rate": 8,
-      "loop_count": 0,
-      "filename_prefix": "2024-05-07/previews/AD_",
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "69",
-        5
-      ]
-    },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "82": {
-    "inputs": {
-      "steps": 8,
-      "cfg": 1,
-      "sampler_name": "lcm",
-      "scheduler": "sgm_uniform",
-      "denoise": 0.35000000000000003,
-      "preview_method": "taesd",
-      "vae_decode": "true",
-      "model": [
-        "69",
-        0
-      ],
-      "positive": [
-        "69",
-        1
-      ],
-      "negative": [
-        "69",
-        2
-      ],
-      "latent_image": [
-        "88",
-        0
-      ],
-      "optional_vae": [
-        "64",
-        4
-      ]
-    },
-    "class_type": "KSampler (Efficient)",
-    "_meta": {
-      "title": "KSampler (Efficient)"
-    }
-  },
-  "83": {
-    "inputs": {
-      "frame_rate": 8,
-      "loop_count": 0,
-      "filename_prefix": "2024-05-07/upscaled/AD_",
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "82",
-        5
-      ]
-    },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "88": {
-    "inputs": {
-      "pixels": [
-        "80:2",
-        0
-      ],
-      "vae": [
-        "69",
-        4
-      ]
-    },
-    "class_type": "VAEEncode",
-    "_meta": {
-      "title": "VAE Encode"
-    }
-  },
   "90": {
     "inputs": {
       "ckpt_name": "rife47.pth",
@@ -403,7 +243,7 @@
     "inputs": {
       "selected_indexes": "0",
       "images": [
-        "82",
+        "69",
         5
       ]
     },
@@ -419,7 +259,7 @@
         0
       ],
       "image2": [
-        "82",
+        "69",
         5
       ]
     },
@@ -446,25 +286,6 @@
       "title": "IPAdapter Model Loader"
     }
   },
-  "105": {
-    "inputs": {
-      "seed": "%seed%"
-    },
-    "class_type": "Seed Everywhere",
-    "_meta": {
-      "title": "Seed Everywhere"
-    }
-  },
-  "107": {
-    "inputs": {
-      "image": "DALL·E 2024-02-29 11.01.14 - Create an image of a cute, chibi version of a grey-skinned, bearded Aasimar Warlock. The character has a dignified presence, marked by a wise beard an.png",
-      "upload": "image"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
   "109": {
     "inputs": {
       "weight": 1,
@@ -482,8 +303,8 @@
         0
       ],
       "image": [
-        "48",
-        5
+        "119",
+        0
       ],
       "clip_vision": [
         "97",
@@ -495,43 +316,146 @@
       "title": "IPAdapter Advanced"
     }
   },
-  "80:0": {
+  "111": {
     "inputs": {
-      "model_name": "4x_NMKD-Siax_200k.pth"
+      "ckpt_name": "PixArt-Sigma-XL-2-1024-MS.pth",
+      "model": "PixArtMS_Sigma_XL_2"
     },
-    "class_type": "UpscaleModelLoader",
+    "class_type": "PixArtCheckpointLoader",
     "_meta": {
-      "title": "Load Upscale Model"
+      "title": "PixArt Sigma .pth Loader"
     }
   },
-  "80:1": {
+  "112": {
     "inputs": {
-      "upscale_model": [
-        "80:0",
+      "text": "%prompt%",
+      "T5": [
+        "114",
+        0
+      ]
+    },
+    "class_type": "T5TextEncode",
+    "_meta": {
+      "title": "T5 Text Encode"
+    }
+  },
+  "113": {
+    "inputs": {
+      "text": "",
+      "T5": [
+        "114",
+        0
+      ]
+    },
+    "class_type": "T5TextEncode",
+    "_meta": {
+      "title": "T5 Text Encode"
+    }
+  },
+  "114": {
+    "inputs": {
+      "t5v11_name": "model-00001-of-00002.safetensors",
+      "t5v11_ver": "xxl",
+      "path_type": "folder",
+      "device": "gpu",
+      "dtype": "auto (comfy)"
+    },
+    "class_type": "T5v11Loader",
+    "_meta": {
+      "title": "T5 Loader"
+    }
+  },
+  "115": {
+    "inputs": {
+      "vae_name": "pixart_sigma_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "PixArt Sigma VAE Loader"
+    }
+  },
+  "116": {
+    "inputs": {
+      "samples": [
+        "117",
         0
       ],
-      "image": [
-        "69",
-        5
-      ]
-    },
-    "class_type": "ImageUpscaleWithModel",
-    "_meta": {
-      "title": "Upscale Image (using Model)"
-    }
-  },
-  "80:2": {
-    "inputs": {
-      "upscale_method": "lanczos",
-      "scale_by": 0.38,
-      "image": [
-        "80:1",
+      "vae": [
+        "115",
         0
       ]
     },
-    "class_type": "ImageScaleBy",
+    "class_type": "VAEDecode",
     "_meta": {
-      "title": "Upscale Image By"
+      "title": "Preview Decoder"
+    }
+  },
+  "117": {
+    "inputs": {
+      "add_noise": "enable",
+      "noise_seed": "%seed%",
+      "steps": 20,
+      "cfg": 6,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "start_at_step": 0,
+      "end_at_step": 10000,
+      "return_with_leftover_noise": "disable",
+      "model": [
+        "111",
+        0
+      ],
+      "positive": [
+        "112",
+        0
+      ],
+      "negative": [
+        "113",
+        0
+      ],
+      "latent_image": [
+        "118",
+        0
+      ]
+    },
+    "class_type": "KSamplerAdvanced",
+    "_meta": {
+      "title": "PixArt Sigma KSampler"
+    }
+  },
+  "118": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Image Size"
+    }
+  },
+  "119": {
+    "inputs": {
+      "black_level": 0,
+      "mid_level": 104,
+      "white_level": 168,
+      "image": [
+        "116",
+        0
+      ]
+    },
+    "class_type": "Image Levels Adjustment",
+    "_meta": {
+      "title": "Image Levels Adjustment"
+    }
+  },
+  "125": {
+    "inputs": {
+      "seed": 0
+    },
+    "class_type": "Seed",
+    "_meta": {
+      "title": "Seed"
     }
   }
 }
