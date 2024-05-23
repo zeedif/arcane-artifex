@@ -6,7 +6,7 @@ export default class LocalA1111Settings extends FormApplication {
             id: 'a1111-settings',
             classes: ["arcane-artifex"],
             title: "A1111 Settings",
-            template: "modules/arcane-artifex/templates/stable-settings.hbs",
+            template: "modules/arcane-artifex/templates/a1111-settings.hbs",
             width: 700,
             height: "auto",
             resizable: true

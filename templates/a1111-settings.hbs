@@ -1,0 +1,209 @@
+<form autocomplete="on">
+    <div class="sheet-body flexrow">
+        <section>
+            <div class="a1111_url">
+                <h2>SERVER IP</h2>
+                <div class="form-group">
+                    <label>stable diffusion server IP</label>
+                    <div class="form-fields">
+                        <input name="a1111_url" type="text"
+                            value="{{a1111_url}}" />
+                    </div>
+                    <p class="notes">IP adress of your local instance of Stable
+                        diffusion</p>
+                </div>
+            </div>
+            <div class="a1111-settings">
+                <h2>Configuration</h2>
+                <div class="form-group">
+                    <div class="slider-container">
+                        <div class="slider-item">
+                            <label for="a1111-cfg-scale-slider">CFG Scale:</label>
+                            <input type="range" id="a1111-cfg-scale-slider" name="a1111_cfg_scale" min="1" max="30" step="0.5" value="{{a1111_cfg_scale}}" oninput="updateCfgScaleValue(this.value)">
+                            <input type="number" id="a1111-cfg-scale-input" name="a1111_cfg_scale" min="1" max="30" step="0.5" value="{{a1111_cfg_scale}}" onchange="updateCfgScaleSlider(this.value)">
+                        </div>
+                        <div class="slider-item">
+                            <label for="a1111-sampler-steps-slider">Sampler Steps:</label>
+                            <input type="range" id="a1111-sampler-steps-slider" name="a1111_sampler_steps" min="1" max="150" step="1" value="{{a1111_sampler_steps}}" oninput="updateSamplerStepsValue(this.value)">
+                            <input type="number" id="a1111-sampler-steps-input" name="a1111_sampler_steps" min="1" max="150" step="1" value="{{a1111_sampler_steps}}" onchange="updateSamplerStepsSlider(this.value)">
+                        </div>
+                        <div class="slider-item">
+                            <label for="a1111-height-slider">Height:</label>
+                            <input type="range" id="a1111-height-slider" name="a1111_height" min="64" max="2048" step="64" value="{{a1111_height}}" oninput="updateHeightValue(this.value)">
+                            <input type="number" id="a1111-height-input" name="a1111_height" min="64" max="2048" step="64" value="{{a1111_height}}" onchange="updateHeightSlider(this.value)">
+                        </div>
+                        <div class="slider-item">
+                            <label for="a1111-width-slider">Width:</label>
+                            <input type="range" id="a1111-width-slider" name="a1111_width" min="64" max="2048" step="64" value="{{a1111_width}}" oninput="updateWidthValue(this.value)">
+                            <input type="number" id="a1111-width-input" name="a1111_width" min="64" max="2048" step="64" value="{{a1111_width}}" onchange="updateWidthSlider(this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="a1111_models">
+                <h2>MODELS</h2>
+                <h4>active model: {{a1111_model}}</h4>
+                <select name="a1111_model">
+                    <option value="">change model here</option>
+                    {{#each a1111_models as |model|}}
+                    <option value="{{model.model_name}}" {{#if (eq model.model_name ../a1111_model)}}selected{{/if}}>
+                        {{model.model_name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="a1111_samplers">
+                <h2>SAMPLING METHOD</h2>
+                <h4>active sampler : {{a1111_sampler}}</h4>
+                <select name="a1111_sampler">
+                    <option value"">change sampler here</option>
+                    {{#each a1111_samplers as |sampler|}}
+                    <option value="{{sampler.name}}" {{#if (eq sampler.name ../a1111_sampler)}}selected{{/if}}>
+                        {{sampler.name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="a1111_upscalers">
+                <h2>UPSCALERS</h2>
+                <h4>active upscaler : {{a1111_upscaler}}</h4>
+                <select name="a1111_upscaler">
+                    <option value"">change upscaler here</option>
+                    {{#each a1111_upscalers as |upscaler|}}
+                    <option value="{{upscaler.name}}" {{#if (eq upscaler.name ../a1111_upscaler)}}selected{{/if}}>
+                        {{upscaler.name}}
+                    </option>
+                    {{/each}}
+                </select>
+            </div>
+           <div class="a1111_loras">
+                <h2 class="stable-a1111_loras">LORA STACK</h2>
+                <div class="form-fields">
+                    <textarea name="loraPrompt">{{loraPrompt}}</textarea>
+                </div>
+                <div class="stable-lora-choice">
+                    {{#each a1111_loras as |lora|}}
+                    <span class="lora-choice {{#if lora.active}}active{{/if}}">{{lora.alias}}</span>
+                    {{/each}}
+                </div>
+
+                {{#each a1111_loras as |lora id|}}
+                <div class="form-group active-lora {{#unless lora.active}}hidden{{/unless}}">
+                    <label>{{lora.alias}}</label>
+                    <input type="range" class="stable-lora-value"
+                           data-lora-alias="{{lora.alias}}"
+                           name="a1111_loras[{{id}}].strength"
+                           data-dtype="Number"
+                           value="{{lora.strength}}" min="0" max="2"
+                           step="0.05">
+                    <span class="range-value">{{lora.strength}}</span>
+                </div>
+                {{/each}}
+            </div>
+            <div class="a1111_restore_faces">
+                <h2>RESTORE FACES</h2>
+                <input name="a1111_restore_faces" type="checkbox" 
+                    {{#if a1111_restore_faces}}checked{{/if}}/>
+            </div>
+            <div class="a1111_enable_hr">  
+                <h2>HIRES. FIX</h2>
+                <input name="a1111_enable_hr" type="checkbox"
+                    {{#if a1111_enable_hr}}checked{{/if}}/>
+            </div>
+            <div class="a1111-hr-settings">
+                <div class="form-group">
+                    <div class="slider-container">
+                        <div class="slider-item">
+                            <label for="a1111-hr-scale-slider">Hires. Scale:</label>
+                            <input type="range" id="a1111-hr-scale-slider" name="a1111_hr_scale" min="1" max="4" step="0.1" value="{{a1111_hr_scale}}" oninput="updateHrScaleValue(this.value)">
+                            <input type="number" id="a1111-hr-scale-input" name="a1111_hr_scale" min="1" max="4" step="0.1" value="{{a1111_hr_scale}}" onchange="updateHrScaleSlider(this.value)">
+                        </div>
+                        <div class="slider-item">
+                            <label for="a1111-denoising-strength-slider">Denoising Strength:</label>
+                            <input type="range" id="a1111-denoising-strength-slider" name="a1111_denoising_strength" min="0" max="1" step="0.01" value="{{a1111_denoising_strength}}" oninput="updateDenoisingStrengthValue(this.value)">
+                            <input type="number" id="a1111-denoising-strength-input" name="a1111_denoising_strength" min="0" max="1" step="0.01" value="{{a1111_denoising_strength}}" onchange="updateDenoisingStrengthSlider(this.value)">
+                        </div>
+                        <div class="slider-item">
+                            <label for="a1111-hr-second-pass-steps-slider">Second Pass Steps:</label>
+                            <input type="range" id="a1111-hr-second-pass-steps-slider" name="a1111_hr_second_pass_steps" min="0" max="150" step="1" value="{{a1111_hr_second_pass_steps}}" oninput="updateHrSecondPassStepsValue(this.value)">
+                            <input type="number" id="a1111-hr-second-pass-steps-input" name="a1111_hr_second_pass_steps" min="0" max="150" step="1" value="{{a1111_hr_second_pass_steps}}" onchange="updateHrSecondPassStepsSlider(this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- JavaScript to synchronize the slider and the input field values -->
+    <script>
+        function updateCfgScaleValue(value) {
+            document.getElementById('a1111-cfg-scale-input').value = value;
+        }
+        function updateCfgScaleSlider(value) {
+            document.getElementById('a1111-cfg-scale-slider').value = value;
+        }
+        function updateSamplerStepsValue(value) {
+            document.getElementById('a1111-sampler-steps-input').value = value;
+        }
+        function updateSamplerStepsSlider(value) {
+            document.getElementById('a1111-sampler-steps-slider').value = value;
+        }
+        function updateHeightValue(value) {
+            document.getElementById('a1111-height-input').value = value;
+        }
+        function updateHeightSlider(value) {
+            document.getElementById('a1111-height-slider').value = value;
+        }
+        function updateWidthValue(value) {
+            document.getElementById('a1111-width-input').value = value;
+        }
+        function updateWidthSlider(value) {
+            document.getElementById('a1111-width-slider').value = value;
+        }
+        function updateHrScaleValue(value) {
+            document.getElementById('a1111-hr-scale-input').value = value;
+        }
+        function updateHrScaleSlider(value) {
+            document.getElementById('a1111-hr-scale-slider').value = value;
+        }
+        function updateDenoisingStrengthValue(value) {
+            document.getElementById('a1111-denoising-strength-input').value = value;
+        }
+        function updateDenoisingStrengthSlider(value) {
+            document.getElementById('a1111-denoising-strength-slider').value = value;
+        }
+        function updateHrSecondPassStepsValue(value) {
+            document.getElementById('a1111-hr-second-pass-steps-input').value = value;
+        }
+        function updateHrSecondPassStepsSlider(value) {
+            document.getElementById('a1111-hr-second-pass-steps-slider').value = value;
+        }
+    </script>
+    <!-- Styles for sliders -->
+    <style>
+        .slider-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .slider-item {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .slider-item:last-child {
+            margin-right: 0;
+        }
+        .slider-item input[type="range"], .slider-item input[type="number"] {
+            width: 100%;
+        }
+        .slider-item input[type="number"] {
+            width: auto; /* Adjusted to not conflict with the full-width range input */
+            margin-top: 5px;
+        }
+    </style>
+
+    <div class="sheet-footer">
+        <button type="submit">
+            <i class="far fa-save"></i>
+            {{ localize "Submit"}}
+        </button>
+    </div>
+</form>
