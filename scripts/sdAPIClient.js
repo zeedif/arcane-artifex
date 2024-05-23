@@ -11,7 +11,7 @@ class SdAPIClient {
     }
 
     postSkip() {
-        let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/skip`;
+        let apiUrl = `${game.settings.get("arcane-artifex", "localA1111Url")}/sdapi/v1/skip`;
         try {
             fetch(apiUrl, {
                 method: 'POST',
@@ -34,7 +34,7 @@ class SdAPIClient {
     }
 
     postInterrupt() {
-        let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/interrupt`;
+        let apiUrl = `${game.settings.get("arcane-artifex", "localA1111Url")}/sdapi/v1/interrupt`;
         try {
             fetch(apiUrl, {
                 method: 'POST',
@@ -93,7 +93,7 @@ class SdAPIClient {
         }
     
         async postOption(option) {
-            let stIP = await game.settings.get("arcane-artifex", "localA1111URL");
+            let stIP = await game.settings.get("arcane-artifex", "localA1111Url");
             let optionsUrl = `${stIP}/sdapi/v1/options`;
             try {
                 fetch(optionsUrl, {
@@ -131,7 +131,7 @@ class SdAPIClient {
             requestBody.prompt = localA1111APIClient.getFullPrompt(prompt);
             requestBody.init_images = [source];
             requestBody.denoising_strength = this.settings.denoising_strength;
-        let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/img2img/`;
+        let apiUrl = `${game.settings.get("arcane-artifex", "localA1111Url")}/sdapi/v1/img2img/`;
         await game.settings.set("arcane-artifex", "working", true);
         try {
             fetch(apiUrl, {

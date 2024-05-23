@@ -139,7 +139,6 @@ export default function registerSettings() {
   });
 
 
-
     // Register non-configurable settings
   game.settings.register("arcane-artifex", "connected", {
     name: "Connection Status",
@@ -157,8 +156,8 @@ export default function registerSettings() {
     default: false
   });
 
-  game.settings.register("arcane-artifex", "localA1111URL", {
-    name: "localA1111URL",
+  game.settings.register("arcane-artifex", "localA1111Url", {
+    name: "localA1111Url",
     scope: "world",
     type: String,
     default: "http://localhost:7860",
@@ -221,23 +220,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     default: 512
   });
 
-
-  game.settings.register("arcane-artifex", "sdwidth", {
-    name: "Image Width",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 512
-  });
-
-  game.settings.register("arcane-artifex", "sdheight", {
-    name: "Image Height",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 512
-  });
-
   // Register settings for localSDSettings
   game.settings.register("arcane-artifex", "localSDSettings", {
     name: "Local SD Settings",
@@ -247,7 +229,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     config: false,
   });
 
-  // Register settings for localA1111Models
   game.settings.register("arcane-artifex", "localA1111Models", {
     name: "localA1111Models",
     scope: "world",
@@ -256,7 +237,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     config: false,
   });
 
-  // Register settings for localA1111Loras
   game.settings.register("arcane-artifex", "localA1111Loras", {
     name: "localA1111Loras",
     scope: "world",
@@ -283,7 +263,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     config: false,
   });
 
-  // Register settings for localA1111Upscalers
   game.settings.register("arcane-artifex", "localA1111Upscalers", {
     name: "localA1111Upscalers",
     scope: "world",
@@ -330,6 +309,13 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     type: Object,
     config: false,
     default: {}
+  });
+
+  game.settings.register("arcane-artifex", "localA1111LoraPrompt", {
+    name: "localA1111LoraPrompt",
+    scope: "world",
+    type: String,
+    default: ""
   });
 
   game.settings.register("arcane-artifex", "rawPrompt", {
@@ -709,20 +695,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     type: Boolean,
     default: true
   });
-  game.settings.register("arcane-artifex", "hordeRestoreFaces", {
-    name: "Restore Faces",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: true
-  });
-  game.settings.register("arcane-artifex", "comfyUiRestoreFaces", {
-    name: "Restore Faces",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: true
-  });
 
   // For hires fix settings
   game.settings.register("arcane-artifex", "localA1111EnableHr", {
@@ -732,41 +704,9 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     type: Boolean,
     default: true
   });
-  game.settings.register("arcane-artifex", "hordeEnableHr", {
-    name: "Hires. Fix",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: true
-  });
-  game.settings.register("arcane-artifex", "comfyUiEnableHr", {
-    name: "Hires. Fix",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: true
-  });
 
   // For HR scale settings
   game.settings.register("arcane-artifex", "localA1111HrScale", {
-    name: "Upscale by",
-    hint: "What to multiply the resolution by",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: { min: 1.0, max: 4.0, step: 0.1 },
-    default: 2.0
-  });
-  game.settings.register("arcane-artifex", "hordeHrScale", {
-    name: "Upscale by",
-    hint: "What to multiply the resolution by",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: { min: 1.0, max: 4.0, step: 0.1 },
-    default: 2.0
-  });
-  game.settings.register("arcane-artifex", "comfyUiHrScale", {
     name: "Upscale by",
     hint: "What to multiply the resolution by",
     scope: "world",
@@ -786,24 +726,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     range: { min: 0.0, max: 1.0, step: 0.01 },
     default: 0.7
   });
-  game.settings.register("arcane-artifex", "hordeDenoisingStrength", {
-    name: "Hires. Fix Denoising Strength",
-    hint: "How strongly the upscaler effects image generation",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: { min: 0.0, max: 1.0, step: 0.01 },
-    default: 0.7
-  });
-  game.settings.register("arcane-artifex", "comfyUiDenoisingStrength", {
-    name: "Hires. Fix Denoising Strength",
-    hint: "How strongly the upscaler effects image generation",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: { min: 0.0, max: 1.0, step: 0.01 },
-    default: 0.7
-  });
 
   // For HR second pass steps settings
   game.settings.register("arcane-artifex", "localA1111HrSecondPassSteps", {
@@ -815,55 +737,6 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     range: { min: 0, max: 150, step: 1 },
     default: 0
   });
-  game.settings.register("arcane-artifex", "hordeHrSecondPassSteps", {
-    name: "Number of second pass steps",
-    hint: "How many steps to take in the second pass",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: { min: 0, max: 150, step: 1 },
-    default: 0
-  });
-  game.settings.register("arcane-artifex", "comfyUiHrSecondPassSteps", {
-    name: "Number of second pass steps",
-    hint: "How many steps to take in the second pass",
-    scope: "world",
-    config: false,
-    type: Number,
-    range: { min: 0, max: 150, step: 1 },
-    default: 0
-  });
-
-
-
-
-  game.settings.register("arcane-artifex", "cfgScale", {
-    name: "CFG Scale",
-    hint: "Set the CFG scale value",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-      min: 1,
-      max: 30,
-      step: 0.5
-    },
-    default: 1.5
-  });
-
-  game.settings.register("arcane-artifex", "samplerSteps", {
-    name: "Sampler Steps",
-    hint: "Set the number of sampler steps",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-      min: 1,
-      max: 150,
-      step: 1
-    },
-    default: 20
-  });
 
   game.settings.register("arcane-artifex", "promptPrefix", {
     name: "Prompt Prefix",
@@ -871,7 +744,7 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     scope: "world",
     config: true,
     type: String,
-    default: 'best quality, absurdres, aesthetic,'
+    default: 'best quality'
   });
 
   game.settings.register("arcane-artifex", "negativePrompt", {
@@ -891,132 +764,39 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     type: String,
     default: ''
   });
-
-  game.settings.register("arcane-artifex", "resolutionOptions", {
-    name: "Resolution Options",
-    hint: "Select a predefined resolution",
-    scope: "world",
-    config: true,
-    type: String,
-    choices: Object.keys(resolutionOptions).reduce((choices, key) => {
-      choices[key] = resolutionOptions[key].name;
-      return choices;
-    }, {}),
-    default: "sd_res_512x512",
-    onChange: async value => {
-      const selectedResolution = resolutionOptions[value];
-      await game.settings.set("arcane-artifex", "sdwidth", selectedResolution.width);
-      await game.settings.set("arcane-artifex", "sdheight", selectedResolution.height);
-      await localA1111APIClient.getSettings();
-    }
-  });
-
-  game.settings.register("arcane-artifex", "restoreFaces", {
-    name: "Restore Faces",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true
-  });
-
-  game.settings.register("arcane-artifex", "enableHr", {
-    name: "Hires. Fix",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true
-  });
-
-  game.settings.register("arcane-artifex", "hrScale", {
-    name: "Upscale by",
-    hint: "What to multiply the resolution by",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-      min: 1.0,
-      max: 4.0,
-      step: 0.1
-    },
-    default: 2.0,
-    default: true
-  });
-
-  game.settings.register("arcane-artifex", "denoisingStrength", {
-    name: "Hires. Fix Denoising Strength",
-    hint: "How strongly the upscaler effects image generation",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-      min: 0.0,
-      max: 1.0,
-      step: 0.01
-    },
-    default: 0.7
-  });
-
-  game.settings.register("arcane-artifex", "hrSecondPassSteps", {
-    name: "Number of second pass steps",
-    hint: "How many steps to take in the second pass",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-      min: 0,
-      max: 150,
-      step: 1
-    },
-    default: 0
-  });
-
-  game.settings.register("arcane-artifex", "denoisingStrength", {
-    name: "Hires. Fix Denoising Strength",
-    hint: "How strongly the upscaler effects image generation",
-    scope: "world",
-    config: true,
-    type: Number,
-    range: {
-      min: 0.0,
-      max: 1.0,
-      step: 0.01
-    },
-    default: 0.7
-  });
-
-  // Dynamically register settings based on defaultSettings
-  Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
-    game.settings.register('arcane-artifex', key, {
-      name: key,
-      hint: `Setting for ${key}`,
-      scope: 'world',
-      config: false,
-      type: determineSettingType(defaultValue),
-      default: defaultValue,
-      onChange: value => console.log(`Setting '${key}' changed to:`, value)
-    });
-  });
-
-  // Register stable-settings
-  game.settings.register('arcane-artifex', 'stable-settings', {
+ // Dynamically register settings based on defaultSettings
+ Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
+  game.settings.register('arcane-artifex', key, {
+    name: key,
+    hint: `Setting for ${key}`,
     scope: 'world',
     config: false,
-    type: Object,
-    default: {}
+    type: determineSettingType(defaultValue),
+    default: defaultValue,
+    onChange: value => console.log(`Setting '${key}' changed to:`, value)
   });
+});
+
+// Register stable-settings
+game.settings.register('arcane-artifex', 'stable-settings', {
+  scope: 'world',
+  config: false,
+  type: Object,
+  default: {}
+});
 }
 
 /**
- * Determines the setting type based on the provided value.
- * @param {*} value - The value to determine the setting type for.
- * @returns {Function} The determined setting type.
- */
+* Determines the setting type based on the provided value.
+* @param {*} value - The value to determine the setting type for.
+* @returns {Function} The determined setting type.
+*/
 function determineSettingType(value) {
-  if (typeof value === 'boolean') return Boolean;
-  if (typeof value === 'number') return Number;
-  if (Array.isArray(value)) return Array;
-  if (typeof value === 'object' && value !== null) return Object;
-  return String; // Default to string for everything else
+if (typeof value === 'boolean') return Boolean;
+if (typeof value === 'number') return Number;
+if (Array.isArray(value)) return Array;
+if (typeof value === 'object' && value !== null) return Object;
+return String; // Default to string for everything else
 }
 
 export { defaultSettings };

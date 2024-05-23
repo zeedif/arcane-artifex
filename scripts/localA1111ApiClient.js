@@ -1,15 +1,12 @@
 import chatListener from "./ChatListener.js";
 
 class LocalA1111APIClient {
-    constructor() {
-        this.settings = {};
-    }
 
 async checkStatus() {
         const selectedSource = game.settings.get('arcane-artifex', 'source');
     
         if (selectedSource === 'localA1111') {
-            const a1111url = game.settings.get('arcane-artifex', 'localA1111URL');
+            const a1111url = game.settings.get('arcane-artifex', 'localA1111Url');
             const statusUrl = a1111url;
     
             try {
@@ -48,40 +45,32 @@ async checkStatus() {
         }
         await this.getA1111EndpointSettings();
 
-        this.settings = game.settings.get("arcane-artifex", "stable-settings");
-        console.log("Settings:", this.settings);
-
         await game.settings.set("arcane-artifex", "localA1111RequestBody",  {
             prompt: game.settings.get("arcane-artifex", "promptPrefix"),
             seed: -1,
-            height: game.settings.get("arcane-artifex", "sdheight"),
-            width: game.settings.get("arcane-artifex", "sdwidth"),
+            height: game.settings.get("arcane-artifex", "localA1111Height"),
+            width: game.settings.get("arcane-artifex", "localA1111Width"),
             negative_prompt: game.settings.get("arcane-artifex", "negativePrompt"),
             n_iter: 1,
-            restore_faces: game.settings.get("arcane-artifex", "restoreFaces"),
-            steps: game.settings.get("arcane-artifex", "samplerSteps"),
+            restore_faces: game.settings.get("arcane-artifex", "localA1111RestoreFaces"),
+            steps: game.settings.get("arcane-artifex", "localA1111SamplerSteps"),
             sampler_name: game.settings.get("arcane-artifex", "localA1111Sampler"),
-            enable_hr: game.settings.get("arcane-artifex", "enableHr"),
+            enable_hr: game.settings.get("arcane-artifex", "localA1111EnableHr"),
             hr_upscaler: game.settings.get("arcane-artifex", "localA1111Upscaler"),
-            hr_scale: game.settings.get("arcane-artifex", "hrScale"),
-            denoising_strength: game.settings.get("arcane-artifex", "denoisingStrength"),
-            hr_second_pass_steps: game.settings.get("arcane-artifex", "hrSecondPassSteps"),
-            cfg_scale: game.settings.get("arcane-artifex", "cfgScale")
+            hr_scale: game.settings.get("arcane-artifex", "localA1111HrScale"),
+            denoising_strength: game.settings.get("arcane-artifex", "localA1111DenoisingStrength"),
+            hr_second_pass_steps: game.settings.get("arcane-artifex", "localA1111HrSecondPassSteps"),
+            cfg_scale: game.settings.get("arcane-artifex", "localA1111CfgScale")
         });
-        console.log("Default Request Body:", game.settings.get("arcane-artifex", "localA1111RequestBody"));
+        console.error("Default Request Body:", game.settings.get("arcane-artifex", "localA1111RequestBody"));
     }
 
     async getA1111EndpointSettings() {
-        const stIP = await game.settings.get("arcane-artifex", "localA1111URL");
+        const stIP = await game.settings.get("arcane-artifex", "localA1111Url");
         try {
             const lorasResponse = await fetch(`${stIP}/sdapi/v1/loras`, { method: 'GET' });
             if (lorasResponse.ok) {
                 game.settings.set("arcane-artifex", "localA1111Loras", await lorasResponse.json());
-            }
-
-            const stylesResponse = await fetch(`${stIP}/sdapi/v1/prompt-styles`, { method: 'GET' });
-            if (stylesResponse.ok) {
-                game.settings.set("arcane-artifex", "localA1111Styles", await stylesResponse.json());
             }
 
             const modelsResponse = await fetch(`${stIP}/sdapi/v1/sd-models`, { method: 'GET' });
@@ -111,12 +100,15 @@ async checkStatus() {
 
   async textToImg(prompt, message) {
 
+    await this.getSettings();
+
     let requestBody = deepClone(game.settings.get("arcane-artifex", "localA1111RequestBody"));
       requestBody.prompt = this.getFullPrompt(prompt);
       await game.settings.set("arcane-artifex", "fullPrompt", requestBody.prompt)
-      let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/txt2img/`;
+      let apiUrl = `${game.settings.get("arcane-artifex", "localA1111Url")}/sdapi/v1/txt2img/`;
       await game.settings.set("arcane-artifex", "working", true);
-    
+      console.error("Request Body:", requestBody);
+   
       try {
         fetch(apiUrl, {
           method: 'POST',
@@ -146,7 +138,7 @@ async checkStatus() {
     
     
   getFullPrompt(userPrompt) {
-    return `${this.settings['prompt_prefix']}, ${userPrompt}, ${this.settings.loraPrompt}`;
+    return `${game.settings.get("arcane-artifex", "promptPrefix")}${userPrompt}, ${game.settings.get("arcane-artifex", "localA1111LoraPrompt")}`;
 }
 
 async initProgressRequest(message, attempt = 0, currentState = "undefined") {
@@ -160,7 +152,7 @@ async initProgressRequest(message, attempt = 0, currentState = "undefined") {
       currentState = "idle";
   }
 
-  let apiUrl = `${game.settings.get("arcane-artifex", "localA1111URL")}/sdapi/v1/progress`;
+  let apiUrl = `${game.settings.get("arcane-artifex", "localA1111Url")}/sdapi/v1/progress`;
   fetch(apiUrl)
       .then(response => {
           if (!response.ok) {
