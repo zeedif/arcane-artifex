@@ -62,7 +62,7 @@ async checkStatus() {
             hr_second_pass_steps: game.settings.get("arcane-artifex", "localA1111HrSecondPassSteps"),
             cfg_scale: game.settings.get("arcane-artifex", "localA1111CfgScale")
         });
-        console.error("Default Request Body:", game.settings.get("arcane-artifex", "localA1111RequestBody"));
+        console.log("Default Request Body:", game.settings.get("arcane-artifex", "localA1111RequestBody"));
     }
 
     async getA1111EndpointSettings() {
@@ -70,7 +70,24 @@ async checkStatus() {
         try {
             const lorasResponse = await fetch(`${stIP}/sdapi/v1/loras`, { method: 'GET' });
             if (lorasResponse.ok) {
-                game.settings.set("arcane-artifex", "localA1111Loras", await lorasResponse.json());
+                const newLoras = await lorasResponse.json();
+                const currentLoras = game.settings.get("arcane-artifex", "localA1111Loras");
+                const updatedLoras = currentLoras.map(currentLora => {
+                    const matchingNewLora = newLoras.find(newLora => newLora.name === currentLora.name);
+                    if (matchingNewLora) {
+                        return {
+                            ...matchingNewLora,
+                            active: currentLora.active || false,
+                            strength: currentLora.strength || 0
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
+            
+                const newLorasToAdd = newLoras.filter(newLora => !currentLoras.some(currentLora => currentLora.name === newLora.name));
+                const finalLoras = [...updatedLoras, ...newLorasToAdd];
+            
+                game.settings.set("arcane-artifex", "localA1111Loras", finalLoras);
             }
 
             const modelsResponse = await fetch(`${stIP}/sdapi/v1/sd-models`, { method: 'GET' });
