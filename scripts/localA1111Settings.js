@@ -1,18 +1,14 @@
 import sdAPIClient from "./sdAPIClient.js";
 
 export default class LocalA1111Settings extends FormApplication {
-    constructor(...args) {
-        super();
-        this.loadingModel = false;
-    }
-
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["arcane-artifex", "stable-setting-sheet"],
+            id: 'a1111-settings',
+            classes: ["arcane-artifex"],
+            title: "A1111 Settings",
             template: "modules/arcane-artifex/templates/stable-settings.hbs",
-            width: 800,
+            width: 700,
             height: "auto",
-            title: "Settings for A1111 Image Generation",
             resizable: true
         });
     }
@@ -176,14 +172,8 @@ export default class LocalA1111Settings extends FormApplication {
         }
         await game.settings.set('arcane-artifex', 'localA1111LoraPrompt', loraPrompt);
       }
-      
-
-      
 
     _updateObject(event, formData) {
-        const data = {  };
-        
-
-        game.settings.set('arcane-artifex', 'stable-settings', data);
+        this.render(true);
     }
 }

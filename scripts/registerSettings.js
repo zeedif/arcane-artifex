@@ -1,4 +1,3 @@
-import stableFileManager from "./StableFileManager.js";
 import openAiSettings from "./openAiSettings.js";
 import localA1111Settings from "./localA1111Settings.js";
 import localA1111APIClient from "./localA1111ApiClient.js";
@@ -9,50 +8,6 @@ import { comfyUiApiClient } from "./comfyUiApiClient.js";
 import { openAiApiClient } from "./openAiApiClient.js";
 import { stabilityApiClient } from "./stabilityApiClient.js";
 import stabilitySettings from "./stabilitySettings.js";
-
-const defaultPrefix = 'best quality, absurdres, aesthetic,';
-const defaultNegative = 'lowres, bad anatomy, bad hands, text, error, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry';
-const defaultStyles = [
-  {
-    name: 'Default',
-    negative: defaultNegative,
-    prefix: defaultPrefix,
-  },
-];
-
-const promptTemplates = {};
-
-const resolutionOptions = {
-  "sd_res_512x512": { width: 512, height: 512, name: "512x512 (1:1, icons, profile pictures. SD1.5)" },
-  "sd_res_600x600": { width: 600, height: 600, name: "600x600 (1:1, icons, profile pictures, SD1.5)" },
-  "sd_res_512x768": { width: 512, height: 768, name: "512x768 (2:3, vertical character card, SD1.5)" },
-  "sd_res_768x512": { width: 768, height: 512, name: "768x512 (3:2, horizontal 35-mm movie film, SD1.5)" },
-  "sd_res_960x540": { width: 960, height: 540, name: "960x540 (16:9, horizontal wallpaper, SD1.5)" },
-  "sd_res_540x960": { width: 540, height: 960, name: "540x960 (9:16, vertical wallpaper, SD1.5)" },
-  "sd_res_1920x1088": { width: 1920, height: 1088, name: "1920x1088 (16:9, 1080p, horizontal wallpaper)" },
-  "sd_res_1088x1920": { width: 1088, height: 1920, name: "1088x1920 (9:16, 1080p, vertical wallpaper)" },
-  "sd_res_1280x720": { width: 1280, height: 720, name: "1280x720 (16:9, 720p, horizontal wallpaper)" },
-  "sd_res_720x1280": { width: 720, height: 1280, name: "720x1280 (9:16, 720p, vertical wallpaper)" },
-  "sd_res_1024x1024": { width: 1024, height: 1024, name: "1024x1024 (1:1, SDXL)" },
-  "sd_res_1152x896": { width: 1152, height: 896, name: "1152x896 (9:7, SDXL)" },
-  "sd_res_896x1152": { width: 896, height: 1152, name: "896x1152 (7:9, SDXL)" },
-  "sd_res_1216x832": { width: 1216, height: 832, name: "1216x832 (19:13, SDXL)" },
-  "sd_res_832x1216": { width: 832, height: 1216, name: "832x1216 (13:19, SDXL)" },
-  "sd_res_1344x768": { width: 1344, height: 768, name: "1344x768 (4:3, SDXL)" },
-  "sd_res_768x1344": { width: 768, height: 1344, name: "768x1344 (3:4, SDXL)" },
-  "sd_res_1536x640": { width: 1536, height: 640, name: "1536x640 (24:10, SDXL)" },
-  "sd_res_640x1536": { width: 640, height: 1536, name: "640x1536 (10:24, SDXL)" }
-};
-
-const defaultSettings = {
-  prompts: promptTemplates,
-  // arcane-artifex old settings TO BE DEPRECATED
-  loras: [],
-  styles: [],
-  loraPrompt: '',
-  activeLoras: [],
-};
-
 
 export default function registerSettings() {
 
@@ -764,39 +719,5 @@ game.settings.register("arcane-artifex", "localA1111Height", {
     type: String,
     default: ''
   });
- // Dynamically register settings based on defaultSettings
- Object.entries(defaultSettings).forEach(([key, defaultValue]) => {
-  game.settings.register('arcane-artifex', key, {
-    name: key,
-    hint: `Setting for ${key}`,
-    scope: 'world',
-    config: false,
-    type: determineSettingType(defaultValue),
-    default: defaultValue,
-    onChange: value => console.log(`Setting '${key}' changed to:`, value)
-  });
-});
 
-// Register stable-settings
-game.settings.register('arcane-artifex', 'stable-settings', {
-  scope: 'world',
-  config: false,
-  type: Object,
-  default: {}
-});
 }
-
-/**
-* Determines the setting type based on the provided value.
-* @param {*} value - The value to determine the setting type for.
-* @returns {Function} The determined setting type.
-*/
-function determineSettingType(value) {
-if (typeof value === 'boolean') return Boolean;
-if (typeof value === 'number') return Number;
-if (Array.isArray(value)) return Array;
-if (typeof value === 'object' && value !== null) return Object;
-return String; // Default to string for everything else
-}
-
-export { defaultSettings };
