@@ -86,43 +86,6 @@ class SdAPIClient {
             }
           }
     
-        async changeModel(title) {
-            return await this.postOption({
-                sd_model_checkpoint: title,
-            });
-        }
-    
-        async postOption(option) {
-            let stIP = await game.settings.get("arcane-artifex", "localA1111Url");
-            let optionsUrl = `${stIP}/sdapi/v1/options`;
-            try {
-                fetch(optionsUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8'
-                    },
-                    body: JSON.stringify(option)
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Error: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(async () => {
-                        await localA1111APIClient.getA1111EndpointSettings();
-                        if (ui.activeWindow.title == "settings for stable diffusion image generation") {
-                            ui.activeWindow.render(true);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            } catch (e) {
-                ui.notifications.warn('Error while sending request to stable diffusion');
-            }
-        }
-    
         async imgToImg(prompt, message, source) {
             if (game.settings.get("arcane-artifex", "working")) {
                 return ui.notifications.warn("please wait until previous job is finished");

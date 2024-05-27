@@ -1,4 +1,4 @@
-import sdAPIClient from "./sdAPIClient.js";
+import localA1111APIClient from "./localA1111ApiClient.js";
 
 export default class LocalA1111Settings extends FormApplication {
     static get defaultOptions() {
@@ -34,11 +34,7 @@ export default class LocalA1111Settings extends FormApplication {
         context.a1111_hr_second_pass_steps = game.settings.get("arcane-artifex", "localA1111HrSecondPassSteps");
         context.a1111_lora_prompt = game.settings.get("arcane-artifex", "localA1111LoraPrompt");
 
-        console.error(context);
-
-        if (!context.activeLoras) {
-            context.activeLoras = [];
-        }
+        console.log(context);
 
         this.context = context;
         return context;
@@ -54,9 +50,8 @@ export default class LocalA1111Settings extends FormApplication {
         });
     
         html.find('[name="a1111_model"]').change(async (event) => {
-            console.error("Model changed", event.target.value);
             await game.settings.set("arcane-artifex", "localA1111Model", event.target.value);
-            await sdAPIClient.changeModel(event.target.value);
+            await this.changeModel(event.target.value);
             this.render(true);
         });
     
@@ -172,6 +167,43 @@ export default class LocalA1111Settings extends FormApplication {
         }
         await game.settings.set('arcane-artifex', 'localA1111LoraPrompt', loraPrompt);
       }
+
+      async changeModel(title) {
+        return await this.postOption({
+            sd_model_checkpoint: title,
+        });
+        }
+
+        async postOption(option) {
+            let stIP = await game.settings.get("arcane-artifex", "localA1111Url");
+            let optionsUrl = `${stIP}/sdapi/v1/options`;
+            try {
+                fetch(optionsUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify(option)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(async () => {
+                        await localA1111APIClient.getA1111EndpointSettings();
+                        if (ui.activeWindow.title == "settings for stable diffusion image generation") {
+                            ui.activeWindow.render(true);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } catch (e) {
+                ui.notifications.warn('Error while sending request to stable diffusion');
+            }
+        }
 
     _updateObject(event, formData) {
         this.render(true);

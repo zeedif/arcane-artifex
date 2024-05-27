@@ -15,8 +15,8 @@ export default class PromptApplication extends FormApplication {
             title: "actor prompt",
             width: 400,
             height: 400,
-            left: 40,
-            top: 40
+            left: 200,
+            top: 200
         });
     }
 

@@ -1,8 +1,20 @@
 {
+  "49": {
+    "inputs": {
+      "images": [
+        "116",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
   "63": {
     "inputs": {
       "image": [
-        "119",
+        "116",
         0
       ],
       "vae": [
@@ -243,8 +255,8 @@
     "inputs": {
       "selected_indexes": "0",
       "images": [
-        "69",
-        5
+        "126",
+        0
       ]
     },
     "class_type": "ImageSelector",
@@ -259,8 +271,8 @@
         0
       ],
       "image2": [
-        "69",
-        5
+        "126",
+        0
       ]
     },
     "class_type": "ImageBatch",
@@ -303,7 +315,7 @@
         0
       ],
       "image": [
-        "119",
+        "116",
         0
       ],
       "clip_vision": [
@@ -314,6 +326,19 @@
     "class_type": "IPAdapterAdvanced",
     "_meta": {
       "title": "IPAdapter Advanced"
+    }
+  },
+  "110": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "116",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
     }
   },
   "111": {
@@ -354,7 +379,7 @@
   },
   "114": {
     "inputs": {
-      "t5v11_name": "model-00001-of-00002.safetensors",
+      "t5v11_name": "model (2).safetensors",
       "t5v11_ver": "xxl",
       "path_type": "folder",
       "device": "gpu",
@@ -434,28 +459,21 @@
       "title": "Image Size"
     }
   },
-  "119": {
+  "126": {
     "inputs": {
-      "black_level": 0,
-      "mid_level": 104,
-      "white_level": 168,
-      "image": [
+      "method": "mkl",
+      "image_ref": [
         "116",
         0
+      ],
+      "image_target": [
+        "69",
+        5
       ]
     },
-    "class_type": "Image Levels Adjustment",
+    "class_type": "ColorMatch",
     "_meta": {
-      "title": "Image Levels Adjustment"
-    }
-  },
-  "125": {
-    "inputs": {
-      "seed": 0
-    },
-    "class_type": "Seed",
-    "_meta": {
-      "title": "Seed"
+      "title": "Color Match"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "arcane-artifex",
   "title": "Arcane Artifex",
-  "version": "v0.1",
+  "version": "v0.8",
   "compatibility": {
     "minimum": "10",
     "verified": "11",
