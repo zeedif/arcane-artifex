@@ -1,12 +1,12 @@
 export default class PromptApplication extends FormApplication {
-    constructor(prompt, actorUuid) {
-        super();
+    constructor(prompt, actorUuid, options = {}) {
+        super({}, options);
         this.basePrompt = prompt;
         this.actorId = actorUuid;
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ['form', 'stable-image'],
             popOut: true,
             closeOnSubmit: true,
@@ -20,17 +20,18 @@ export default class PromptApplication extends FormApplication {
         });
     }
 
-    getData() {
-        return mergeObject(super.getData(), {
+    getData(options) {
+        const context = super.getData(options);
+        return foundry.utils.mergeObject(context, {
             basePrompt: this.basePrompt
         });
     }
 
-    _updateObject() {
-        const prompt = this.form.querySelector('[name="basePrompt"]').value;
+    async _updateObject(event, formData) {
+        const prompt = formData.basePrompt;
         const msgData = {
-            user: game.user.id,
-            type: 1,
+             user: game.user.id,
+            type: CONST.CHAT_MESSAGE_TYPES.OOC,
             speaker: ChatMessage.getSpeaker(),
             content: prompt,
             flags: {
@@ -39,6 +40,6 @@ export default class PromptApplication extends FormApplication {
                 }
             }
         };
-        ChatMessage.create(msgData);
+        await ChatMessage.create(msgData);
     }
 }

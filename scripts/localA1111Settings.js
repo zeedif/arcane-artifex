@@ -2,7 +2,7 @@ import localA1111APIClient from "./localA1111ApiClient.js";
 
 export default class LocalA1111Settings extends FormApplication {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'a1111-settings',
             classes: ["arcane-artifex"],
             title: "A1111 Settings",
@@ -13,8 +13,8 @@ export default class LocalA1111Settings extends FormApplication {
         });
     }
 
-    getData() {
-        let context = {};
+    getData(options) {
+        const context = super.getData(options);
         context.a1111_url = game.settings.get("arcane-artifex", "localA1111Url");
         context.a1111_model = game.settings.get("arcane-artifex", "localA1111Model");
         context.a1111_sampler = game.settings.get("arcane-artifex", "localA1111Sampler");
@@ -34,9 +34,6 @@ export default class LocalA1111Settings extends FormApplication {
         context.a1111_hr_second_pass_steps = game.settings.get("arcane-artifex", "localA1111HrSecondPassSteps");
         context.a1111_lora_prompt = game.settings.get("arcane-artifex", "localA1111LoraPrompt");
 
-        console.log(context);
-
-        this.context = context;
         return context;
     }
 
@@ -44,86 +41,87 @@ export default class LocalA1111Settings extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
     
-        html.find('[name="a1111_url"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_url"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111Url", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_model"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_model"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111Model", event.target.value);
             await this.changeModel(event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_sampler"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_sampler"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111Sampler", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_upscaler"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_upscaler"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111Upscaler", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_cfg_scale"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_cfg_scale"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111CfgScale", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_sampler_steps"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_sampler_steps"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111SamplerSteps", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_height"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_height"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111Height", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_width"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_width"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111Width", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_restore_faces"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_restore_faces"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111RestoreFaces", event.target.checked);
             this.render(true);
         });
     
-        html.find('[name="a1111_enable_hr"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_enable_hr"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111EnableHr", event.target.checked);
             this.render(true);
         });
     
-        html.find('[name="a1111_hr_scale"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_hr_scale"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111HrScale", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_denoising_strength"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_denoising_strength"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111DenoisingStrength", event.target.value);
             this.render(true);
         });
     
-        html.find('[name="a1111_hr_second_pass_steps"]').change(async (event) => {
+        html[0].querySelector('[name="a1111_hr_second_pass_steps"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "localA1111HrSecondPassSteps", event.target.value);
             this.render(true);
         });
     
         this.changeLoraPrompt();
-    
+     
+        const a1111Loras = this.getData().a1111_loras;
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
             let loraAlias = span.innerText.trim();
-            let lora = this.context.a1111_loras.find(l => l.alias === loraAlias);
+            let lora = a1111Loras.find(l => l.alias === loraAlias);
             if (lora && lora.active) {
                 span.classList.add('active');
             }
             span.addEventListener('click', (event) => this.toggleLora(event, lora));
         }
-    
-        for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
+
+        html[0].querySelectorAll('.form-group.active-lora .stable-lora-value').forEach(range => {
             range.addEventListener('change', (event) => this.changeLoraStrength(event, range.dataset.loraAlias));
-        }
+        });
     }
 
     async toggleLora(ev, lora) {
@@ -153,59 +151,61 @@ export default class LocalA1111Settings extends FormApplication {
     }
       
 
-      async changeLoraPrompt() {
+    async changeLoraPrompt() {
         let loras = game.settings.get('arcane-artifex', 'localA1111Loras');
         let loraPrompt = "";
-        loras.forEach(lora => {
-          if (lora.active) {
-            let newString = `<lora:${lora.alias}:${lora.strength}>`;
-            loraPrompt += newString;
-          }
-        });
+        if (Array.isArray(loras)) {
+            loras.forEach(lora => {
+                if (lora.active) {
+                    let newString = `<lora:${lora.alias}:${lora.strength}>`;
+                    loraPrompt += newString;
+                }
+            });
+        }
         if (this.form) {
-          this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
+            this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
         }
         await game.settings.set('arcane-artifex', 'localA1111LoraPrompt', loraPrompt);
-      }
+    }
 
-      async changeModel(title) {
+    async changeModel(title) {
         return await this.postOption({
             sd_model_checkpoint: title,
         });
-        }
+    }
 
-        async postOption(option) {
-            let stIP = await game.settings.get("arcane-artifex", "localA1111Url");
-            let optionsUrl = `${stIP}/sdapi/v1/options`;
-            try {
-                fetch(optionsUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8'
-                    },
-                    body: JSON.stringify(option)
+    async postOption(option) {
+        let stIP = await game.settings.get("arcane-artifex", "localA1111Url");
+        let optionsUrl = `${stIP}/sdapi/v1/options`;
+        try {
+            fetch(optionsUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                body: JSON.stringify(option)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response.json();
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Error: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(async () => {
-                        await localA1111APIClient.getA1111EndpointSettings();
-                        if (ui.activeWindow.title == "settings for stable diffusion image generation") {
-                            ui.activeWindow.render(true);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            } catch (e) {
-                ui.notifications.warn('Error while sending request to stable diffusion');
-            }
+                .then(async () => {
+                    await localA1111APIClient.getA1111EndpointSettings();
+                    if (ui.activeWindow.title == "settings for stable diffusion image generation") {
+                        ui.activeWindow.render(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } catch (e) {
+            ui.notifications.warn('Error while sending request to stable diffusion');
         }
+    }
 
-    _updateObject(event, formData) {
+    async _updateObject(event, formData) {
         this.render(true);
     }
 }

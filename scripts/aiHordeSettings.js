@@ -1,6 +1,6 @@
 export default class HordeSettings extends FormApplication {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'aihorde-settings',
             classes: ['arcane-artifex'],
             title: 'AI Horde Settings',
@@ -11,8 +11,8 @@ export default class HordeSettings extends FormApplication {
         });
     }
 
-    async getData() {
-        let context = {};
+    getData(options) {
+        const context = super.getData(options);
         context.horde_models = game.settings.get("arcane-artifex", "hordeModels");
         context.horde_model = game.settings.get("arcane-artifex", "hordeModel");
         context.horde_sampler = game.settings.get("arcane-artifex", "hordeSampler");
@@ -59,39 +59,39 @@ export default class HordeSettings extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="horde_model"]').change(async (event) => {
+        html[0].querySelector('[name="horde_model"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeModel", event.target.value);
             this.render(true);
         });
-        html.find('[name="horde_sampler"]').change(async (event) => {
+        html[0].querySelector('[name="horde_sampler"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeSampler", event.target.value);
             this.render(true);
         });
-        html.find('[name="horde_nsfw"]').change(async (event) => {
+        html[0].querySelector('[name="horde_nsfw"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeNSFW", event.target.checked);
             this.render(true);
         });
-        html.find('[name="horde_karras"]').change(async (event) => {
+        html[0].querySelector('[name="horde_karras"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeKarras", event.target.checked);
             this.render(true);
         });
-        html.find('[name="horde_url"]').change(async (event) => {
+        html[0].querySelector('[name="horde_url"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeUrl", event.target.value);
             this.render(true);
         });
-        html.find('[name="horde_api_key"]').change(async (event) => {
+        html[0].querySelector('[name="horde_api_key"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeAPIKey", event.target.value);
             this.render(true);
         });
-        html.find('[name="horde_cfg_scale"]').change(async (event) => {
+        html[0].querySelector('[name="horde_cfg_scale"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeCfgScale", event.target.value);
             this.render(true);
         });
-        html.find('[name="horde_sampler_steps"]').change(async (event) => {
+        html[0].querySelector('[name="horde_sampler_steps"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "hordeSamplerSteps", event.target.value);
             this.render(true);
         });
-        html.find('[name="horde_resolution"]').change(async (event) => {
+        html[0].querySelector('[name="horde_resolution"]').addEventListener('change', async (event) => {
             const hordeResolutionOptions = this.prepareResolutionOptions();
             const resolutionObject = hordeResolutionOptions[event.target.value];
             const { width, height } = resolutionObject;

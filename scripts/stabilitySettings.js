@@ -1,6 +1,6 @@
 export default class stabilitySettings extends FormApplication {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'stability-settings',
             classes: ['arcane-artifex'],
             title: 'stability Settings',
@@ -11,8 +11,8 @@ export default class stabilitySettings extends FormApplication {
         });
     }
 
-    async getData() {
-        let context = {};
+    async getData(options) {
+        const context = super.getData(options);
         context.stability_api_key = game.settings.get("arcane-artifex", "stabilityApiKey");
         context.stability_aspect_ratio = game.settings.get("arcane-artifex", "stabilityAspectRatio");
         context.stability_model = game.settings.get("arcane-artifex", "stabilityModel");
@@ -54,17 +54,17 @@ export default class stabilitySettings extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="stability_api_key"]').change(async (event) => {
+        html[0].querySelector('[name="stability_api_key"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "stabilityApiKey", event.target.value);
             this.render(true);
         });
 
-        html.find('[name="stability_aspect_ratio"]').change(async (event) => {
+        html[0].querySelector('[name="stability_aspect_ratio"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "stabilityAspectRatio", event.target.value);
             this.render(true);
         });
 
-        html.find('[name="stability_model"]').change(async (event) => {
+        html[0].querySelector('[name="stability_model"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "stabilityModel", event.target.value);
             this.render(true);
         });

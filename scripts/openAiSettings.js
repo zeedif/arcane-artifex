@@ -1,6 +1,6 @@
 export default class openAiSettings extends FormApplication {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'openai-settings',
             classes: ['arcane-artifex'],
             title: 'OpenAI Settings',
@@ -11,8 +11,8 @@ export default class openAiSettings extends FormApplication {
         });
     }
 
-    async getData() {
-        let context = {};
+    getData(options) {
+        const context = super.getData(options);
         context.openai_api_key = game.settings.get("arcane-artifex", "openAiApiKey");
         context.openai_resolution = game.settings.get("arcane-artifex", "openAiResolutionOption");
         context.openai_hd = game.settings.get("arcane-artifex", "openAiHd");
@@ -35,18 +35,18 @@ export default class openAiSettings extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="openai_api_key"]').change(async (event) => {
+        html[0].querySelector('[name="openai_api_key"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "openAiApiKey", event.target.value);
             this.render(true);
         });
-        html.find('[name="openai_hd"]').change(async (event) => {
+        html[0].querySelector('[name="openai_hd"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "openAiHd", event.target.checked);
         });
-        html.find('[name="openai_vivid"]').change(async (event) => {
+        html[0].querySelector('[name="openai_vivid"]').addEventListener('change', async (event) => {
             await game.settings.set("arcane-artifex", "openAiVivid", event.target.checked);
         });
 
-        html.find('select[name="openai_resolution"]').change(async (event) => {
+        html[0].querySelector('select[name="openai_resolution"]').addEventListener('change', async (event) => {
             const openAiResolutionOptions = this.prepareResolutionOptions();
             const resolutionObject = openAiResolutionOptions[event.target.value];
             const { width, height } = resolutionObject;

@@ -1,6 +1,6 @@
 export default class ComfyUISettings extends FormApplication {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'comfyui-settings',
             classes: ['arcane-artifex'],
             title: 'ComfyUI Settings',
@@ -10,8 +10,8 @@ export default class ComfyUISettings extends FormApplication {
             resizable: true
         });
     }
-    getData() {
-        let context = {};
+    getData(options) {
+        const context = super.getData(options);
         context.comfyui_url = game.settings.get("arcane-artifex", "comfyUiUrl");
         context.comfyui_workflow_storage_path = game.settings.get("arcane-artifex", "comfyUiWorkflowStoragePath");
         context.comfyui_workflow = game.settings.get("arcane-artifex", "comfyUiWorkflow");
@@ -29,59 +29,57 @@ export default class ComfyUISettings extends FormApplication {
         context.comfyui_cfg_scale = game.settings.get("arcane-artifex", "comfyUiCfgScale");
         context.comfyui_sampler_steps = game.settings.get("arcane-artifex", "comfyUiSamplerSteps");
 
-        this.context = context;
-
         return context;
     }
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('[name="comfyui_url"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_url"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiUrl", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_workflow_storage_path"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_workflow_storage_path"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiWorkflowStoragePath", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_workflow"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_workflow"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiWorkflow", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_model"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_model"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiModel", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_sampler"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_sampler"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiSampler", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_scheduler"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_scheduler"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiScheduler", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_upscaler"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_upscaler"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiUpscaler", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_cfg_scale"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_cfg_scale"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiCfgScale", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_sampler_steps"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_sampler_steps"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiSamplerSteps", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_height"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_height"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiHeight", event.target.value);
             this.render(true);
         });
-        html.find('[name="comfyui_width"]').change(async (event) => {
+        html[0].querySelector('[name="comfyui_width"]').addEventListener('click', async (event) => {
             await game.settings.set("arcane-artifex", "comfyUiWidth", event.target.value);
             this.render(true);
         });
         
-        html.find('button.file-picker').click(async (event) => {
+        html[0].querySelector('button.file-picker').addEventListener('click', async (event) => {
             new FilePicker({
                 type: event.currentTarget.dataset.type,
                 current: html.find(event.currentTarget.dataset.target).val(),
@@ -101,18 +99,20 @@ export default class ComfyUISettings extends FormApplication {
         
         this.changeLoraPrompt();
 
+        const comfyUiLoras = this.getData().comfyui_loras;
         for (let span of html[0].querySelectorAll('span.lora-choice')) {
             let loraName = span.innerText.trim();
-            let lora = this.context.comfyui_loras.find(l => l.lora === loraName);
+            let lora = comfyUiLoras.find(l => l.lora === loraName);
             if (lora && lora.active) {
                 span.classList.add('active');
             }
             span.addEventListener('click', (event) => this.toggleLora(event, lora));
         }
 
-        for (let range of html.find('.form-group.active-lora .stable-lora-value')) {
-            range.addEventListener('change', (event) => this.changeLoraStrength(event, range.dataset.loraAlias));
-        }
+        html[0].querySelectorAll('.form-group.active-lora .stable-lora-value')
+            .forEach(range => {
+                range.addEventListener('change', (event) => this.changeLoraStrength(event, range.dataset.loraAlias));
+            });
 
 
 
@@ -147,12 +147,14 @@ export default class ComfyUISettings extends FormApplication {
     async changeLoraPrompt() {
         let loras = game.settings.get('arcane-artifex', 'comfyUiLoras');
         let loraPrompt = "";
-        loras.forEach(lora => {
-            if (lora.active) {
-                let newString = `<lora:${lora.lora}:${lora.strength}>`;
-                loraPrompt += newString;
-            }
-        });
+        if (Array.isArray(loras)) {
+            loras.forEach(lora => {
+                if (lora.active) {
+                    let newString = `<lora:${lora.lora}:${lora.strength}>`;
+                    loraPrompt += newString;
+                }
+            });
+        }
         if (this.form) {
             this.form.querySelector('textarea[name="loraPrompt"]').value = loraPrompt;
         }
@@ -160,7 +162,10 @@ export default class ComfyUISettings extends FormApplication {
         this.context.loraPrompt = loraPrompt;
     }
 
-    _updateObject(event, formData) {
+    async _updateObject(event, formData) {
+        // Settings are saved by individual listeners on 'change'.
+        // This method is called on form submission.
+        // Re-rendering will ensure the form reflects any state not caught by immediate listeners.
         this.render(true);
     }
 }

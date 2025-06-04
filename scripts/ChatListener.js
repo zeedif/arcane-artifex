@@ -154,20 +154,20 @@ async updateActorImg(ev) {
             return; // Stop execution if data is not as expected
         }
     
-        let messageData = mergeObject(message, options);
-        let content = await renderTemplate(this.template, messageData);
+        const templateData = foundry.utils.mergeObject(message.toObject(false), options);
+        let content = await renderTemplate(this.template, templateData);
     
         message.update({
-            id: message._id,
+            _id: message._id,
             content: content,
             whisper: ChatMessage.getWhisperRecipients("GM")
-        }).then(msg => {
+        }).then(async msg => {
             if (options.send) {
                 const selectedSource = game.settings.get('arcane-artifex', 'source');
                 if (selectedSource === 'localA1111') {
-                    localA1111APIClient.initProgressRequest(msg);
+                    await localA1111APIClient.initProgressRequest(msg);
                 } else if (selectedSource === 'aiHorde') {
-                    aiHordeApiClient.initProgressRequest(msg.id, msg.content, msg, 0, "undefined");
+                    await aiHordeApiClient.initProgressRequest(msg.id, templateData.prompt || templateData.title, msg, 0, "undefined");
                 } else if (selectedSource === 'openAI') {
                     // Assuming no progress tracking is required, directly update as complete
                     this.finalizeMessageUpdate(msg);
